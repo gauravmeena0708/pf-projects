@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Officer Query</title>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px 12px;
+            text-align: left;
+        }
+        input[type="text"] {
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Officer Query System</h2>
+
+<div>
+    <h3>Search by Officer's Office</h3>
+    <label for="officeQuery">Enter Office Name:</label>
+    <input type="text" id="officeQuery">
+</div>
+
+<div>
+    <h3>Search by Officer</h3>
+    <label for="officerQuery">Enter Officer ID (eid):</label>
+    <input type="text" id="officerQuery">
+</div>
+
+<h3>Results:</h3>
+<table id="resultTable">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Designation</th>
+            <th>Office</th>
+            <th>Date of Birth</th>
+            <th>Period 1</th>
+            <th>Period 2</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<script>
+// JSON Data (converted from your table)
+let data = [];
+
+// Function to load data from the JSON file
+async function loadData() {
+    try {
+        console.log('Loading data...');
+        const response = await fetch('data.json'); // Assuming your data is stored in data.json
+        data = await response.json();
+        console.log('Data loaded successfully');
+    } catch (error) {
+        console.error("Error loading file:", error);
+    }
+}
+
+// Search Function for Office and Officer
+function searchByOffice() {
+    const officeQuery = document.getElementById('officeQuery').value.toLowerCase();
+    const officerQuery = document.getElementById('officerQuery').value.toLowerCase();
+    const resultTable = document.getElementById('resultTable').getElementsByTagName('tbody')[0];
+
+    resultTable.innerHTML = ""; // Clear previous results
+
+    let filteredData = data;
+
+    if (officeQuery) {
+        // If office query is filled, filter by office
+        filteredData = filteredData.filter(entry => 
+            entry.col4.toLowerCase().includes(officeQuery)
+        );
+    }
+    if (officerQuery) {
+        // If officer query is filled, filter by officer id
+        filteredData = filteredData.filter(entry => 
+            entry.name_office.toLowerCase().includes(officerQuery)
+        );
+    }
+
+    // Insert filtered data into the table
+    filteredData.forEach(entry => {
+        const row = resultTable.insertRow();
+        row.insertCell(0).innerText = entry.name_office;
+        row.insertCell(1).innerText = entry.desig;
+        row.insertCell(2).innerText = entry.col4;
+        row.insertCell(3).innerText = entry.dob;
+        row.insertCell(4).innerText = entry.period1;
+        row.insertCell(5).innerText = entry.period2;
+        row.insertCell(6).innerText = entry.new_col4;
+    });
+}
+
+// Event listeners to call searchByOffice whenever the input changes
+document.getElementById('officeQuery').addEventListener('input', searchByOffice);
+document.getElementById('officerQuery').addEventListener('input', searchByOffice);
+
+// Load the data when the page loads
+window.onload = loadData;
+</script>
+
+</body>
+</html>
