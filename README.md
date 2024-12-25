@@ -6,9 +6,8 @@
 ## Possible Projects
 
 I. Projects Focused on Improving EPFO's Internal Operations:
-
-    Fraud Detection and Anomaly Detection in Claims Processing:
-
+   Fraud Detection and Anomaly Detection in Claims Processing:
+   
         Problem: Identify fraudulent claims or irregular patterns in claim settlements (e.g., unusually high withdrawal amounts, multiple claims from the same bank account, claims from dormant accounts).
 
         Data: Claims data, member data, transaction history, KYC details.
@@ -21,7 +20,7 @@ I. Projects Focused on Improving EPFO's Internal Operations:
 
         EPFO Interest: Direct financial benefits, improved efficiency, enhanced security.
 
-    Predictive Modeling for Grievance Redressal:
+   Predictive Modeling for Grievance Redressal:
 
         Problem: Predict the volume and types of grievances likely to be filed in the future, allowing EPFO to proactively allocate resources and address common issues.
 
@@ -35,7 +34,7 @@ I. Projects Focused on Improving EPFO's Internal Operations:
 
         EPFO Interest: Improved member satisfaction, proactive resource management, data-driven policy improvements.
 
-    Automation of KYC and Data Validation:
+  Automation of KYC and Data Validation:
 
         Problem: Automate the process of KYC verification and data validation to reduce manual effort and improve accuracy.
 
@@ -49,7 +48,7 @@ I. Projects Focused on Improving EPFO's Internal Operations:
 
         EPFO Interest: Enhanced efficiency, improved data accuracy, cost savings.
 
-    Optimizing Contribution Collection and Reconciliation:
+   Optimizing Contribution Collection and Reconciliation:
 
         Problem: Develop models to predict contribution defaults and optimize the process of collecting and reconciling contributions from employers.
 
@@ -65,7 +64,7 @@ I. Projects Focused on Improving EPFO's Internal Operations:
 
 II. Projects Focused on Member Services and Policy Insights:
 
-    Personalized Retirement Planning Tool:
+Personalized Retirement Planning Tool:
 
         Problem: Develop an AI-powered tool that provides personalized retirement planning advice to EPFO members based on their individual circumstances and contribution history.
 
@@ -79,7 +78,7 @@ II. Projects Focused on Member Services and Policy Insights:
 
         EPFO Interest: Enhanced member engagement, improved financial well-being of members, potential for increased voluntary contributions.
 
-    Analysis of Withdrawal Patterns and Early Exits:
+Analysis of Withdrawal Patterns and Early Exits:
 
         Problem: Understand the reasons behind premature withdrawals and identify factors contributing to early exits from the EPF scheme.
 
@@ -93,7 +92,7 @@ II. Projects Focused on Member Services and Policy Insights:
 
         EPFO Interest: Data-driven policy recommendations, improved member retention, long-term financial stability of the scheme.
 
-    Impact Assessment of Policy Changes:
+Impact Assessment of Policy Changes:
 
         Problem: Develop a framework to evaluate the impact of past and future policy changes on member behavior and the overall effectiveness of the EPF scheme.
 
@@ -109,7 +108,7 @@ II. Projects Focused on Member Services and Policy Insights:
 
 III. Projects Focused on Data Security and Privacy:
 
-    Privacy-Preserving Data Analysis:
+Privacy-Preserving Data Analysis:
 
         Problem: Develop techniques to analyze EPFO data while preserving the privacy of individual members.
 
