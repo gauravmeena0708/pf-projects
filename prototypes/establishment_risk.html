@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPFO Establishment Fraud Risk Prediction</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .risk-card-high {
+            background-color: #FFF1F2; /* red-50 */
+            border-left: 4px solid #F43F5E; /* rose-500 */
+        }
+        .risk-card-medium {
+            background-color: #FFFBEB; /* amber-50 */
+            border-left: 4px solid #F59E0B; /* amber-500 */
+        }
+        .risk-card-low {
+            background-color: #F0FDF4; /* green-50 */
+            border-left: 4px solid #22C55E; /* green-500 */
+        }
+        .section-title {
+            border-bottom: 2px solid #4F46E5; /* indigo-600 */
+            padding-bottom: 0.5rem;
+            color: #3730A3; /* indigo-800 */
+        }
+        .detail-group {
+            background-color: #F9FAFB; /* gray-50 */
+            padding: 1rem;
+            border-radius: 0.375rem; /* rounded-md */
+            border: 1px solid #E5E7EB; /* gray-200 */
+        }
+        .detail-label {
+            font-weight: 500;
+            color: #4B5563; /* gray-600 */
+            min-width: 180px; /* Ensure alignment */
+        }
+        .detail-value {
+            color: #1F2937; /* gray-800 */
+        }
+        .highlight-red { color: #DC2626; /* red-600 */ font-weight: 500; }
+        .highlight-amber { color: #D97706; /* amber-600 */ font-weight: 500; }
+        .highlight-green { color: #16A34A; /* green-600 */ font-weight: 500; }
+
+        /* Collapsible section styles */
+        .collapsible-header {
+            cursor: pointer;
+            background-color: #EEF2FF; /* indigo-50 */
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s ease;
+        }
+        .collapsible-header:hover {
+            background-color: #E0E7FF; /* indigo-100 */
+        }
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: #fff;
+            border: 1px solid #E5E7EB;
+            border-top: none;
+            border-radius: 0 0 0.375rem 0.375rem;
+        }
+        .collapsible-content.open {
+            max-height: 1000px; /* Adjust as needed */
+            padding: 1rem;
+        }
+        .icon-indicator {
+            transition: transform 0.3s ease;
+        }
+        .icon-indicator.open {
+            transform: rotate(90deg);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-4 md:p-8">
+    <div class="container mx-auto max-w-5xl bg-white shadow-xl rounded-lg">
+        <header class="bg-indigo-700 text-white p-6 rounded-t-lg">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold">Establishment Fraud Risk Profile</h1>
+                    <p id="estNameHeader" class="text-sm text-indigo-200">ABC Phantom Pvt. Ltd. (DL/GGN/0078901/000)</p>
+                </div>
+                <div id="riskScoreDisplay" class="text-right">
+                    <span class="text-sm text-indigo-200 block">Overall Risk</span>
+                    <span id="overallRiskScore" class="text-4xl font-bold">78</span>
+                    <span id="overallRiskLevel" class="text-lg block risk-card-high px-2 py-1 rounded bg-rose-500 text-white">High Risk</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="p-6 md:p-8 space-y-6">
+            <div id="keyRiskFactorsSection" class="p-4 rounded-md risk-card-high">
+                <h2 class="text-lg font-semibold text-rose-700 mb-2 flex items-center"><i class="fas fa-exclamation-triangle mr-2"></i>Key Risk Factors</h2>
+                <ul id="keyRiskFactorsList" class="list-disc pl-5 space-y-1 text-sm text-rose-600">
+                    <li>Newly registered establishment (2 months).</li>
+                    <li>Address is a virtual office space with 15 other registered entities.</li>
+                    <li>Minimal EPFO contributions for all 5 registered employees.</li>
+                    <li>Promoter linked to 2 previously struck-off companies.</li>
+                    <li>No verifiable online presence or business activity.</li>
+                </ul>
+            </div>
+
+            <div>
+                <div class="mb-4">
+                    <div class="collapsible-header flex justify-between items-center" data-target="regIdDetails">
+                        <h3 class="text-lg font-semibold text-indigo-700">Registration & Identity Details</h3>
+                        <i class="fas fa-chevron-right icon-indicator"></i>
+                    </div>
+                    <div id="regIdDetails" class="collapsible-content space-y-3">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="detail-group"><span class="detail-label">Establishment Name:</span> <span id="estName" class="detail-value">ABC Phantom Pvt. Ltd.</span></div>
+                            <div class="detail-group"><span class="detail-label">EPFO Code:</span> <span id="estCode" class="detail-value">DL/GGN/0078901/000</span></div>
+                            <div class="detail-group"><span class="detail-label">Date of Registration:</span> <span id="estRegDate" class="detail-value highlight-red">15-Mar-2025 (2 months ago)</span></div>
+                            <div class="detail-group"><span class="detail-label">Type of Entity:</span> <span id="estType" class="detail-value">Private Limited Company</span></div>
+                            <div class="detail-group"><span class="detail-label">Registered Address:</span> <span id="estAddress" class="detail-value highlight-amber">Unit 12B, Virtual Office Complex, Gurugram</span></div>
+                            <div class="detail-group"><span class="detail-label">Address Verification:</span> <span id="estAddrVerify" class="detail-value highlight-red">Virtual Office, Not Physically Verified</span></div>
+                            <div class="detail-group"><span class="detail-label">Promoter Name:</span> <span id="promoterName" class="detail-value">Mr. X Y Z</span></div>
+                            <div class="detail-group"><span class="detail-label">Promoter History:</span> <span id="promoterHistory" class="detail-value highlight-red">Linked to 2 struck-off entities</span></div>
+                             <div class="detail-group"><span class="detail-label">GSTIN Status:</span> <span id="gstinStatus" class="detail-value">Active, Filed 1 return (Nil)</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="collapsible-header flex justify-between items-center" data-target="finDetails">
+                        <h3 class="text-lg font-semibold text-indigo-700">Financial & Transactional Profile</h3>
+                        <i class="fas fa-chevron-right icon-indicator"></i>
+                    </div>
+                    <div id="finDetails" class="collapsible-content space-y-3">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="detail-group"><span class="detail-label">Bank Account Age:</span> <span id="bankAge" class="detail-value highlight-red">1 month old</span></div>
+                            <div class="detail-group"><span class="detail-label">Contribution Regularity:</span> <span id="contribRegularity" class="detail-value highlight-green">Regular (1 cycle paid)</span></div>
+                            <div class="detail-group"><span class="detail-label">Avg. Contribution/Emp:</span> <span id="avgContrib" class="detail-value highlight-red">₹1800 (Statutory Minimum)</span></div>
+                            <div class="detail-group"><span class="detail-label">Transaction Velocity:</span> <span id="txnVelocity" class="detail-value">Low</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="collapsible-header flex justify-between items-center" data-target="empDetails">
+                        <h3 class="text-lg font-semibold text-indigo-700">Employee Profile & Activity</h3>
+                        <i class="fas fa-chevron-right icon-indicator"></i>
+                    </div>
+                    <div id="empDetails" class="collapsible-content space-y-3">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="detail-group"><span class="detail-label">Number of Employees:</span> <span id="numEmployees" class="detail-value">5</span></div>
+                            <div class="detail-group"><span class="detail-label">Employee Churn Rate:</span> <span id="empChurn" class="detail-value">0% (New Est.)</span></div>
+                            <div class="detail-group"><span class="detail-label">UAN Activation Pattern:</span> <span id="uanPattern" class="detail-value">All 5 activated simultaneously</span></div>
+                            <div class="detail-group"><span class="detail-label">Avg. Declared Wage:</span> <span id="avgWage" class="detail-value highlight-red">₹15,000 (Statutory Minimum PF wage)</span></div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="mb-4">
+                    <div class="collapsible-header flex justify-between items-center" data-target="opDetails">
+                        <h3 class="text-lg font-semibold text-indigo-700">Operational & Business Indicators</h3>
+                        <i class="fas fa-chevron-right icon-indicator"></i>
+                    </div>
+                    <div id="opDetails" class="collapsible-content space-y-3">
+                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="detail-group"><span class="detail-label">Nature of Business:</span> <span id="bizNature" class="detail-value">General Consulting Services</span></div>
+                            <div class="detail-group"><span class="detail-label">Physical Presence:</span> <span id="phyPresence" class="detail-value highlight-red">None Verifiable beyond Virtual Office</span></div>
+                            <div class="detail-group"><span class="detail-label">Online Footprint:</span> <span id="onlinePresence" class="detail-value highlight-red">No website, No social media</span></div>
+                            <div class="detail-group"><span class="detail-label">Contact Info Status:</span> <span id="contactStatus" class="detail-value">Generic Gmail, Mobile Number Active</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="collapsible-header flex justify-between items-center" data-target="compDetails">
+                        <h3 class="text-lg font-semibold text-indigo-700">Compliance & Network History</h3>
+                        <i class="fas fa-chevron-right icon-indicator"></i>
+                    </div>
+                    <div id="compDetails" class="collapsible-content space-y-3">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="detail-group"><span class="detail-label">Statutory Filings:</span> <span id="statFilings" class="detail-value">Up-to-date (Minimal history)</span></div>
+                            <div class="detail-group"><span class="detail-label">Watchlist Status:</span> <span id="watchlistStatus" class="detail-value highlight-green">Clear</span></div>
+                            <div class="detail-group"><span class="detail-label">Network Links:</span> <span id="networkLinks" class="detail-value highlight-red">Promoter linked to 2 struck-off firms. 15 other firms at same virtual address.</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-6 border-t border-gray-300">
+                <h3 class="text-lg font-semibold text-gray-700 mb-3">Recommended Actions</h3>
+                <div class="flex flex-wrap gap-3">
+                    <button class="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-search mr-2"></i>Initiate Physical Inspection</button>
+                    <button class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-file-alt mr-2"></i>Request Additional Documents</button>
+                    <button class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-flag mr-2"></i>Flag for Close Monitoring</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Static Data for Demonstration (would come from backend) ---
+        const establishmentData = {
+            name: "ABC Phantom Pvt. Ltd.",
+            epfoCode: "DL/GGN/0078901/000",
+            riskScore: 78,
+            riskLevel: "High Risk", // "Low Risk", "Medium Risk", "High Risk"
+            keyFactors: [
+                "Newly registered establishment (2 months).",
+                "Address is a virtual office space with 15 other registered entities.",
+                "Minimal EPFO contributions for all 5 registered employees.",
+                "Promoter linked to 2 previously struck-off companies.",
+                "No verifiable online presence or business activity."
+            ],
+            details: {
+                regDate: "15-Mar-2025 (2 months ago)", regDateClass: "highlight-red",
+                entityType: "Private Limited Company",
+                address: "Unit 12B, Virtual Office Complex, Gurugram", addressClass: "highlight-amber",
+                addressVerify: "Virtual Office, Not Physically Verified", addressVerifyClass: "highlight-red",
+                promoterName: "Mr. X Y Z",
+                promoterHistory: "Linked to 2 struck-off entities", promoterHistoryClass: "highlight-red",
+                gstinStatus: "Active, Filed 1 return (Nil)",
+                bankAge: "1 month old", bankAgeClass: "highlight-red",
+                contribRegularity: "Regular (1 cycle paid)", contribRegularityClass: "highlight-green",
+                avgContrib: "₹1800 (Statutory Minimum)", avgContribClass: "highlight-red",
+                txnVelocity: "Low",
+                numEmployees: "5",
+                empChurn: "0% (New Est.)",
+                uanPattern: "All 5 activated simultaneously",
+                avgWage: "₹15,000 (Statutory Minimum PF wage)", avgWageClass: "highlight-red",
+                bizNature: "General Consulting Services",
+                phyPresence: "None Verifiable beyond Virtual Office", phyPresenceClass: "highlight-red",
+                onlinePresence: "No website, No social media", onlinePresenceClass: "highlight-red",
+                contactStatus: "Generic Gmail, Mobile Number Active",
+                statFilings: "Up-to-date (Minimal history)",
+                watchlistStatus: "Clear", watchlistStatusClass: "highlight-green",
+                networkLinks: "Promoter linked to 2 struck-off firms. 15 other firms at same virtual address.", networkLinksClass: "highlight-red"
+            }
+        };
+
+        // Populate Header & Risk Score
+        document.getElementById('estNameHeader').textContent = `${establishmentData.name} (${establishmentData.epfoCode})`;
+        document.getElementById('overallRiskScore').textContent = establishmentData.riskScore;
+        const riskLevelEl = document.getElementById('overallRiskLevel');
+        riskLevelEl.textContent = establishmentData.riskLevel;
+        
+        const riskScoreCard = document.getElementById('riskScoreDisplay'); // The parent div for score
+        const keyRiskFactorsSection = document.getElementById('keyRiskFactorsSection');
+        
+        riskLevelEl.classList.remove('risk-card-low', 'risk-card-medium', 'risk-card-high', 'bg-rose-500', 'bg-amber-500', 'bg-green-500', 'text-white'); // Clear existing
+        keyRiskFactorsSection.classList.remove('risk-card-low', 'risk-card-medium', 'risk-card-high');
+
+
+        if (establishmentData.riskLevel === "High Risk") {
+            riskLevelEl.classList.add('bg-rose-500', 'text-white');
+            keyRiskFactorsSection.classList.add('risk-card-high');
+            keyRiskFactorsSection.querySelector('h2').className = 'text-lg font-semibold text-rose-700 mb-2 flex items-center';
+            keyRiskFactorsSection.querySelector('ul').className = 'list-disc pl-5 space-y-1 text-sm text-rose-600';
+        } else if (establishmentData.riskLevel === "Medium Risk") {
+            riskLevelEl.classList.add('bg-amber-500', 'text-white');
+            keyRiskFactorsSection.classList.add('risk-card-medium');
+            keyRiskFactorsSection.querySelector('h2').className = 'text-lg font-semibold text-amber-700 mb-2 flex items-center';
+            keyRiskFactorsSection.querySelector('ul').className = 'list-disc pl-5 space-y-1 text-sm text-amber-600';
+        } else { // Low Risk
+            riskLevelEl.classList.add('bg-green-500', 'text-white');
+            keyRiskFactorsSection.classList.add('risk-card-low');
+            keyRiskFactorsSection.querySelector('h2').className = 'text-lg font-semibold text-green-700 mb-2 flex items-center';
+            keyRiskFactorsSection.querySelector('ul').className = 'list-disc pl-5 space-y-1 text-sm text-green-600';
+        }
+        
+        // Populate Key Risk Factors
+        const keyFactorsUList = document.getElementById('keyRiskFactorsList');
+        keyFactorsUList.innerHTML = ''; // Clear defaults
+        establishmentData.keyFactors.forEach(factor => {
+            const li = document.createElement('li');
+            li.textContent = factor;
+            keyFactorsUList.appendChild(li);
+        });
+
+        // Populate Detailed Fields
+        document.getElementById('estName').textContent = establishmentData.name;
+        document.getElementById('estCode').textContent = establishmentData.epfoCode;
+        document.getElementById('estRegDate').textContent = establishmentData.details.regDate;
+        document.getElementById('estRegDate').className = `detail-value ${establishmentData.details.regDateClass || ''}`;
+        document.getElementById('estType').textContent = establishmentData.details.entityType;
+        document.getElementById('estAddress').textContent = establishmentData.details.address;
+        document.getElementById('estAddress').className = `detail-value ${establishmentData.details.addressClass || ''}`;
+        document.getElementById('estAddrVerify').textContent = establishmentData.details.addressVerify;
+        document.getElementById('estAddrVerify').className = `detail-value ${establishmentData.details.addressVerifyClass || ''}`;
+        document.getElementById('promoterName').textContent = establishmentData.details.promoterName;
+        document.getElementById('promoterHistory').textContent = establishmentData.details.promoterHistory;
+        document.getElementById('promoterHistory').className = `detail-value ${establishmentData.details.promoterHistoryClass || ''}`;
+        document.getElementById('gstinStatus').textContent = establishmentData.details.gstinStatus;
+
+        document.getElementById('bankAge').textContent = establishmentData.details.bankAge;
+        document.getElementById('bankAge').className = `detail-value ${establishmentData.details.bankAgeClass || ''}`;
+        document.getElementById('contribRegularity').textContent = establishmentData.details.contribRegularity;
+        document.getElementById('contribRegularity').className = `detail-value ${establishmentData.details.contribRegularityClass || ''}`;
+        document.getElementById('avgContrib').textContent = establishmentData.details.avgContrib;
+        document.getElementById('avgContrib').className = `detail-value ${establishmentData.details.avgContribClass || ''}`;
+        document.getElementById('txnVelocity').textContent = establishmentData.details.txnVelocity;
+        
+        document.getElementById('numEmployees').textContent = establishmentData.details.numEmployees;
+        document.getElementById('empChurn').textContent = establishmentData.details.empChurn;
+        document.getElementById('uanPattern').textContent = establishmentData.details.uanPattern;
+        document.getElementById('avgWage').textContent = establishmentData.details.avgWage;
+        document.getElementById('avgWage').className = `detail-value ${establishmentData.details.avgWageClass || ''}`;
+
+        document.getElementById('bizNature').textContent = establishmentData.details.bizNature;
+        document.getElementById('phyPresence').textContent = establishmentData.details.phyPresence;
+        document.getElementById('phyPresence').className = `detail-value ${establishmentData.details.phyPresenceClass || ''}`;
+        document.getElementById('onlinePresence').textContent = establishmentData.details.onlinePresence;
+        document.getElementById('onlinePresence').className = `detail-value ${establishmentData.details.onlinePresenceClass || ''}`;
+        document.getElementById('contactStatus').textContent = establishmentData.details.contactStatus;
+        
+        document.getElementById('statFilings').textContent = establishmentData.details.statFilings;
+        document.getElementById('watchlistStatus').textContent = establishmentData.details.watchlistStatus;
+        document.getElementById('watchlistStatus').className = `detail-value ${establishmentData.details.watchlistStatusClass || ''}`;
+        document.getElementById('networkLinks').textContent = establishmentData.details.networkLinks;
+        document.getElementById('networkLinks').className = `detail-value ${establishmentData.details.networkLinksClass || ''}`;
+
+        // Collapsible section script
+        const collapsibles = document.querySelectorAll('.collapsible-header');
+        collapsibles.forEach(collapsible => {
+            collapsible.addEventListener('click', function() {
+                const contentId = this.dataset.target;
+                const content = document.getElementById(contentId);
+                const icon = this.querySelector('.icon-indicator');
+
+                if (content.classList.contains('open')) {
+                    content.classList.remove('open');
+                    icon.classList.remove('open');
+                } else {
+                    // Optional: Close other open sections
+                    // document.querySelectorAll('.collapsible-content.open').forEach(openContent => {
+                    //     openContent.classList.remove('open');
+                    //     openContent.previousElementSibling.querySelector('.icon-indicator').classList.remove('open');
+                    // });
+                    content.classList.add('open');
+                    icon.classList.add('open');
+                }
+            });
+        });
+
+        // Auto-open the first section by default for better UX
+        const firstCollapsibleHeader = document.querySelector('.collapsible-header');
+        if (firstCollapsibleHeader) {
+            const firstContentId = firstCollapsibleHeader.dataset.target;
+            document.getElementById(firstContentId).classList.add('open');
+            firstCollapsibleHeader.querySelector('.icon-indicator').classList.add('open');
+        }
+
+    </script>
+</body>
+</html>
