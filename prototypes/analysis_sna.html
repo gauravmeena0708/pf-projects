@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPFO Social Network Analysis for Fraud Detection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F9FA; /* Light gray */
+        }
+        .header-section {
+            background: linear-gradient(to right, #B91C1C, #F97316); /* Red to Orange gradient for alert/detection */
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -1px rgba(0,0,0,0.05);
+        }
+        .stat-card {
+            border-left-width: 4px;
+        }
+        .stat-card-red { border-left-color: #EF4444; }
+        .stat-card-orange { border-left-color: #F97316; }
+        .stat-card-amber { border-left-color: #F59E0B; }
+        .stat-card-yellow { border-left-color: #EAB308; }
+
+        .info-box {
+            background-color: #FFFBEB; /* Light yellow for info */
+            border-left: 4px solid #F59E0B; /* Amber border */
+        }
+         .research-box {
+            background-color: #FEF2F2; /* Light red for research focus */
+            border-left: 4px solid #EF4444; /* Red border */
+        }
+        .epfo-box {
+            background-color: #FFF7ED; /* Light orange for EPFO focus */
+            border-left: 4px solid #F97316; /* Orange border */
+        }
+        
+        /* Conceptual Graph Visualization Styles */
+        .graph-container {
+            min-height: 380px;
+            background-color: #F9FAFB; /* gray-50 */
+            border: 1px solid #E5E7EB; /* gray-200 */
+            border-radius: 0.375rem; /* rounded-md */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .graph-node {
+            position: absolute;
+            width: 45px; /* Slightly smaller nodes */
+            height: 45px;
+            border-radius: 50%;
+            background-color: #60A5FA; /* Blue-400 for normal nodes */
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem; /* Smaller font */
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .graph-node.member { background-color: #3B82F6; } /* Blue-500 */
+        .graph-node.employer { background-color: #10B981; } /* Green-500 */
+        .graph-node.account { background-color: #A78BFA; } /* Violet-400 */
+        
+        .graph-node.suspicious-activity { 
+            background-color: #FCD34D; /* Amber-300 */ 
+            color: #B45309; /* Amber-700 */
+            border-color: #F59E0B; /* Amber-500 */
+        }
+        .graph-node.fraud-ring-member { 
+            background-color: #FCA5A5; /* Red-300 */
+            color: #991B1B; /* Red-700 */
+            border-color: #EF4444; /* Red-500 */
+            animation: pulse-fraud 1.5s infinite;
+        }
+         .graph-node.central-fraud-actor {
+            background-color: #DC2626; /* Red-600 */
+            color: white;
+            border-color: #991B1B; /* Red-700 */
+            width: 55px;
+            height: 55px;
+            font-size: 0.7rem;
+            animation: pulse-strong-fraud 1s infinite alternate;
+        }
+
+
+        @keyframes pulse-fraud {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        @keyframes pulse-strong-fraud {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
+
+        .graph-edge {
+            position: absolute;
+            background-color: #9CA3AF; /* Gray-400 */
+            height: 1.5px; /* Thinner edges */
+            transform-origin: left center;
+            z-index: -1; /* Behind nodes */
+        }
+        .graph-edge.suspicious-link {
+            background-color: #F97316; /* Orange-500 */
+            height: 2.5px;
+        }
+        .pattern-card {
+            background-color: #FEF3C7; /* Amber-100 */
+            border: 1px solid #FDE68A; /* Amber-200 */
+        }
+
+        /* Custom modal styles */
+        .modal {
+            display: none; position: fixed; z-index: 1000; 
+            left: 0; top: 0; width: 100%; height: 100%;
+            overflow: auto; background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: #fefefe; margin: 10% auto; padding: 25px;
+            border: 1px solid #888; width: 80%; max-width: 700px;
+            border-radius: 0.5rem; text-align: left;
+        }
+        .modal-header { padding-bottom: 10px; border-bottom: 1px solid #eee; }
+        .modal-header h2 { margin: 0; font-size: 1.5rem; color: #333; }
+        .modal-body { padding-top:15px; padding-bottom:15px; font-size: 1rem; color: #555;}
+        .modal-footer { padding-top: 10px; border-top: 1px solid #eee; text-align: right; }
+        .modal-button {
+            background-color: #D97706; color: white; padding: 10px 18px;
+            border: none; border-radius: 0.375rem; cursor: pointer; font-size: 0.9rem;
+        }
+        .modal-button:hover { background-color: #B45309; }
+    </style>
+</head>
+<body class="text-slate-800">
+    <div class="min-h-screen">
+        <nav class="bg-white shadow-md">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center">
+                        <i class="fas fa-user-secret text-2xl text-red-600 mr-2"></i>
+                        <span class="font-bold text-xl text-red-700">EPFO Social Network<span class="text-red-500">Fraud Detector</span></span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="text-sm text-gray-600 mr-3">Integrity & Security Unit</span>
+                         <button class="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" aria-label="Help">
+                            <i class="fas fa-question-circle"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="header-section text-white py-10 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-3xl sm:text-4xl font-bold mb-2">Social Network Analysis for Fraud Detection</h1>
+                <p class="text-lg text-red-100">Identifying suspicious patterns and anomalies in member networks to combat fraud.</p>
+            </div>
+        </div>
+
+        <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="card stat-card stat-card-red p-4">
+                    <h3 class="text-sm font-medium text-gray-500">High-Risk Clusters</h3>
+                    <p id="highRiskClusters" class="text-2xl font-semibold text-red-600">78</p>
+                </div>
+                <div class="card stat-card stat-card-orange p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Anomalous Transactions</h3>
+                    <p id="anomalousTransactions" class="text-2xl font-semibold text-orange-600">1,204</p>
+                </div>
+                <div class="card stat-card stat-card-amber p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Suspicious New Accounts</h3>
+                    <p id="suspiciousAccounts" class="text-2xl font-semibold text-amber-600">256</p>
+                </div>
+                <div class="card stat-card stat-card-yellow p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Potential Loss Averted (Est.)</h3>
+                    <p id="lossAverted" class="text-2xl font-semibold text-yellow-600">₹ 5.2 Cr</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="card p-6">
+                        <h2 class="text-xl font-semibold text-slate-700 mb-1 flex items-center">
+                            <i class="fas fa-project-diagram mr-2 text-red-500"></i>EPFO Social Network - Fraud View
+                        </h2>
+                        <p class="text-sm text-gray-500 mb-4">Conceptual visualization of member interactions, highlighting suspicious connections and clusters.</p>
+                        <div id="fraudGraphVisualization" class="graph-container">
+                            </div>
+                         <div class="info-box p-3 mt-4 rounded-md text-sm">
+                            <p><i class="fas fa-info-circle mr-1"></i><strong>Graph-based Machine Learning:</strong> Algorithms like GNNs, community detection, and anomaly detection are applied to the network structure and transaction data to identify patterns indicative of fraud, such as unusual clustering, central actors in suspicious networks, or rapid changes in connectivity.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="card p-6">
+                        <h2 class="text-lg font-semibold text-slate-700 mb-3 flex items-center">
+                            <i class="fas fa-exclamation-triangle mr-2 text-orange-500"></i>Detected Suspicious Patterns
+                        </h2>
+                        <div id="suspiciousPatternsList" class="space-y-2 max-h-96 overflow-y-auto">
+                            </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="card p-6 epfo-box">
+                    <h2 class="text-xl font-semibold text-orange-700 mb-3 flex items-center"><i class="fas fa-shield-virus mr-2"></i>EPFO: Strengthening Integrity & Fraud Prevention</h2>
+                    <ul class="list-disc list-inside space-y-2 text-sm text-orange-600">
+                        <li>Significantly improve the detection rate of complex and collusive fraud schemes.</li>
+                        <li>Reduce financial losses due to fraudulent claims and activities.</li>
+                        <li>Enhance the overall integrity and trustworthiness of EPFO operations.</li>
+                        <li>Provide actionable intelligence for investigative units.</li>
+                        <li>Deter potential fraudsters by demonstrating advanced detection capabilities.</li>
+                    </ul>
+                    <button onclick="showModal('epfoIntegrityModal')" class="mt-4 text-sm bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-md w-full md:w-auto">View Integrity Benefits</button>
+                </div>
+                <div class="card p-6 research-box">
+                    <h2 class="text-xl font-semibold text-red-700 mb-3 flex items-center"><i class="fas fa-flask mr-2"></i>Research: Advancing Graph-Based Fraud Detection</h2>
+                     <ul class="list-disc list-inside space-y-2 text-sm text-red-600">
+                        <li>Develop novel GNN architectures specifically for detecting sophisticated fraud in social security systems.</li>
+                        <li>Research dynamic graph algorithms to track evolving fraud tactics in real-time.</li>
+                        <li>Explore explainable AI (XAI) for graph models to understand why certain networks are flagged as fraudulent.</li>
+                        <li>Benchmark different graph-based anomaly detection techniques on large-scale EPFO data.</li>
+                        <li>Investigate the integration of textual data (communication records) with graph structures for richer fraud signals.</li>
+                    </ul>
+                     <button onclick="showModal('researchFraudGraphModal')" class="mt-4 text-sm bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md w-full md:w-auto">Explore Graph AI in Fraud Research</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="epfoIntegrityModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>EPFO: Benefits for Integrity and Fraud Prevention</h2></div>
+            <div class="modal-body">
+                <p class="mb-2">Social network analysis provides powerful tools to safeguard EPFO's integrity:</p>
+                <ul class="list-disc list-inside space-y-1 text-sm">
+                    <li><strong>Early Detection of Collusion:</strong> Identify groups of members, employers, or intermediaries working together to defraud the system.</li>
+                    <li><strong>Uncovering Hidden Relationships:</strong> Reveal non-obvious connections between entities that may be involved in fraudulent activities.</li>
+                    <li><strong>Risk Scoring Entities:</strong> Assign risk scores to members or employers based on their network characteristics and transaction patterns.</li>
+                    <li><strong>Proactive Investigations:</strong> Generate leads for investigators based on suspicious network structures rather than waiting for reported fraud.</li>
+                    <li><strong>Adaptive Defense:</strong> Understand how fraud patterns evolve and adapt detection methods accordingly.</li>
+                </ul>
+            </div>
+            <div class="modal-footer"><button onclick="closeModal('epfoIntegrityModal')" class="modal-button">Close</button></div>
+        </div>
+    </div>
+
+    <div id="researchFraudGraphModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>Research Frontiers in Graph-Based Fraud Detection</h2></div>
+            <div class="modal-body">
+                <p class="mb-2">EPFO's data can drive innovation in graph AI for fraud detection:</p>
+                <ul class="list-disc list-inside space-y-1 text-sm">
+                    <li><strong>Adversarial Attacks on Graph Models:</strong> Study how fraudsters might try to evade graph-based detection and develop robust defenses.</li>
+                    <li><strong>Self-Supervised Learning on Graphs:</strong> Train GNNs without explicit fraud labels by learning inherent network structures and anomalies.</li>
+                    <li><strong>Multi-Relational Graph Analysis:</strong> Model different types of relationships (e.g., financial, employment, communication) simultaneously.</li>
+                    <li><strong>Scalable Real-time Graph Processing:</strong> Develop systems for analyzing streaming graph data to detect fraud as it happens.</li>
+                    <li><strong>Privacy-Preserving Graph Analytics for Fraud:</strong> Explore techniques to perform fraud detection on anonymized or encrypted graph data.</li>
+                </ul>
+            </div>
+            <div class="modal-footer"><button onclick="closeModal('researchFraudGraphModal')" class="modal-button">Close</button></div>
+        </div>
+    </div>
+
+    <script>
+        // --- Dummy Data and Functions for Demonstration ---
+        const fraudAnalysisData = {
+            stats: {
+                highRiskClusters: "78",
+                anomalousTransactions: "1,204",
+                suspiciousAccounts: "256",
+                lossAverted: "₹ 5.2 Cr"
+            },
+            conceptualGraph: { // Nodes positioned for a more "fraud ring" like structure
+                nodes: [
+                    // Normal cluster
+                    { id: "NM1", label: "Mem A", type: "member", x: 50, y: 100 },
+                    { id: "NE1", label: "Emp X", type: "employer", x: 150, y: 100 },
+                    { id: "NA1", label: "Acc P", type: "account", x: 100, y: 180 },
+                    // Fraudulent cluster
+                    { id: "FM1", label: "Mem B", type: "fraud-ring-member", x: 300, y: 150 },
+                    { id: "FM2", label: "Mem C", type: "fraud-ring-member", x: 400, y: 100 },
+                    { id: "FM3", label: "Mem D", type: "fraud-ring-member", x: 400, y: 200 },
+                    { id: "FE1", label: "Emp Y (Shell)", type: "employer suspicious-activity", x: 500, y: 150 },
+                    { id: "FA1", label: "Acc Q (Shared)", type: "account suspicious-activity", x: 350, y: 250 },
+                    { id: "FC1", label: "Actor Z", type: "central-fraud-actor", x: 350, y: 50 } // Central actor
+                ],
+                edges: [
+                    { source: "NM1", target: "NE1" }, { source: "NM1", target: "NA1" },
+                    // Fraudulent links
+                    { source: "FM1", target: "FE1", type: "suspicious-link" }, 
+                    { source: "FM2", target: "FE1", type: "suspicious-link" },
+                    { source: "FM3", target: "FE1", type: "suspicious-link" },
+                    { source: "FM1", target: "FA1", type: "suspicious-link" },
+                    { source: "FM2", target: "FA1", type: "suspicious-link" },
+                    { source: "FM3", target: "FA1", type: "suspicious-link" },
+                    { source: "FC1", target: "FM1" }, { source: "FC1", target: "FM2" }, { source: "FC1", target: "FM3" },
+                    { source: "FC1", target: "FE1", type: "suspicious-link"}
+                ]
+            },
+            suspiciousPatterns: [
+                { title: "Circular Transactions Detected", description: "Funds moved between a group of 5 newly created member accounts and a single employer account within 24 hours.", severity: "High", icon: "fas fa-recycle text-red-500" },
+                { title: "Rapid Account Creation & Claim", description: "12 new member accounts linked to 'Employer Z' filed for identical withdrawal reasons within 1 week of account creation.", severity: "High", icon: "fas fa-user-plus text-red-500" },
+                { title: "Shared Bank Account Anomaly", description: "Over 50 members, across 3 different employers, found sharing the same bank account for credit of benefits.", severity: "Medium", icon: "fas fa-university text-orange-500" },
+                { title: "Unusually High Connectivity", description: "A single member account shows transaction links to over 100 other member accounts, primarily for small, frequent amounts.", severity: "Medium", icon: "fas fa-project-diagram text-orange-500" },
+                { title: "Dormant Account Activation & Max Withdrawal", description: "Account dormant for 5+ years suddenly activated, contribution received from new employer, followed by maximum permissible withdrawal.", severity: "Low", icon: "fas fa-bed text-yellow-500" }
+            ]
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Populate Key Stats
+            document.getElementById('highRiskClusters').textContent = fraudAnalysisData.stats.highRiskClusters;
+            document.getElementById('anomalousTransactions').textContent = fraudAnalysisData.stats.anomalousTransactions;
+            document.getElementById('suspiciousAccounts').textContent = fraudAnalysisData.stats.suspiciousAccounts;
+            document.getElementById('lossAverted').textContent = fraudAnalysisData.stats.lossAverted;
+
+            // Populate Suspicious Patterns List
+            const patternsListDiv = document.getElementById('suspiciousPatternsList');
+            if(patternsListDiv){
+                fraudAnalysisData.suspiciousPatterns.forEach(pattern => {
+                    const item = document.createElement('div');
+                    item.className = 'pattern-card p-3 rounded-md text-sm mb-2';
+                    item.innerHTML = `
+                        <h4 class="font-semibold text-amber-800 flex items-center"><i class="${pattern.icon} mr-2"></i>${pattern.title}</h4>
+                        <p class="text-xs text-amber-700">${pattern.description}</p>
+                        <p class="text-xs font-medium mt-1">Severity: <span class="${pattern.severity === 'High' ? 'text-red-600' : (pattern.severity === 'Medium' ? 'text-orange-600' : 'text-yellow-600')}">${pattern.severity}</span></p>
+                    `;
+                    patternsListDiv.appendChild(item);
+                });
+            }
+            
+            // Render Conceptual Fraud Graph
+            const graphContainer = document.getElementById('fraudGraphVisualization');
+            if (graphContainer) {
+                const nodes = fraudAnalysisData.conceptualGraph.nodes;
+                const edges = fraudAnalysisData.conceptualGraph.edges;
+                const nodeElements = {};
+
+                nodes.forEach(node => {
+                    const nodeEl = document.createElement('div');
+                    nodeEl.className = `graph-node ${node.type || ''}`; // Add type as class
+                    nodeEl.style.left = `${node.x}px`;
+                    nodeEl.style.top = `${node.y}px`;
+                    nodeEl.innerHTML = `<span class="truncate block w-full px-1">${node.label}</span>`;
+                    nodeEl.title = `${node.type}: ${node.label}`;
+                    graphContainer.appendChild(nodeEl);
+                    nodeElements[node.id] = nodeEl;
+                });
+
+                edges.forEach(edge => {
+                    const sourceNode = nodeElements[edge.source];
+                    const targetNode = nodeElements[edge.target];
+
+                    if (sourceNode && targetNode) {
+                        const x1 = sourceNode.offsetLeft + sourceNode.offsetWidth / 2;
+                        const y1 = sourceNode.offsetTop + sourceNode.offsetHeight / 2;
+                        const x2 = targetNode.offsetLeft + targetNode.offsetWidth / 2;
+                        const y2 = targetNode.offsetTop + targetNode.offsetHeight / 2;
+
+                        const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+                        const angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
+
+                        const edgeEl = document.createElement('div');
+                        edgeEl.className = `graph-edge ${edge.type || ''}`;
+                        edgeEl.style.width = `${length}px`;
+                        edgeEl.style.left = `${x1}px`;
+                        edgeEl.style.top = `${y1}px`;
+                        edgeEl.style.transform = `rotate(${angle}deg)`;
+                        graphContainer.appendChild(edgeEl);
+                    }
+                });
+            }
+        });
+
+        // Modal functions
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = "block";
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            });
+        }
+    </script>
+</body>
+</html>
