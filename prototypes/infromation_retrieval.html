@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPFO Smart Search & Document Retrieval</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F9FA; /* Light gray */
+        }
+        .header-section {
+            background: linear-gradient(to right, #1D4ED8, #3B82F6); /* Blue gradient for a professional/tech feel */
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -1px rgba(0,0,0,0.05);
+        }
+        .stat-card {
+            border-left-width: 4px;
+        }
+        .stat-card-blue { border-left-color: #3B82F6; }
+        .stat-card-sky { border-left-color: #0EA5E9; }
+        .stat-card-cyan { border-left-color: #06B6D4; }
+        .stat-card-indigo { border-left-color: #6366F1; }
+
+        .info-box {
+            background-color: #EFF6FF; /* Light blue for info */
+            border-left: 4px solid #3B82F6; /* Blue border */
+        }
+         .research-box {
+            background-color: #E0F2FE; /* Light sky for research focus */
+            border-left: 4px solid #0EA5E9; /* Sky border */
+        }
+        .epfo-box {
+            background-color: #F0F9FF; /* Light cyan for EPFO focus */
+            border-left: 4px solid #06B6D4; /* Cyan border */
+        }
+        .search-result-item {
+            border: 1px solid #E5E7EB; /* gray-200 */
+            transition: box-shadow 0.3s ease;
+        }
+        .search-result-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .tag {
+            background-color: #DBEAFE; /* blue-100 */
+            color: #1E4ED8; /* blue-700 */
+            font-size: 0.75rem; /* text-xs */
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem; /* rounded */
+        }
+
+        /* Custom modal styles */
+        .modal {
+            display: none; position: fixed; z-index: 1000; 
+            left: 0; top: 0; width: 100%; height: 100%;
+            overflow: auto; background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: #fefefe; margin: 10% auto; padding: 25px;
+            border: 1px solid #888; width: 80%; max-width: 700px;
+            border-radius: 0.5rem; text-align: left;
+        }
+        .modal-header { padding-bottom: 10px; border-bottom: 1px solid #eee; }
+        .modal-header h2 { margin: 0; font-size: 1.5rem; color: #333; }
+        .modal-body { padding-top:15px; padding-bottom:15px; font-size: 1rem; color: #555;}
+        .modal-footer { padding-top: 10px; border-top: 1px solid #eee; text-align: right; }
+        .modal-button {
+            background-color: #2563EB; color: white; padding: 10px 18px;
+            border: none; border-radius: 0.375rem; cursor: pointer; font-size: 0.9rem;
+        }
+        .modal-button:hover { background-color: #1D4ED8; }
+    </style>
+</head>
+<body class="text-slate-800">
+    <div class="min-h-screen">
+        <nav class="bg-white shadow-md">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center">
+                        <i class="fas fa-search-plus text-2xl text-blue-600 mr-2"></i>
+                        <span class="font-bold text-xl text-blue-700">EPFO Smart Search &<span class="text-blue-500">Retrieval</span></span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="text-sm text-gray-600 mr-3">Information Access Hub</span>
+                         <button class="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" aria-label="Help">
+                            <i class="fas fa-question-circle"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="header-section text-white py-10 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-3xl sm:text-4xl font-bold mb-2">Efficient Information Retrieval for EPFO</h1>
+                <p class="text-lg text-blue-100">Quickly access documents, records, and policy information with AI-powered search.</p>
+            </div>
+        </div>
+
+        <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="card stat-card stat-card-blue p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Documents Indexed</h3>
+                    <p id="docsIndexed" class="text-2xl font-semibold text-blue-600">10.2 M</p>
+                </div>
+                <div class="card stat-card stat-card-sky p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Avg. Search Time</h3>
+                    <p id="avgSearchTime" class="text-2xl font-semibold text-sky-600">0.35 s</p>
+                </div>
+                <div class="card stat-card stat-card-cyan p-4">
+                    <h3 class="text-sm font-medium text-gray-500">NLP Accuracy (Intent)</h3>
+                    <p id="nlpAccuracy" class="text-2xl font-semibold text-cyan-600">94%</p>
+                </div>
+                <div class="card stat-card stat-card-indigo p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Queries Processed Today</h3>
+                    <p id="queriesToday" class="text-2xl font-semibold text-indigo-600">25,780</p>
+                </div>
+            </div>
+
+            <div class="card p-6 mb-8">
+                <h2 class="text-xl font-semibold text-slate-700 mb-4 flex items-center">
+                    <i class="fas fa-search mr-2 text-blue-500"></i>Search EPFO Archives
+                </h2>
+                <div class="flex flex-col md:flex-row gap-4 mb-4">
+                    <input type="text" id="searchInput" placeholder="Enter keywords, policy number, member ID, or natural language query..." class="flex-grow p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <button onclick="performSearch()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-md flex items-center justify-center">
+                        <i class="fas fa-search mr-2"></i>Search
+                    </button>
+                </div>
+                <div class="flex flex-wrap gap-4 text-sm">
+                    <div>
+                        <label for="docTypeFilter" class="block text-xs font-medium text-gray-700">Document Type:</label>
+                        <select id="docTypeFilter" class="mt-1 p-2 border border-gray-300 rounded-md text-xs">
+                            <option>All</option>
+                            <option>Policy Circular</option>
+                            <option>Member Record</option>
+                            <option>Claim Form</option>
+                            <option>Gazette Notification</option>
+                            <option>FAQ</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="dateRangeFilter" class="block text-xs font-medium text-gray-700">Date Range:</label>
+                        <select id="dateRangeFilter" class="mt-1 p-2 border border-gray-300 rounded-md text-xs">
+                            <option>Any Time</option>
+                            <option>Past Year</option>
+                            <option>Past Month</option>
+                            <option>Custom Range</option>
+                        </select>
+                    </div>
+                     <button class="text-xs text-blue-600 hover:underline self-end" onclick="toggleAdvancedSearch()">Advanced Filters <i class="fas fa-chevron-down text-xs ml-1"></i></button>
+                </div>
+                <div id="advancedSearchOptions" class="mt-4 p-4 bg-gray-50 rounded-md hidden">
+                    <p class="text-sm text-gray-600">Advanced search options (e.g., specific department, region, metadata tags) would appear here.</p>
+                </div>
+            </div>
+
+            <div id="searchResultsArea" class="space-y-4">
+                <p class="text-center text-gray-500" id="searchPlaceholder">Enter a query to see results.</p>
+            </div>
+            
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="card p-4 info-box">
+                    <h3 class="text-md font-semibold text-blue-700 mb-1"><i class="fas fa-cogs mr-1"></i>Advanced Indexing</h3>
+                    <p class="text-xs text-blue-600">Utilizes techniques like inverted indexes, vector embeddings (for semantic search), and metadata tagging to create a highly efficient and searchable knowledge base.</p>
+                </div>
+                <div class="card p-4 info-box">
+                    <h3 class="text-md font-semibold text-blue-700 mb-1"><i class="fas fa-bolt mr-1"></i>Smart Search Algorithms</h3>
+                    <p class="text-xs text-blue-600">Employs relevance ranking (e.g., BM25, TF-IDF), semantic search to understand context, and query expansion to retrieve the most pertinent documents quickly.</p>
+                </div>
+                <div class="card p-4 info-box">
+                    <h3 class="text-md font-semibold text-blue-700 mb-1"><i class="fas fa-language mr-1"></i>Natural Language Processing (NLP)</h3>
+                    <p class="text-xs text-blue-600">Enables understanding of natural language queries, extracts key entities and intents, and can summarize documents or answer questions based on retrieved content.</p>
+                </div>
+            </div>
+
+
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="card p-6 epfo-box">
+                    <h2 class="text-xl font-semibold text-cyan-700 mb-3 flex items-center"><i class="fas fa-landmark mr-2"></i>EPFO: Streamlined Operations & Decision Support</h2>
+                    <ul class="list-disc list-inside space-y-2 text-sm text-cyan-600">
+                        <li>Drastically reduce time spent searching for documents and records.</li>
+                        <li>Improve response times for member inquiries and grievances.</li>
+                        <li>Support faster, data-driven decision-making by providing quick access to relevant information.</li>
+                        <li>Enhance compliance by ensuring easy access to up-to-date policies and regulations.</li>
+                        <li>Streamline administrative processes like claims processing and auditing.</li>
+                    </ul>
+                    <button onclick="showModal('epfoOperationsModal')" class="mt-4 text-sm bg-cyan-500 hover:bg-cyan-600 text-white py-2 px-4 rounded-md w-full md:w-auto">View Operational Benefits</button>
+                </div>
+                <div class="card p-6 research-box">
+                    <h2 class="text-xl font-semibold text-sky-700 mb-3 flex items-center"><i class="fas fa-flask mr-2"></i>Research: Advancing Information Retrieval</h2>
+                     <ul class="list-disc list-inside space-y-2 text-sm text-sky-600">
+                        <li>Develop and benchmark domain-specific NLP models for EPFO terminology.</li>
+                        <li>Research hybrid search approaches combining keyword, semantic, and graph-based retrieval.</li>
+                        <li>Explore question-answering systems over EPFO's knowledge base.</li>
+                        <li>Investigate proactive information delivery and recommendation systems.</li>
+                        <li>Publish findings on large-scale information retrieval in public administration.</li>
+                    </ul>
+                     <button onclick="showModal('researchIRModal')" class="mt-4 text-sm bg-sky-500 hover:bg-sky-600 text-white py-2 px-4 rounded-md w-full md:w-auto">Explore IR Research</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="epfoOperationsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>EPFO: Streamlining Operations with Smart Search</h2></div>
+            <div class="modal-body">
+                <p class="mb-2">An intelligent information retrieval system transforms EPFO's daily operations:</p>
+                <ul class="list-disc list-inside space-y-1 text-sm">
+                    <li><strong>Member Services:</strong> Customer service representatives can find answers to member queries in seconds, improving satisfaction.</li>
+                    <li><strong>Claims Processing:</strong> Officers can quickly access all relevant documents for a claim, reducing processing time and errors.</li>
+                    <li><strong>Legal & Compliance:</strong> Easy retrieval of specific circulars, acts, and case histories for legal teams.</li>
+                    <li><strong>Policy Making:</strong> Analysts can gather historical data and policy documents efficiently to inform new policy development.</li>
+                    <li><strong>Auditing:</strong> Auditors can swiftly locate transaction logs and supporting evidence.</li>
+                </ul>
+            </div>
+            <div class="modal-footer"><button onclick="closeModal('epfoOperationsModal')" class="modal-button">Close</button></div>
+        </div>
+    </div>
+
+    <div id="researchIRModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>Research Frontiers in Information Retrieval for EPFO</h2></div>
+            <div class="modal-body">
+                <p class="mb-2">EPFO's vast dataset provides a unique testbed for IR research:</p>
+                <ul class="list-disc list-inside space-y-1 text-sm">
+                    <li><strong>Knowledge Graph Construction:</strong> Automatically build a knowledge graph from EPFO documents to enable complex relational queries.</li>
+                    <li><strong>Conversational AI for Retrieval:</strong> Develop chatbots that can understand complex queries and retrieve information through dialogue.</li>
+                    <li><strong>Multilingual Search:</strong> Extend capabilities to support queries and documents in multiple Indian languages.</li>
+                    <li><strong>Personalized Search:</strong> Tailor search results based on the user's role, department, or past query history.</li>
+                    <li><strong>Explainable Search (XAI):</strong> Provide reasons why certain documents are ranked higher, increasing transparency and trust in the system.</li>
+                </ul>
+            </div>
+            <div class="modal-footer"><button onclick="closeModal('researchIRModal')" class="modal-button">Close</button></div>
+        </div>
+    </div>
+
+    <script>
+        // --- Dummy Data and Functions for Demonstration ---
+        const retrievalSystemData = {
+            stats: {
+                docsIndexed: "10.2 M",
+                avgSearchTime: "0.35 s",
+                nlpAccuracy: "94%",
+                queriesToday: "25,780"
+            },
+            sampleResults: [
+                { id: "doc001", title: "Circular on Interest Rate Revision 2023-24", type: "Policy Circular", date: "2023-03-15", snippet: "The Central Board of Trustees, EPF, has approved the crediting of interest at 8.15% for the year 2023-24...", relevance: 0.92, path: "/docs/circulars/2023/interest_rate_2023_24.pdf" },
+                { id: "doc002", title: "Member UAN: 100XXXXXX123 - Claim Form 31 (Housing)", type: "Member Record", date: "2024-01-20", snippet: "Withdrawal request for housing loan principal repayment. Amount: INR 5,00,000. Status: Approved.", relevance: 0.88, path: "/records/members/100XXXXXX123/claims/form31_housing.pdf" },
+                { id: "doc003", title: "FAQ on Premature Closure of PF Account", type: "FAQ", date: "2022-11-01", snippet: "Under what conditions can a member close their PF account prematurely? This document outlines the eligibility criteria...", relevance: 0.85, path: "/faqs/premature_closure.html" },
+                { id: "doc004", title: "Gazette Notification: Amendment to EPF Scheme, 1952", type: "Gazette Notification", date: "2023-09-05", snippet: "Notification regarding changes in paragraph 68-BD concerning advances for purchase of dwelling house or flat.", relevance: 0.79, path: "/gazettes/2023/epf_amendment_68bd.pdf" }
+            ]
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Populate Key Stats
+            document.getElementById('docsIndexed').textContent = retrievalSystemData.stats.docsIndexed;
+            document.getElementById('avgSearchTime').textContent = retrievalSystemData.stats.avgSearchTime;
+            document.getElementById('nlpAccuracy').textContent = retrievalSystemData.stats.nlpAccuracy;
+            document.getElementById('queriesToday').textContent = retrievalSystemData.stats.queriesToday;
+        });
+        
+        function toggleAdvancedSearch() {
+            const advancedOptions = document.getElementById('advancedSearchOptions');
+            advancedOptions.classList.toggle('hidden');
+        }
+
+        function performSearch() {
+            const searchInput = document.getElementById('searchInput').value;
+            const searchResultsArea = document.getElementById('searchResultsArea');
+            const searchPlaceholder = document.getElementById('searchPlaceholder');
+            
+            searchResultsArea.innerHTML = ''; // Clear previous results or placeholder
+
+            if (!searchInput.trim()) {
+                searchResultsArea.appendChild(searchPlaceholder);
+                searchPlaceholder.textContent = "Please enter a search query.";
+                return;
+            }
+
+            // Simulate API call & display results
+            const loadingEl = document.createElement('p');
+            loadingEl.className = 'text-center text-gray-500';
+            loadingEl.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Searching...';
+            searchResultsArea.appendChild(loadingEl);
+
+            setTimeout(() => {
+                searchResultsArea.innerHTML = ''; // Clear loading
+                if (retrievalSystemData.sampleResults.length > 0) {
+                    const resultsInfo = document.createElement('p');
+                    resultsInfo.className = 'text-sm text-gray-600 mb-2';
+                    resultsInfo.textContent = `Found ${retrievalSystemData.sampleResults.length} results for "${searchInput}" (simulated):`;
+                    searchResultsArea.appendChild(resultsInfo);
+
+                    retrievalSystemData.sampleResults.forEach(result => {
+                        const resultEl = document.createElement('div');
+                        resultEl.className = 'search-result-item p-4 rounded-md hover:shadow-lg';
+                        resultEl.innerHTML = `
+                            <h3 class="text-lg font-semibold text-blue-600 hover:underline cursor-pointer">${result.title}</h3>
+                            <p class="text-xs text-gray-500 mb-1">
+                                <span class="tag">${result.type}</span> | Date: ${result.date} | Relevance: ${(result.relevance * 100).toFixed(0)}%
+                            </p>
+                            <p class="text-sm text-gray-700 mb-2">${result.snippet}</p>
+                            <a href="${result.path}" target="_blank" class="text-xs text-green-600 hover:underline">View Document <i class="fas fa-external-link-alt ml-1"></i></a>
+                        `;
+                        searchResultsArea.appendChild(resultEl);
+                    });
+                } else {
+                     searchResultsArea.appendChild(searchPlaceholder);
+                     searchPlaceholder.textContent = `No results found for "${searchInput}". Try different keywords.`;
+                }
+            }, 1000); // Simulate network delay
+        }
+
+        // Modal functions
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = "block";
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            });
+        }
+    </script>
+</body>
+</html>
