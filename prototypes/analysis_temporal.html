@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPFO Temporal Transaction Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F9FA; /* Light gray */
+        }
+        .header-section {
+            background: linear-gradient(to right, #0E7490, #16A34A); /* Cyan to Green gradient for a temporal/growth feel */
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -1px rgba(0,0,0,0.05);
+        }
+        .stat-card {
+            border-left-width: 4px;
+        }
+        .stat-card-cyan { border-left-color: #06B6D4; }
+        .stat-card-emerald { border-left-color: #10B981; }
+        .stat-card-teal { border-left-color: #14B8A6; }
+        .stat-card-green { border-left-color: #22C55E; }
+
+        .info-box {
+            background-color: #E0F2F7; /* Light cyan for info */
+            border-left: 4px solid #06B6D4; /* Cyan border */
+        }
+         .research-box {
+            background-color: #E6FFFA; /* Light teal for research focus */
+            border-left: 4px solid #14B8A6; /* Teal border */
+        }
+        .epfo-box {
+            background-color: #F0FFF4; /* Light green for EPFO focus */
+            border-left: 4px solid #22C55E; /* Green border */
+        }
+        .anomaly-dot {
+            background-color: #EF4444; /* Red-500 */
+            border-radius: 50%;
+            width: 8px;
+            height: 8px;
+            position: absolute;
+        }
+        /* Custom modal styles */
+        .modal {
+            display: none; position: fixed; z-index: 1000; 
+            left: 0; top: 0; width: 100%; height: 100%;
+            overflow: auto; background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: #fefefe; margin: 10% auto; padding: 25px;
+            border: 1px solid #888; width: 80%; max-width: 700px;
+            border-radius: 0.5rem; text-align: left;
+        }
+        .modal-header { padding-bottom: 10px; border-bottom: 1px solid #eee; }
+        .modal-header h2 { margin: 0; font-size: 1.5rem; color: #333; }
+        .modal-body { padding-top:15px; padding-bottom:15px; font-size: 1rem; color: #555;}
+        .modal-footer { padding-top: 10px; border-top: 1px solid #eee; text-align: right; }
+        .modal-button {
+            background-color: #0D9488; color: white; padding: 10px 18px;
+            border: none; border-radius: 0.375rem; cursor: pointer; font-size: 0.9rem;
+        }
+        .modal-button:hover { background-color: #0F766E; }
+    </style>
+</head>
+<body class="text-slate-800">
+    <div class="min-h-screen">
+        <nav class="bg-white shadow-md">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center">
+                        <i class="fas fa-hourglass-half text-2xl text-cyan-600 mr-2"></i>
+                        <span class="font-bold text-xl text-cyan-700">EPFO Temporal Transaction<span class="text-cyan-500">Analyzer</span></span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="text-sm text-gray-600 mr-3">Time-Series Insights</span>
+                         <button class="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500" aria-label="Help">
+                            <i class="fas fa-question-circle"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="header-section text-white py-10 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-3xl sm:text-4xl font-bold mb-2">Temporal Analysis of EPFO Transactions</h1>
+                <p class="text-lg text-cyan-100">Identifying trends, seasonal behaviors, and anomalies in member transactions over time.</p>
+            </div>
+        </div>
+
+        <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="card stat-card stat-card-cyan p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Peak Contribution Month</h3>
+                    <p id="peakContributionMonth" class="text-2xl font-semibold text-cyan-600">March</p>
+                </div>
+                <div class="card stat-card stat-card-emerald p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Avg. Monthly Transactions</h3>
+                    <p id="avgMonthlyTx" class="text-2xl font-semibold text-emerald-600">2.1 M</p>
+                </div>
+                <div class="card stat-card stat-card-teal p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Anomalies Detected (Last Q)</h3>
+                    <p id="anomaliesDetected" class="text-2xl font-semibold text-teal-600">12</p>
+                </div>
+                <div class="card stat-card stat-card-green p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Forecast Accuracy (Claims)</h3>
+                    <p id="forecastAccuracy" class="text-2xl font-semibold text-green-600">92.5%</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="card p-6">
+                        <h2 class="text-xl font-semibold text-slate-700 mb-1 flex items-center">
+                            <i class="fas fa-chart-area mr-2 text-cyan-500"></i>Overall Transaction Volume Trends
+                        </h2>
+                        <p class="text-sm text-gray-500 mb-4">Monthly trends for contributions, withdrawals, and claims over the last 3 years.</p>
+                        <div style="height: 350px;"><canvas id="transactionTrendsChart"></canvas></div>
+                    </div>
+
+                    <div class="card p-6">
+                        <h2 class="text-xl font-semibold text-slate-700 mb-1 flex items-center">
+                            <i class="fas fa-calendar-alt mr-2 text-emerald-500"></i>Seasonal Decomposition of Contributions
+                        </h2>
+                        <p class="text-sm text-gray-500 mb-4">Breaking down contribution data into trend, seasonal, and residual components.</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div style="height: 200px;"><canvas id="trendComponentChart"></canvas></div>
+                            <div style="height: 200px;"><canvas id="seasonalComponentChart"></canvas></div>
+                            <div style="height: 200px;"><canvas id="residualComponentChart"></canvas></div>
+                        </div>
+                         <div class="info-box p-3 mt-4 rounded-md text-sm">
+                            <p><i class="fas fa-info-circle mr-1"></i><strong>Time Series Analysis:</strong> Techniques like seasonal decomposition help separate underlying trends from regular seasonal fluctuations and random noise, providing clearer insights into long-term patterns.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="card p-6">
+                        <h2 class="text-lg font-semibold text-slate-700 mb-3 flex items-center">
+                            <i class="fas fa-search-location mr-2 text-red-500"></i>Anomaly Detection in Withdrawal Volume
+                        </h2>
+                        <p class="text-sm text-gray-500 mb-3">Identifying unusual spikes or dips in monthly withdrawal volumes.</p>
+                        <div style="height: 300px; position: relative;"><canvas id="anomalyDetectionChart"></canvas></div>
+                    </div>
+                    
+                    <div class="card p-6">
+                        <h2 class="text-lg font-semibold text-slate-700 mb-3 flex items-center">
+                            <i class="fas fa-wave-pulse mr-2 text-teal-500"></i>Claim Intensity (Temporal Point Process)
+                        </h2>
+                        <p class="text-sm text-gray-500 mb-3">Conceptual model of claim arrival intensity over a typical week, highlighting peak times.</p>
+                        <div style="height: 250px;"><canvas id="pointProcessChart"></canvas></div>
+                         <div class="info-box p-3 mt-3 rounded-md text-sm">
+                           <p><i class="fas fa-info-circle mr-1"></i><strong>Temporal Point Processes:</strong> Model the probability of events (e.g., claims) occurring over continuous time. Useful for understanding event intensity and predicting future occurrences, especially for non-uniformly spaced events.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="card p-6 epfo-box">
+                    <h2 class="text-xl font-semibold text-green-700 mb-3 flex items-center"><i class="fas fa-landmark mr-2"></i>EPFO: Proactive Policy & Resource Allocation</h2>
+                    <ul class="list-disc list-inside space-y-2 text-sm text-green-600">
+                        <li>Identify emerging trends in contributions or withdrawals early.</li>
+                        <li>Understand seasonal peaks for better resource planning (e.g., claim processing staff).</li>
+                        <li>Detect anomalies that might indicate fraud, system issues, or sudden economic shifts.</li>
+                        <li>Improve forecasting accuracy for financial planning and liquidity management.</li>
+                        <li>Inform timing of policy interventions or awareness campaigns for maximum impact.</li>
+                    </ul>
+                    <button onclick="showModal('epfoResourceModal')" class="mt-4 text-sm bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md w-full md:w-auto">View Resource Planning Benefits</button>
+                </div>
+                <div class="card p-6 research-box">
+                    <h2 class="text-xl font-semibold text-teal-700 mb-3 flex items-center"><i class="fas fa-flask mr-2"></i>Research: Advancing Temporal Models</h2>
+                     <ul class="list-disc list-inside space-y-2 text-sm text-teal-600">
+                        <li>Apply advanced temporal point process models (e.g., Hawkes processes) to capture self-exciting or mutually exciting transaction behaviors.</li>
+                        <li>Develop sophisticated time series forecasting models (e.g., Prophet, ARIMA with exogenous variables) for EPFO data.</li>
+                        <li>Research anomaly detection algorithms tailored to financial transaction streams.</li>
+                        <li>Publish findings on member behavior dynamics and predictability in social security systems.</li>
+                        <li>Explore causal relationships between macroeconomic indicators and transaction patterns.</li>
+                    </ul>
+                     <button onclick="showModal('researchTemporalModal')" class="mt-4 text-sm bg-teal-500 hover:bg-teal-600 text-white py-2 px-4 rounded-md w-full md:w-auto">Explore Advanced Temporal Models</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="epfoResourceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>EPFO: Benefits for Resource Planning & Policy</h2></div>
+            <div class="modal-body">
+                <p class="mb-2">Temporal analysis provides actionable insights for EPFO operations:</p>
+                <ul class="list-disc list-inside space-y-1 text-sm">
+                    <li><strong>Staff Allocation:</strong> Predict peak periods for claims or inquiries to optimize staffing levels in regional offices.</li>
+                    <li><strong>Liquidity Management:</strong> Forecast net cash flow (contributions vs. withdrawals) more accurately to manage funds effectively.</li>
+                    <li><strong>System Monitoring:</strong> Use anomaly detection to flag potential issues with online portals or payment systems promptly.</li>
+                    <li><strong>Targeted Campaigns:</strong> Launch contribution drives or financial literacy initiatives during periods identified as having lower engagement or higher withdrawal intent.</li>
+                    <li><strong>Policy Timing:</strong> Understand baseline seasonal patterns to better assess the true impact of new policies, distinguishing it from normal fluctuations.</li>
+                </ul>
+            </div>
+            <div class="modal-footer"><button onclick="closeModal('epfoResourceModal')" class="modal-button">Close</button></div>
+        </div>
+    </div>
+
+    <div id="researchTemporalModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>Research Frontiers in Temporal Data Analysis</h2></div>
+            <div class="modal-body">
+                <p class="mb-2">EPFO's temporal transaction data offers rich research opportunities:</p>
+                <ul class="list-disc list-inside space-y-1 text-sm">
+                    <li><strong>Multivariate Time Series:</strong> Model interdependencies between different transaction types (e.g., how contribution changes affect future withdrawal patterns).</li>
+                    <li><strong>Dynamic Causal Models:</strong> Investigate how external events (e.g., economic policy changes, pandemics) dynamically impact transaction behaviors over time.</li>
+                    <li><strong>High-Frequency Data Analysis:</strong> If available, analyze intraday or daily transaction patterns using point process models.</li>
+                    <li><strong>Network Effects in Transactions:</strong> Explore if transaction behaviors propagate through member networks (e.g., within a company or region).</li>
+                    <li><strong>Predictive Maintenance for Systems:</strong> Use transaction logs to predict potential system overloads or failures.</li>
+                </ul>
+            </div>
+            <div class="modal-footer"><button onclick="closeModal('researchTemporalModal')" class="modal-button">Close</button></div>
+        </div>
+    </div>
+
+    <script>
+        // --- Dummy Data and Functions for Demonstration ---
+        const temporalAnalysisData = {
+            stats: {
+                peakContributionMonth: "March",
+                avgMonthlyTx: "2.1 M",
+                anomaliesDetected: "12",
+                forecastAccuracy: "92.5%"
+            },
+            // Generating monthly labels for the last 3 years
+            monthlyLabels3Yrs: Array.from({length: 36}, (_, i) => {
+                const d = new Date(new Date().getFullYear() - 3, 0, 1);
+                d.setMonth(d.getMonth() + i);
+                return d;
+            }),
+            transactionTrends: {
+                contributions: Array.from({length: 36}, (_,i) => 100 + i*2 + Math.sin(i/2)*20 + Math.random()*10),
+                withdrawals: Array.from({length: 36}, (_,i) => 50 + i*1 + Math.sin(i/2 + Math.PI/2)*15 + Math.random()*8),
+                claims: Array.from({length: 36}, (_,i) => 30 + i*0.5 + Math.sin(i/2 + Math.PI)*10 + Math.random()*5)
+            },
+            seasonalDecomposition: { // For 1 year of monthly data
+                labels: Array.from({length: 12}, (_, i) => { const d = new Date(new Date().getFullYear()-1, 0, 1); d.setMonth(i); return d; }),
+                trend: Array.from({length: 12}, (_,i) => 100 + i*5),
+                seasonal: [5, 8, 15, 10, 5, 0, -5, -8, -12, -5, 0, 5],
+                residual: Array.from({length: 12}, () => (Math.random()-0.5)*10)
+            },
+            anomalyData: {
+                data: Array.from({length: 36}, (_,i) => 60 + Math.sin(i/3)*10 + Math.random()*5),
+                anomalies: [{index: 5, value: 85}, {index: 18, value: 40}, {index: 30, value: 92}] // Index and value of anomaly
+            },
+            pointProcess: { // Conceptual weekly intensity
+                labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+                intensity: [10, 15, 12, 18, 25, 8, 5] // Higher intensity on Fri
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Populate Key Stats
+            document.getElementById('peakContributionMonth').textContent = temporalAnalysisData.stats.peakContributionMonth;
+            document.getElementById('avgMonthlyTx').textContent = temporalAnalysisData.stats.avgMonthlyTx;
+            document.getElementById('anomaliesDetected').textContent = temporalAnalysisData.stats.anomaliesDetected;
+            document.getElementById('forecastAccuracy').textContent = temporalAnalysisData.stats.forecastAccuracy;
+
+            // Chart.js - Overall Transaction Trends
+            const trendsCanvas = document.getElementById('transactionTrendsChart');
+            if(trendsCanvas){
+                const trendsCtx = trendsCanvas.getContext('2d');
+                new Chart(trendsCtx, {
+                    type: 'line',
+                    data: {
+                        labels: temporalAnalysisData.monthlyLabels3Yrs,
+                        datasets: [
+                            {
+                                label: 'Contributions (Cr)',
+                                data: temporalAnalysisData.transactionTrends.contributions,
+                                borderColor: 'rgb(6, 182, 212)', // Cyan
+                                tension: 0.1, fill: false
+                            },
+                            {
+                                label: 'Withdrawals (Cr)',
+                                data: temporalAnalysisData.transactionTrends.withdrawals,
+                                borderColor: 'rgb(245, 158, 11)', // Amber
+                                tension: 0.1, fill: false
+                            },
+                            {
+                                label: 'Claims (Cr)',
+                                data: temporalAnalysisData.transactionTrends.claims,
+                                borderColor: 'rgb(239, 68, 68)', // Red
+                                tension: 0.1, fill: false
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        scales: {
+                            x: { type: 'time', time: { unit: 'month' } },
+                            y: { title: { display: true, text: 'Transaction Volume (Cr)'}}
+                        },
+                        plugins: { legend: { position: 'top'}, tooltip: { mode: 'index', intersect: false } }
+                    }
+                });
+            }
+
+            // Chart.js - Seasonal Decomposition
+            const trendCompCanvas = document.getElementById('trendComponentChart');
+            if(trendCompCanvas) new Chart(trendCompCanvas.getContext('2d'), createDecompChartConfig('Trend Component', temporalAnalysisData.seasonalDecomposition.labels, temporalAnalysisData.seasonalDecomposition.trend, 'rgb(75, 192, 192)'));
+            
+            const seasonalCompCanvas = document.getElementById('seasonalComponentChart');
+            if(seasonalCompCanvas) new Chart(seasonalCompCanvas.getContext('2d'), createDecompChartConfig('Seasonal Component', temporalAnalysisData.seasonalDecomposition.labels, temporalAnalysisData.seasonalDecomposition.seasonal, 'rgb(54, 162, 235)'));
+
+            const residualCompCanvas = document.getElementById('residualComponentChart');
+            if(residualCompCanvas) new Chart(residualCompCanvas.getContext('2d'), createDecompChartConfig('Residual Component', temporalAnalysisData.seasonalDecomposition.labels, temporalAnalysisData.seasonalDecomposition.residual, 'rgb(255, 99, 132)'));
+
+            function createDecompChartConfig(label, labels, data, color) {
+                return {
+                    type: 'line',
+                    data: { labels: labels, datasets: [{ label: label, data: data, borderColor: color, tension: 0.1, pointRadius: 2 }] },
+                    options: { responsive: true, maintainAspectRatio: false, scales: { x: { type: 'time', time: { unit: 'month' } } }, plugins: { legend: { display: false }, title: { display: true, text: label, font: {size: 10} } } }
+                };
+            }
+            
+            // Chart.js - Anomaly Detection Chart
+            const anomalyCanvas = document.getElementById('anomalyDetectionChart');
+            if (anomalyCanvas) {
+                const anomalyCtx = anomalyCanvas.getContext('2d');
+                const anomalyPoints = temporalAnalysisData.anomalyData.anomalies.map(anom => ({
+                    x: temporalAnalysisData.monthlyLabels3Yrs[anom.index], // Map index to date label
+                    y: anom.value
+                }));
+
+                new Chart(anomalyCtx, {
+                    type: 'line',
+                    data: {
+                        labels: temporalAnalysisData.monthlyLabels3Yrs,
+                        datasets: [
+                            {
+                                label: 'Withdrawal Volume',
+                                data: temporalAnalysisData.anomalyData.data,
+                                borderColor: 'rgb(54, 162, 235)', // Blue
+                                tension: 0.1
+                            },
+                            {
+                                label: 'Anomalies',
+                                data: anomalyPoints,
+                                type: 'scatter',
+                                backgroundColor: 'rgb(255, 99, 132)', // Red for anomaly points
+                                pointRadius: 5,
+                                pointHoverRadius: 7
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        scales: { x: { type: 'time', time: { unit: 'month' } }, y: { title: {display: true, text: 'Volume'} } },
+                        plugins: { legend: { position: 'top' }, tooltip: { mode: 'index', intersect: false } }
+                    }
+                });
+            }
+
+            // Chart.js - Point Process Chart (Conceptual)
+            const pointProcessCanvas = document.getElementById('pointProcessChart');
+            if(pointProcessCanvas){
+                const pointProcessCtx = pointProcessCanvas.getContext('2d');
+                new Chart(pointProcessCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: temporalAnalysisData.pointProcess.labels,
+                        datasets: [{
+                            label: 'Claim Intensity',
+                            data: temporalAnalysisData.pointProcess.intensity,
+                            backgroundColor: 'rgba(20, 184, 166, 0.6)', // Teal
+                            borderColor: 'rgba(13, 148, 136, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        scales: { y: { title: { display: true, text: 'Relative Intensity'} } },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+        });
+
+        // Modal functions
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = "block";
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            });
+        }
+    </script>
+</body>
+</html>
