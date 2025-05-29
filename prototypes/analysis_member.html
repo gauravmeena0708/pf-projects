@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPFO Member Demographics Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F9FA; /* Light gray */
+        }
+        .header-section {
+            background: linear-gradient(to right, #0EA5E9, #22D3EE); /* Sky to Cyan gradient for a clear, analytical feel */
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -1px rgba(0,0,0,0.05);
+        }
+        .stat-card {
+            border-left-width: 4px;
+        }
+        .stat-card-sky { border-left-color: #0EA5E9; }
+        .stat-card-cyan { border-left-color: #06B6D4; }
+        .stat-card-blue { border-left-color: #3B82F6; }
+        .stat-card-indigo { border-left-color: #6366F1; }
+
+        .info-box {
+            background-color: #E0F2FE; /* Light sky for info */
+            border-left: 4px solid #0EA5E9; /* Sky border */
+        }
+         .research-box {
+            background-color: #ECFEFF; /* Light cyan for research focus */
+            border-left: 4px solid #06B6D4; /* Cyan border */
+        }
+        .epfo-box {
+            background-color: #EFF6FF; /* Light blue for EPFO focus */
+            border-left: 4px solid #3B82F6; /* Blue border */
+        }
+        .trend-item {
+             background-color: #F0F9FF; /* Sky-50 */
+             border-left: 3px solid #0EA5E9; /* Sky-500 */
+             padding: 0.5rem 0.75rem;
+        }
+
+        /* Custom modal styles */
+        .modal {
+            display: none; position: fixed; z-index: 1000; 
+            left: 0; top: 0; width: 100%; height: 100%;
+            overflow: auto; background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: #fefefe; margin: 10% auto; padding: 25px;
+            border: 1px solid #888; width: 80%; max-width: 700px;
+            border-radius: 0.5rem; text-align: left;
+        }
+        .modal-header { padding-bottom: 10px; border-bottom: 1px solid #eee; }
+        .modal-header h2 { margin: 0; font-size: 1.5rem; color: #333; }
+        .modal-body { padding-top:15px; padding-bottom:15px; font-size: 1rem; color: #555;}
+        .modal-footer { padding-top: 10px; border-top: 1px solid #eee; text-align: right; }
+        .modal-button {
+            background-color: #0BA5E9; color: white; padding: 10px 18px;
+            border: none; border-radius: 0.375rem; cursor: pointer; font-size: 0.9rem;
+        }
+        .modal-button:hover { background-color: #0284C7; }
+    </style>
+</head>
+<body class="text-slate-800">
+    <div class="min-h-screen">
+        <nav class="bg-white shadow-md">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center">
+                        <i class="fas fa-users-viewfinder text-2xl text-sky-600 mr-2"></i>
+                        <span class="font-bold text-xl text-sky-700">EPFO Member Demographics<span class="text-sky-500">Analyzer</span></span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="text-sm text-gray-600 mr-3">Statistical Insights</span>
+                         <button class="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500" aria-label="Help">
+                            <i class="fas fa-question-circle"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+        <div class="header-section text-white py-10 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-3xl sm:text-4xl font-bold mb-2">Statistical Analysis of EPFO Member Demographics</h1>
+                <p class="text-lg text-sky-100">Uncovering trends and patterns to inform policy and tailor services effectively.</p>
+            </div>
+        </div>
+
+        <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="card stat-card stat-card-sky p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Total Active Members</h3>
+                    <p id="totalActiveMembers" class="text-2xl font-semibold text-sky-600">6.5 Cr</p>
+                </div>
+                <div class="card stat-card stat-card-cyan p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Average Member Age</h3>
+                    <p id="avgMemberAge" class="text-2xl font-semibold text-cyan-600">38.2 Yrs</p>
+                </div>
+                <div class="card stat-card stat-card-blue p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Dominant Sector</h3>
+                    <p id="dominantSector" class="text-2xl font-semibold text-blue-600">Services</p>
+                </div>
+                <div class="card stat-card stat-card-indigo p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Avg. Contribution Period</h3>
+                    <p id="avgContributionPeriod" class="text-2xl font-semibold text-indigo-600">12.5 Yrs</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="card p-6">
+                        <h2 class="text-xl font-semibold text-slate-700 mb-1 flex items-center">
+                            <i class="fas fa-chart-bar mr-2 text-sky-500"></i>Member Age Distribution
+                        </h2>
+                        <p class="text-sm text-gray-500 mb-4">Distribution of active members across different age groups.</p>
+                        <div style="height: 300px;"><canvas id="ageDistributionChart"></canvas></div>
+                    </div>
+
+                    <div class="card p-6">
+                        <h2 class="text-xl font-semibold text-slate-700 mb-1 flex items-center">
+                            <i class="fas fa-industry mr-2 text-blue-500"></i>Employment Sector Distribution
+                        </h2>
+                        <p class="text-sm text-gray-500 mb-4">Breakdown of members by their employment sector.</p>
+                        <div class="flex justify-center" style="height: 300px;"><canvas id="sectorDistributionChart" style="max-width: 300px;"></canvas></div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="card p-6">
+                        <h2 class="text-lg font-semibold text-slate-700 mb-3 flex items-center">
+                            <i class="fas fa-chart-line mr-2 text-cyan-500"></i>Key Demographic Trends
+                        </h2>
+                        <div id="keyTrendsList" class="space-y-2 max-h-72 overflow-y-auto">
+                            </div>
+                    </div>
+                    
+                    <div class="card p-6 info-box">
+                        <h2 class="text-lg font-semibold text-sky-700 mb-2 flex items-center">
+                            <i class="fas fa-calculator mr-2"></i>Analytical Techniques
+                        </h2>
+                        <p class="text-sm text-sky-600 mb-2">Statistical modeling and data analytics applied:</p>
+                        <ul class="list-disc list-inside text-xs text-sky-600 space-y-1">
+                            <li>Descriptive Statistics (Mean, Median, Mode)</li>
+                            <li>Frequency Distributions & Histograms</li>
+                            <li>Cross-tabulations & Chi-squared Tests</li>
+                            <li>Correlation Analysis</li>
+                            <li>Regression Modeling (for contribution patterns)</li>
+                            <li>Cluster Analysis (to identify member segments)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card p-6 mt-6">
+                <h2 class="text-xl font-semibold text-slate-700 mb-1 flex items-center">
+                    <i class="fas fa-coins mr-2 text-indigo-500"></i>Average Contribution by Age Group
+                </h2>
+                <p class="text-sm text-gray-500 mb-4">Comparison of average monthly PF contributions across different age brackets.</p>
+                <div style="height: 300px;"><canvas id="contributionByAgeChart"></canvas></div>
+            </div>
+
+
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="card p-6 epfo-box">
+                    <h2 class="text-xl font-semibold text-blue-700 mb-3 flex items-center"><i class="fas fa-landmark mr-2"></i>EPFO: Informed Policy & Tailored Services</h2>
+                    <ul class="list-disc list-inside space-y-2 text-sm text-blue-600">
+                        <li>Design policies that cater to the specific needs of different demographic segments.</li>
+                        <li>Tailor communication and outreach strategies for better engagement.</li>
+                        <li>Forecast future liabilities and plan resources more effectively.</li>
+                        <li>Identify underserved or vulnerable member groups requiring special attention.</li>
+                        <li>Enhance financial literacy programs based on demographic insights.</li>
+                    </ul>
+                    <button onclick="showModal('epfoPolicyModal')" class="mt-4 text-sm bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md w-full md:w-auto">View Policy Implications</button>
+                </div>
+                <div class="card p-6 research-box">
+                    <h2 class="text-xl font-semibold text-cyan-700 mb-3 flex items-center"><i class="fas fa-flask mr-2"></i>Research: Advancing Socio-Economic Understanding</h2>
+                     <ul class="list-disc list-inside space-y-2 text-sm text-cyan-600">
+                        <li>Analyze long-term demographic shifts within the formal workforce.</li>
+                        <li>Study the impact of economic trends on different member segments.</li>
+                        <li>Investigate correlations between demographics and retirement savings behavior.</li>
+                        <li>Develop predictive models for future demographic compositions.</li>
+                        <li>Publish research on social security demographics and their policy relevance.</li>
+                    </ul>
+                     <button onclick="showModal('researchDemographicsModal')" class="mt-4 text-sm bg-cyan-500 hover:bg-cyan-600 text-white py-2 px-4 rounded-md w-full md:w-auto">Explore Demographic Research</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="epfoPolicyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>EPFO: Policy Implications of Demographic Analysis</h2></div>
+            <div class="modal-body">
+                <p class="mb-2">Understanding member demographics directly informs better policymaking:</p>
+                <ul class="list-disc list-inside space-y-1 text-sm">
+                    <li><strong>Targeted Schemes:</strong> If a large segment of young members exists, policies encouraging early savings or housing advances might be prioritized.</li>
+                    <li><strong>Retirement Planning:</strong> For an aging workforce, focus may shift to pre-retirement counseling and annuity options.</li>
+                    <li><strong>Sector-Specific Needs:</strong> Different employment sectors might have unique financial vulnerabilities or preferences, guiding tailored advice.</li>
+                    <li><strong>Communication Channels:</strong> Preferred communication methods may vary by age or region, impacting outreach effectiveness.</li>
+                    <li><strong>Risk Assessment:</strong> Demographic trends can help assess long-term financial sustainability of the scheme.</li>
+                </ul>
+            </div>
+            <div class="modal-footer"><button onclick="closeModal('epfoPolicyModal')" class="modal-button">Close</button></div>
+        </div>
+    </div>
+
+    <div id="researchDemographicsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>Research Opportunities in EPFO Member Demographics</h2></div>
+            <div class="modal-body">
+                <p class="mb-2">EPFO's demographic data is a rich resource for socio-economic research:</p>
+                <ul class="list-disc list-inside space-y-1 text-sm">
+                    <li><strong>Longitudinal Studies:</strong> Track cohorts of members over time to understand their financial lifecycle and decision-making.</li>
+                    <li><strong>Inter-generational Comparisons:</strong> Analyze differences in savings patterns and career trajectories across generations.</li>
+                    <li><strong>Impact of Urbanization/Migration:</strong> Study how geographic shifts affect employment and savings.</li>
+                    <li><strong>Gender-based Analysis:</strong> Investigate differences in contribution patterns, career breaks, and retirement preparedness between genders.</li>
+                    <li><strong>Correlation with Macroeconomic Factors:</strong> Link demographic trends with inflation, GDP growth, and employment rates.</li>
+                </ul>
+            </div>
+            <div class="modal-footer"><button onclick="closeModal('researchDemographicsModal')" class="modal-button">Close</button></div>
+        </div>
+    </div>
+
+    <script>
+        // --- Dummy Data and Functions for Demonstration ---
+        const demographicAnalysisData = {
+            stats: {
+                totalActiveMembers: "6.5 Cr",
+                avgMemberAge: "38.2 Yrs",
+                dominantSector: "Services",
+                avgContributionPeriod: "12.5 Yrs"
+            },
+            ageDistribution: {
+                labels: ['<25', '25-34', '35-44', '45-54', '55+'],
+                data: [15, 35, 25, 20, 5] // Percentages
+            },
+            sectorDistribution: {
+                labels: ['Manufacturing', 'Services', 'IT & ITeS', 'Construction', 'Healthcare', 'Other'],
+                data: [20, 40, 15, 10, 8, 7] // Percentages
+            },
+            contributionByAge: {
+                labels: ['<25', '25-34', '35-44', '45-54', '55+'],
+                data: [4500, 8500, 12500, 15000, 13000] // Average Monthly Contribution in INR
+            },
+            keyTrends: [
+                { text: "Increasing proportion of members in the 25-34 age group over the last 5 years.", icon: "fas fa-arrow-trend-up text-green-500" },
+                { text: "Growth in female membership by 12% in the IT & ITeS sector.", icon: "fas fa-venus text-pink-500" },
+                { text: "Average contribution period is slightly decreasing for new entrants in manufacturing.", icon: "fas fa-arrow-trend-down text-red-500" },
+                { text: "Higher adoption of VPF among members aged 45-54.", icon: "fas fa-piggy-bank text-blue-500" }
+            ]
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Populate Key Stats
+            document.getElementById('totalActiveMembers').textContent = demographicAnalysisData.stats.totalActiveMembers;
+            document.getElementById('avgMemberAge').textContent = demographicAnalysisData.stats.avgMemberAge;
+            document.getElementById('dominantSector').textContent = demographicAnalysisData.stats.dominantSector;
+            document.getElementById('avgContributionPeriod').textContent = demographicAnalysisData.stats.avgContributionPeriod;
+
+            // Populate Key Trends List
+            const trendsListDiv = document.getElementById('keyTrendsList');
+            if(trendsListDiv){
+                demographicAnalysisData.keyTrends.forEach(trend => {
+                    const item = document.createElement('div');
+                    item.className = 'trend-item text-sm p-2 rounded-md mb-2 flex items-start';
+                    item.innerHTML = `
+                        <i class="${trend.icon} mr-2 mt-1"></i>
+                        <span>${trend.text}</span>
+                    `;
+                    trendsListDiv.appendChild(item);
+                });
+            }
+
+            // Chart.js - Age Distribution Chart
+            const ageCtx = document.getElementById('ageDistributionChart');
+            if(ageCtx){
+                new Chart(ageCtx.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: demographicAnalysisData.ageDistribution.labels,
+                        datasets: [{
+                            label: '% of Members',
+                            data: demographicAnalysisData.ageDistribution.data,
+                            backgroundColor: 'rgba(14, 165, 233, 0.6)', // Sky-500
+                            borderColor: 'rgba(2, 132, 199, 1)',     // Sky-600
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        scales: { y: { beginAtZero: true, title: { display: true, text: 'Percentage of Members (%)'} } },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+
+            // Chart.js - Sector Distribution Chart
+            const sectorCtx = document.getElementById('sectorDistributionChart');
+            if(sectorCtx){
+                 new Chart(sectorCtx.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: demographicAnalysisData.sectorDistribution.labels,
+                        datasets: [{
+                            label: 'Member Distribution by Sector',
+                            data: demographicAnalysisData.sectorDistribution.data,
+                            backgroundColor: [
+                                'rgba(59, 130, 246, 0.7)', 'rgba(16, 185, 129, 0.7)', 
+                                'rgba(139, 92, 246, 0.7)', 'rgba(245, 158, 11, 0.7)',
+                                'rgba(239, 68, 68, 0.7)', 'rgba(107, 114, 128, 0.7)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom'} }
+                    }
+                });
+            }
+            
+            // Chart.js - Contribution by Age Group Chart
+            const contribAgeCtx = document.getElementById('contributionByAgeChart');
+            if(contribAgeCtx){
+                new Chart(contribAgeCtx.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: demographicAnalysisData.contributionByAge.labels,
+                        datasets: [{
+                            label: 'Average Monthly Contribution (₹)',
+                            data: demographicAnalysisData.contributionByAge.data,
+                            borderColor: 'rgba(99, 102, 241, 1)', // Indigo-500
+                            backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                            fill: true,
+                            tension: 0.1
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        scales: { y: { beginAtZero: false, title: { display: true, text: 'Average Contribution (₹)'} } },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+        });
+
+        // Modal functions
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = "block";
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            });
+        }
+    </script>
+</body>
+</html>
