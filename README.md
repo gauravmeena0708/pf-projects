@@ -43,7 +43,7 @@
 
 
 
-#Other
+#Others 
 
 ## 1. Temporal Analysis of EPFO Transactions
 ## 2. Graph-Based Analysis of EPFO Member Networks
@@ -55,11 +55,4 @@
 ## 8: Optimization of EPFO's Data Processing Algorithms
 ## 9: Statistical Analysis of EPFO Member Demographics
 ## 10: Semi-Supervised Learning for EPFO Data Classification
-
-
-### Project 2: Graphical Model-Based Risk Assessment in EPFO
-- **Objective**: Assess risks associated with member accounts and transactions.
-- **Data**: Transaction histories, member profiles, and external economic indicators.
-- **Techniques**: Graphical models to represent and analyze risk factors and their interdependencies.
-- **Impact**: Enable EPFO to proactively manage risks and safeguard member assets.
-
+## 11: Graphical Model-Based Risk Assessment in EPFO
