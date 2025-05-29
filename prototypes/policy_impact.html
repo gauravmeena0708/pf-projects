@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPFO AI-Powered Policy Impact Evaluator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F9FA;
+        }
+        .header-section {
+            background: linear-gradient(to right, #059669, #10B981); /* Green gradient */
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -1px rgba(0,0,0,0.05);
+        }
+        .stat-card {
+            border-left-width: 4px;
+        }
+        .stat-card-teal { border-left-color: #14B8A6; }
+        .stat-card-emerald { border-left-color: #10B981; }
+        .stat-card-cyan { border-left-color: #06B6D4; }
+        .stat-card-lime { border-left-color: #84CC16; }
+
+        .info-box {
+            background-color: #E0F2F7; /* Light cyan for info */
+            border-left: 4px solid #06B6D4; /* Cyan border */
+        }
+         .research-box {
+            background-color: #F0FFF4; /* Light green for research focus */
+            border-left: 4px solid #38A169; /* Green border */
+        }
+        .epfo-box {
+            background-color: #FEF3C7; /* Light yellow for EPFO focus */
+            border-left: 4px solid #F59E0B; /* Amber border */
+        }
+        .policy-log-item {
+            border-left: 3px solid #60A5FA; /* Blue for policy items */
+            padding-left: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+        /* Custom modal styles */
+        .modal {
+            display: none; position: fixed; z-index: 1000; 
+            left: 0; top: 0; width: 100%; height: 100%;
+            overflow: auto; background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: #fefefe; margin: 10% auto; padding: 25px;
+            border: 1px solid #888; width: 80%; max-width: 700px;
+            border-radius: 0.5rem; text-align: left;
+        }
+        .modal-header { padding-bottom: 10px; border-bottom: 1px solid #eee; }
+        .modal-header h2 { margin: 0; font-size: 1.5rem; color: #333; }
+        .modal-body { padding-top:15px; padding-bottom:15px; font-size: 1rem; color: #555;}
+        .modal-footer { padding-top: 10px; border-top: 1px solid #eee; text-align: right; }
+        .modal-button {
+            background-color: #059669; color: white; padding: 10px 18px;
+            border: none; border-radius: 0.375rem; cursor: pointer; font-size: 0.9rem;
+        }
+        .modal-button:hover { background-color: #047857; }
+    </style>
+</head>
+<body class="text-slate-800">
+    <div class="min-h-screen">
+        <nav class="bg-white shadow-md">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center">
+                        <i class="fas fa-balance-scale-right text-2xl text-emerald-600 mr-2"></i>
+                        <span class="font-bold text-xl text-emerald-700">EPFO Policy Impact<span class="text-emerald-500">Evaluator</span></span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="text-sm text-gray-600 mr-3">Policy Analysis Dashboard</span>
+                         <button class="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500" aria-label="Help">
+                            <i class="fas fa-question-circle"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="header-section text-white py-10 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-3xl sm:text-4xl font-bold mb-2">Evaluating Policy Impact on EPF Scheme</h1>
+                <p class="text-lg text-emerald-100">Using AI for evidence-based insights into policy effectiveness and member behavior.</p>
+            </div>
+        </div>
+
+        <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="card stat-card stat-card-teal p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Policies Analyzed</h3>
+                    <p id="policiesAnalyzed" class="text-2xl font-semibold text-teal-600">5</p>
+                </div>
+                <div class="card stat-card stat-card-emerald p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Avg. Impact on Contribution</h3>
+                    <p id="avgContributionImpact" class="text-2xl font-semibold text-emerald-600">+2.5%</p>
+                </div>
+                <div class="card stat-card stat-card-cyan p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Data Points Used</h3>
+                    <p id="dataPointsUsed" class="text-2xl font-semibold text-cyan-600">10M+</p>
+                </div>
+                <div class="card stat-card stat-card-lime p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Forecast Horizon</h3>
+                    <p id="forecastHorizon" class="text-2xl font-semibold text-lime-600">5 Years</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="card p-6">
+                        <h2 class="text-xl font-semibold text-slate-700 mb-1 flex items-center">
+                            <i class="fas fa-wave-square mr-2 text-indigo-500"></i>Causal Impact of Policy X on Contribution Rates
+                        </h2>
+                        <p class="text-sm text-gray-500 mb-4">Using Difference-in-Differences to estimate the effect of a hypothetical policy change.</p>
+                        <div style="height: 350px;"><canvas id="causalImpactChart"></canvas></div>
+                        <div class="info-box p-3 mt-4 rounded-md text-sm">
+                            <p><i class="fas fa-info-circle mr-1"></i><strong>Causal Inference (e.g., Difference-in-Differences):</strong> Compares the change in outcomes over time between a group affected by a policy (treatment group) and a group that is not (control group). This helps isolate the policy's true effect.</p>
+                        </div>
+                    </div>
+
+                    <div class="card p-6">
+                        <h2 class="text-xl font-semibold text-slate-700 mb-3 flex items-center">
+                            <i class="fas fa-history mr-2 text-gray-500"></i>Recent Policy Changes Log
+                        </h2>
+                        <div id="policyLog" class="space-y-2 text-sm max-h-60 overflow-y-auto">
+                            </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="card p-6">
+                        <h2 class="text-lg font-semibold text-slate-700 mb-3 flex items-center">
+                            <i class="fas fa-chart-line mr-2 text-sky-500"></i>Long-Term Trend: Total EPF Corpus
+                        </h2>
+                        <p class="text-sm text-gray-500 mb-3">Historical trend and AI-powered forecast of the total scheme corpus.</p>
+                        <div style="height: 300px;"><canvas id="timeSeriesChart"></canvas></div>
+                        <div class="info-box p-3 mt-4 rounded-md text-sm">
+                           <p><i class="fas fa-info-circle mr-1"></i><strong>Time Series Analysis:</strong> Analyzes historical data to identify patterns, trends, and seasonality. Used here to forecast future values of key scheme indicators.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-6">
+                        <h2 class="text-lg font-semibold text-slate-700 mb-3 flex items-center">
+                            <i class="fas fa-lightbulb mr-2 text-amber-500"></i>Key Policy Evaluation Insights
+                        </h2>
+                        <ul id="policyInsightsList" class="list-disc list-inside space-y-1 text-sm text-gray-700">
+                            </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="card p-6 epfo-box">
+                    <h2 class="text-xl font-semibold text-amber-700 mb-3 flex items-center"><i class="fas fa-landmark mr-2"></i>EPFO: Evidence-Based Policymaking</h2>
+                    <ul class="list-disc list-inside space-y-2 text-sm text-amber-600">
+                        <li>Quantify the actual impact of past policies on member behavior and scheme health.</li>
+                        <li>Forecast potential effects of proposed policy changes before implementation.</li>
+                        <li>Improve targeting and effectiveness of new policies.</li>
+                        <li>Enhance scheme adaptability to changing economic and social conditions.</li>
+                        <li>Strengthen justification for policy decisions with robust data evidence.</li>
+                    </ul>
+                    <button onclick="showModal('epfoPolicyImpactModal')" class="mt-4 text-sm bg-amber-500 hover:bg-amber-600 text-white py-2 px-4 rounded-md w-full md:w-auto">View Policy Formulation Cycle</button>
+                </div>
+                <div class="card p-6 research-box">
+                    <h2 class="text-xl font-semibold text-green-700 mb-3 flex items-center"><i class="fas fa-flask mr-2"></i>Research: Advancing Policy Evaluation Methods</h2>
+                     <ul class="list-disc list-inside space-y-2 text-sm text-green-600">
+                        <li>Apply and refine causal inference techniques (DiD, RDD, synthetic controls) on large-scale social security data.</li>
+                        <li>Develop novel methodologies for long-term impact assessment of social programs.</li>
+                        <li>Publish findings on the efficacy of different policy levers in retirement savings.</li>
+                        <li>Explore interaction effects between multiple policies and external economic shocks.</li>
+                        <li>Contribute to the global academic discourse on social security system design and evaluation.</li>
+                    </ul>
+                     <button onclick="showModal('researchMethodsModal')" class="mt-4 text-sm bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md w-full md:w-auto">Explore Advanced Methodologies</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="epfoPolicyImpactModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>EPFO Policy Formulation & Evaluation Cycle</h2></div>
+            <div class="modal-body">
+                <p class="mb-2">This AI-driven framework supports EPFO's policy cycle:</p>
+                <ol class="list-decimal list-inside space-y-1 text-sm">
+                    <li><strong>Problem Identification:</strong> Analyze trends and member behavior to identify areas needing policy intervention.</li>
+                    <li><strong>Policy Design:</strong> Simulate potential impacts of different policy options using predictive models.</li>
+                    <li><strong>Implementation:</strong> Roll out chosen policies.</li>
+                    <li><strong>Monitoring:</strong> Track key indicators in real-time post-implementation.</li>
+                    <li><strong>Impact Evaluation (AI-Powered):</strong> Use causal inference and time series analysis to rigorously assess actual impact against objectives.</li>
+                    <li><strong>Feedback & Refinement:</strong> Use evaluation insights to refine existing policies or inform future ones.</li>
+                </ol>
+                <p class="mt-3 font-semibold">This iterative, data-driven approach leads to more effective and responsive policies.</p>
+            </div>
+            <div class="modal-footer"><button onclick="closeModal('epfoPolicyImpactModal')" class="modal-button">Close</button></div>
+        </div>
+    </div>
+
+    <div id="researchMethodsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>Advanced Research Methodologies for Policy Evaluation</h2></div>
+            <div class="modal-body">
+                <p class="mb-2">Beyond basic DiD and time series, advanced research can explore:</p>
+                <ul class="list-disc list-inside space-y-1 text-sm">
+                    <li><strong>Regression Discontinuity Design (RDD):</strong> For policies with a sharp cutoff (e.g., age, income threshold).</li>
+                    <li><strong>Synthetic Control Methods:</strong> Construct a "synthetic" control group when a natural one isn't available.</li>
+                    <li><strong>Interrupted Time Series Analysis (ITSA):</strong> More robustly analyze pre- and post-policy trends.</li>
+                    <li><strong>Machine Learning for Causal Inference:</strong> Use models like Causal Forests to estimate heterogeneous treatment effects.</li>
+                    <li><strong>Event Study Analysis:</strong> Assess short-term impacts around specific policy announcement dates.</li>
+                    <li><strong>Dynamic Treatment Regimes:</strong> Optimize sequences of policy interventions over time.</li>
+                </ul>
+                 <p class="mt-3">These methods can provide deeper and more nuanced understanding of policy impacts on diverse member segments.</p>
+            </div>
+            <div class="modal-footer"><button onclick="closeModal('researchMethodsModal')" class="modal-button">Close</button></div>
+        </div>
+    </div>
+
+    <script>
+        // --- Dummy Data for Demonstration ---
+        const policyEvaluationData = {
+            stats: {
+                policiesAnalyzed: "5",
+                avgContributionImpact: "+2.5%",
+                dataPointsUsed: "10M+",
+                forecastHorizon: "5 Years"
+            },
+            policyLog: [
+                { date: '2023-01-15', name: 'Interest Rate Revision', description: 'Annual interest rate adjusted to 8.1%.' },
+                { date: '2022-07-01', name: 'New Withdrawal Rule for Housing', description: 'Eligibility criteria for housing withdrawal updated.' },
+                { date: '2022-04-01', name: 'Contribution Campaign Launch', description: 'Nationwide campaign to promote VPF contributions.' },
+                { date: '2021-10-01', name: 'Digital KYC Mandate', description: 'e-KYC made mandatory for new registrations.' }
+            ],
+            causalImpact: { // For Difference-in-Differences
+                labels: ['Q1 2022', 'Q2 2022', 'Q3 2022 (Policy X Implemented)', 'Q4 2022', 'Q1 2023', 'Q2 2023'],
+                treatmentGroupData: [5.0, 5.1, 5.2, 5.8, 6.0, 6.1], // % contribution rate
+                controlGroupData: [5.0, 5.05, 5.1, 5.15, 5.2, 5.25],
+                // Hypothetical counterfactual for treatment group if no policy
+                counterfactualData: [5.0, 5.1, 5.2, 5.3, 5.4, 5.5] 
+            },
+            timeSeries: { // For Total Corpus Trend
+                // Generating labels for the last 3 years and next 2 years (quarterly)
+                labels: Array.from({length: 20}, (_, i) => {
+                    const d = new Date(2021, 0, 1);
+                    d.setMonth(d.getMonth() + i*3);
+                    return d;
+                }),
+                historicalData: [100, 102, 105, 108, 110, 113, 117, 120, 124, 128, 133, 138], // In Cr (example)
+                forecastData: [null, null, null, null, null, null, null, null, null, null, null, 138, 142, 147, 153, 159, 165, 172, 179, 187]
+            },
+            policyInsights: [
+                "Policy A (Interest Rate Hike) led to a 1.5% increase in voluntary contributions within 6 months among members aged 40-50.",
+                "The 'Digital KYC Mandate' reduced new member onboarding time by an average of 3 days, but showed no immediate impact on contribution volume.",
+                "Withdrawal rule changes for housing (Policy B) showed a temporary 5% spike in withdrawals for that purpose, stabilizing after 3 months.",
+                "Time series forecast indicates a 25% growth in total corpus over the next 5 years under current policy assumptions."
+            ]
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Populate Key Stats
+            document.getElementById('policiesAnalyzed').textContent = policyEvaluationData.stats.policiesAnalyzed;
+            document.getElementById('avgContributionImpact').textContent = policyEvaluationData.stats.avgContributionImpact;
+            document.getElementById('dataPointsUsed').textContent = policyEvaluationData.stats.dataPointsUsed;
+            document.getElementById('forecastHorizon').textContent = policyEvaluationData.stats.forecastHorizon;
+
+            // Populate Policy Log
+            const policyLogDiv = document.getElementById('policyLog');
+            if(policyLogDiv){
+                policyEvaluationData.policyLog.forEach(policy => {
+                    const item = document.createElement('div');
+                    item.className = 'policy-log-item';
+                    item.innerHTML = `
+                        <p class="font-medium text-gray-700">${policy.name} - <span class="text-xs text-gray-500">${policy.date}</span></p>
+                        <p class="text-xs text-gray-600">${policy.description}</p>
+                    `;
+                    policyLogDiv.appendChild(item);
+                });
+            }
+
+            // Populate Policy Insights
+            const insightsList = document.getElementById('policyInsightsList');
+            if(insightsList){
+                policyEvaluationData.policyInsights.forEach(insight => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = insight;
+                    insightsList.appendChild(listItem);
+                });
+            }
+
+            // Chart.js - Causal Impact Chart (Diff-in-Diff)
+            const causalCanvas = document.getElementById('causalImpactChart');
+            if(causalCanvas){
+                const causalCtx = causalCanvas.getContext('2d');
+                new Chart(causalCtx, {
+                    type: 'line',
+                    data: {
+                        labels: policyEvaluationData.causalImpact.labels,
+                        datasets: [
+                            {
+                                label: 'Treatment Group (Actual)',
+                                data: policyEvaluationData.causalImpact.treatmentGroupData,
+                                borderColor: 'rgb(79, 70, 229)', // Indigo
+                                tension: 0.1,
+                                fill: false
+                            },
+                            {
+                                label: 'Control Group',
+                                data: policyEvaluationData.causalImpact.controlGroupData,
+                                borderColor: 'rgb(245, 158, 11)', // Amber
+                                tension: 0.1,
+                                fill: false
+                            },
+                            {
+                                label: 'Treatment Group (Counterfactual)',
+                                data: policyEvaluationData.causalImpact.counterfactualData,
+                                borderColor: 'rgb(79, 70, 229)',
+                                borderDash: [5, 5], // Dashed line for counterfactual
+                                tension: 0.1,
+                                fill: false,
+                                pointRadius: 0 // No points for counterfactual line
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        scales: { 
+                            y: { title: { display: true, text: 'Avg. Contribution Rate (%)'} },
+                            x: { title: { display: true, text: 'Time (Quarters)'} }
+                        },
+                        plugins: { 
+                            legend: { position: 'top'},
+                            tooltip: { mode: 'index', intersect: false },
+                            annotation: { // Example: Line for policy implementation
+                                annotations: {
+                                    line1: {
+                                        type: 'line',
+                                        xMin: policyEvaluationData.causalImpact.labels[2],
+                                        xMax: policyEvaluationData.causalImpact.labels[2],
+                                        borderColor: 'rgb(0, 0, 0)',
+                                        borderWidth: 1,
+                                        borderDash: [2,2],
+                                        label: {
+                                            content: 'Policy X Implemented',
+                                            enabled: true,
+                                            position: 'start',
+                                            backgroundColor: 'rgba(0,0,0,0.05)',
+                                            color: 'black',
+                                            font: { style: 'normal'}
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Chart.js - Time Series Chart
+            const timeSeriesCanvas = document.getElementById('timeSeriesChart');
+            if(timeSeriesCanvas){
+                const timeSeriesCtx = timeSeriesCanvas.getContext('2d');
+                new Chart(timeSeriesCtx, {
+                    type: 'line',
+                    data: {
+                        labels: policyEvaluationData.timeSeries.labels,
+                        datasets: [
+                            {
+                                label: 'Historical Corpus (Cr)',
+                                data: policyEvaluationData.timeSeries.historicalData,
+                                borderColor: 'rgb(6, 182, 212)', // Cyan
+                                backgroundColor: 'rgba(6, 182, 212, 0.1)',
+                                tension: 0.1,
+                                fill: true,
+                                spanGaps: false // Don't connect historical and forecast with a line
+                            },
+                            {
+                                label: 'Forecasted Corpus (Cr)',
+                                data: policyEvaluationData.timeSeries.forecastData,
+                                borderColor: 'rgb(132, 204, 22)', // Lime
+                                borderDash: [5, 5],
+                                tension: 0.1,
+                                fill: false,
+                                spanGaps: false
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        scales: {
+                            y: { title: { display: true, text: 'Total Corpus (₹ Cr)'} },
+                            x: { 
+                                type: 'time',
+                                time: { unit: 'quarter', tooltipFormat: 'MMM yyyy', displayFormats: { quarter: 'MMM yyyy'}},
+                                title: { display: true, text: 'Time'}
+                            }
+                        },
+                        plugins: { legend: { position: 'top'}, tooltip: { mode: 'index', intersect: false } }
+                    }
+                });
+            }
+        });
+
+        // Modal functions
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = "block";
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            });
+        }
+    </script>
+</body>
+</html>
