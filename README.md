@@ -6,66 +6,20 @@
 4. [Pension Contribution Eligibility Checker](./form11-eligibility/index.html)
 5. [Transfer Claim Risk Score](./prototypes/transfer_risk.html)
 6. [Esatblishment Risk Score](./prototypes/establishment_risk.html)
+7. [Claim Risk Score](./prototypes/claim_risk.html)
+8. [Grievance Prediction](./prototypes/grievance_prediction.html)
+9. [Automated KYC](./prototypes/automated_kyc.html)
+10. [Default Predcition](./prototypes/default_prediction.html)
+
+11. [Retirement Planner](./prototypes/retirement_planner.html)
 
 # Possible Projects
 
 ## I. Projects Focused on Improving EPFO's Internal Operations
-
 ### 1. Fraud Detection and Anomaly Detection in Claims Processing
-- **Problem**: Identify fraudulent claims or irregular patterns in claim settlements (e.g., unusually high withdrawal amounts, multiple claims from the same bank account, claims from dormant accounts).
-- **Data**: Claims data, member data, transaction history, KYC details.
-- **AI/ML Techniques**:
-  - Anomaly detection algorithms (e.g., Isolation Forest, One-Class SVM)
-  - Supervised learning (classification models to flag suspicious claims)
-  - Deep learning for pattern recognition
-- **Impact**:
-  - Reduce financial losses due to fraud
-  - Improve efficiency of claim processing
-  - Enhance trust in the system
-- **Professor Interest**: Applying advanced ML to real-world problems, developing robust anomaly detection systems, publishing research on novel fraud detection methods.
-- **EPFO Interest**: Direct financial benefits, improved efficiency, enhanced security.
-
 ### 2. Predictive Modeling for Grievance Redressal
-- **Problem**: Predict the volume and types of grievances likely to be filed, enabling proactive resource allocation and addressing common issues.
-- **Data**: Grievance data (text descriptions, categories, resolution times), member demographics, regional data.
-- **AI/ML Techniques**:
-  - Natural Language Processing (NLP) for text classification and sentiment analysis
-  - Time series forecasting for grievance volume
-  - Topic modeling to identify common themes
-- **Impact**:
-  - Improve grievance redressal speed and efficiency
-  - Enhance member satisfaction
-  - Identify areas for policy improvement
-- **Professor Interest**: Applying NLP to real-world text data, developing predictive models for resource allocation, publishing research on public service delivery.
-- **EPFO Interest**: Improved member satisfaction, proactive resource management, data-driven policy improvements.
-
 ### 3. Automation of KYC and Data Validation
-- **Problem**: Automate KYC verification and data validation to reduce manual effort and improve accuracy.
-- **Data**: Member KYC data (Aadhaar, PAN, bank account details), historical data on data quality issues.
-- **AI/ML Techniques**:
-  - Optical Character Recognition (OCR) for extracting document information
-  - NLP for data matching and validation
-  - Anomaly detection for inconsistencies
-- **Impact**:
-  - Reduce processing time for KYC updates
-  - Improve data quality
-  - Minimize errors
-- **Professor Interest**: Developing OCR and NLP techniques, creating automated data validation systems, publishing research on improving data quality.
-- **EPFO Interest**: Enhanced efficiency, improved data accuracy, cost savings.
-
 ### 4. Optimizing Contribution Collection and Reconciliation
-- **Problem**: Predict contribution defaults and optimize the process of collecting and reconciling employer contributions.
-- **Data**: Employer data, contribution history, economic indicators, industry-specific data.
-- **AI/ML Techniques**:
-  - Time series analysis
-  - Predictive modeling (regression and classification)
-  - Optimization algorithms for resource allocation in enforcement
-- **Impact**:
-  - Improve contribution collection rates
-  - Reduce defaults
-  - Ensure financial stability of EPFO
-- **Professor Interest**: Developing predictive models for financial risk management, applying optimization techniques, publishing research on improving compliance in social security systems.
-- **EPFO Interest**: Increased revenue collection, improved financial health, better enforcement strategies.
 
 ---
 
