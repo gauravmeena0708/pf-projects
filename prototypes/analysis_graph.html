@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPFO Graph-Based Network Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F9FA; /* Light gray */
+        }
+        .header-section {
+            background: linear-gradient(to right, #4F46E5, #7C3AED); /* Indigo to Purple gradient for a network/tech feel */
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -1px rgba(0,0,0,0.05);
+        }
+        .stat-card {
+            border-left-width: 4px;
+        }
+        .stat-card-indigo { border-left-color: #6366F1; }
+        .stat-card-purple { border-left-color: #8B5CF6; }
+        .stat-card-violet { border-left-color: #7C3AED; }
+        .stat-card-fuchsia { border-left-color: #D946EF; }
+
+        .info-box {
+            background-color: #EEF2FF; /* Light indigo for info */
+            border-left: 4px solid #6366F1; /* Indigo border */
+        }
+         .research-box {
+            background-color: #F5F3FF; /* Light violet for research focus */
+            border-left: 4px solid #8B5CF6; /* Violet border */
+        }
+        .epfo-box {
+            background-color: #FAF5FF; /* Light purple for EPFO focus */
+            border-left: 4px solid #A78BFA; /* Purple-400 border */
+        }
+        
+        /* Conceptual Graph Visualization Styles */
+        .graph-container {
+            min-height: 350px;
+            background-color: #F9FAFB; /* gray-50 */
+            border: 1px solid #E5E7EB; /* gray-200 */
+            border-radius: 0.375rem; /* rounded-md */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .graph-node {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #6366F1; /* Indigo-500 */
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+        .graph-node.employer { background-color: #10B981; /* Green-500 */ }
+        .graph-node.member { background-color: #3B82F6; /* Blue-500 */ }
+        .graph-node.financial-institution { background-color: #F59E0B; /* Amber-500 */ }
+        .graph-node.anomaly { border: 3px solid #EF4444; /* Red-500 */ animation: pulse 1.5s infinite; }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        .graph-edge {
+            position: absolute;
+            background-color: #9CA3AF; /* Gray-400 */
+            height: 2px;
+            transform-origin: left center;
+        }
+        .community-card {
+            background-color: #E0E7FF; /* Indigo-100 */
+            border: 1px solid #C7D2FE; /* Indigo-200 */
+        }
+
+        /* Custom modal styles */
+        .modal {
+            display: none; position: fixed; z-index: 1000; 
+            left: 0; top: 0; width: 100%; height: 100%;
+            overflow: auto; background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: #fefefe; margin: 10% auto; padding: 25px;
+            border: 1px solid #888; width: 80%; max-width: 700px;
+            border-radius: 0.5rem; text-align: left;
+        }
+        .modal-header { padding-bottom: 10px; border-bottom: 1px solid #eee; }
+        .modal-header h2 { margin: 0; font-size: 1.5rem; color: #333; }
+        .modal-body { padding-top:15px; padding-bottom:15px; font-size: 1rem; color: #555;}
+        .modal-footer { padding-top: 10px; border-top: 1px solid #eee; text-align: right; }
+        .modal-button {
+            background-color: #6366F1; color: white; padding: 10px 18px;
+            border: none; border-radius: 0.375rem; cursor: pointer; font-size: 0.9rem;
+        }
+        .modal-button:hover { background-color: #4F46E5; }
+    </style>
+</head>
+<body class="text-slate-800">
+    <div class="min-h-screen">
+        <nav class="bg-white shadow-md">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center">
+                        <i class="fas fa-project-diagram text-2xl text-indigo-600 mr-2"></i>
+                        <span class="font-bold text-xl text-indigo-700">EPFO Graph Network<span class="text-indigo-500">Analyzer</span></span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="text-sm text-gray-600 mr-3">Relationship Insights</span>
+                         <button class="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" aria-label="Help">
+                            <i class="fas fa-question-circle"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="header-section text-white py-10 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-3xl sm:text-4xl font-bold mb-2">Graph-Based Analysis of EPFO Member Networks</h1>
+                <p class="text-lg text-indigo-100">Uncovering patterns, communities, and anomalies in member-employer-financial relationships.</p>
+            </div>
+        </div>
+
+        <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="card stat-card stat-card-indigo p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Total Nodes (Entities)</h3>
+                    <p id="totalNodes" class="text-2xl font-semibold text-indigo-600">5.5 M</p>
+                </div>
+                <div class="card stat-card stat-card-purple p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Total Edges (Relationships)</h3>
+                    <p id="totalEdges" class="text-2xl font-semibold text-purple-600">12.3 M</p>
+                </div>
+                <div class="card stat-card stat-card-violet p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Communities Detected</h3>
+                    <p id="communitiesDetected" class="text-2xl font-semibold text-violet-600">1,250</p>
+                </div>
+                <div class="card stat-card stat-card-fuchsia p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Potential Fraud Rings</h3>
+                    <p id="fraudRings" class="text-2xl font-semibold text-fuchsia-600">42</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="card p-6">
+                        <h2 class="text-xl font-semibold text-slate-700 mb-1 flex items-center">
+                            <i class="fas fa-share-alt mr-2 text-indigo-500"></i>Conceptual EPFO Network Graph
+                        </h2>
+                        <p class="text-sm text-gray-500 mb-4">Illustrative view of entities and their connections. (Actual GNN output would be more complex).</p>
+                        <div id="graphVisualization" class="graph-container">
+                            </div>
+                         <div class="info-box p-3 mt-4 rounded-md text-sm">
+                            <p><i class="fas fa-info-circle mr-1"></i><strong>Graph Neural Networks (GNNs) & Graph Mining:</strong> These AI techniques learn from graph structures. GNNs can predict node properties or link existence. Graph mining algorithms find patterns like communities, central nodes, and anomalous subgraphs (potential fraud).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="card p-6">
+                        <h2 class="text-lg font-semibold text-slate-700 mb-3 flex items-center">
+                            <i class="fas fa-users mr-2 text-purple-500"></i>Identified Communities
+                        </h2>
+                        <p class="text-sm text-gray-500 mb-3">Clusters of densely connected entities (e.g., employees of a large company, members using a specific bank).</p>
+                        <div id="communityList" class="space-y-2 max-h-48 overflow-y-auto">
+                            </div>
+                    </div>
+                    
+                    <div class="card p-6">
+                        <h2 class="text-lg font-semibold text-slate-700 mb-3 flex items-center">
+                            <i class="fas fa-star mr-2 text-amber-500"></i>Influential Entities
+                        </h2>
+                        <p class="text-sm text-gray-500 mb-3">Nodes with high centrality or influence within the network (e.g., large employers, key financial intermediaries).</p>
+                        <ul id="influentialEntitiesList" class="list-disc list-inside space-y-1 text-sm text-gray-700 max-h-40 overflow-y-auto">
+                            </ul>
+                    </div>
+
+                    <div class="card p-6">
+                        <h2 class="text-lg font-semibold text-slate-700 mb-3 flex items-center">
+                            <i class="fas fa-user-secret mr-2 text-red-500"></i>Potential Fraud Indicators
+                        </h2>
+                        <ul id="fraudIndicatorsList" class="list-disc list-inside space-y-1 text-sm text-red-600 max-h-40 overflow-y-auto">
+                            </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="card p-6 epfo-box">
+                    <h2 class="text-xl font-semibold text-purple-700 mb-3 flex items-center"><i class="fas fa-landmark mr-2"></i>EPFO: Enhanced Fraud Detection & Operations</h2>
+                    <ul class="list-disc list-inside space-y-2 text-sm text-purple-600">
+                        <li>Proactively identify collusive fraud networks involving members, employers, or shell companies.</li>
+                        <li>Understand complex organizational structures and interdependencies.</li>
+                        <li>Optimize communication strategies by identifying influential nodes or communities.</li>
+                        <li>Improve risk assessment for employers or financial institutions.</li>
+                        <li>Detect unusual transaction patterns that deviate from typical community behavior.</li>
+                    </ul>
+                    <button onclick="showModal('epfoFraudModal')" class="mt-4 text-sm bg-purple-500 hover:bg-purple-600 text-white py-2 px-4 rounded-md w-full md:w-auto">View Fraud Detection Benefits</button>
+                </div>
+                <div class="card p-6 research-box">
+                    <h2 class="text-xl font-semibold text-violet-700 mb-3 flex items-center"><i class="fas fa-flask mr-2"></i>Research: Advancing Graph AI on Social Data</h2>
+                     <ul class="list-disc list-inside space-y-2 text-sm text-violet-600">
+                        <li>Develop and apply novel GNN architectures for link prediction, node classification, and anomaly detection in large-scale socio-financial networks.</li>
+                        <li>Research dynamic graph analysis to track evolving relationships and community structures over time.</li>
+                        <li>Explore explainable AI (XAI) for graph-based models to understand why certain entities or networks are flagged.</li>
+                        <li>Publish findings on the application of graph AI to social security systems and fraud detection.</li>
+                        <li>Investigate privacy-preserving graph analysis techniques.</li>
+                    </ul>
+                     <button onclick="showModal('researchGraphModal')" class="mt-4 text-sm bg-violet-500 hover:bg-violet-600 text-white py-2 px-4 rounded-md w-full md:w-auto">Explore Graph AI Research</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="epfoFraudModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>EPFO: Benefits of Graph-Based Fraud Detection</h2></div>
+            <div class="modal-body">
+                <p class="mb-2">Graph analysis offers powerful capabilities for uncovering sophisticated fraud:</p>
+                <ul class="list-disc list-inside space-y-1 text-sm">
+                    <li><strong>Collusion Detection:</strong> Identify rings of members and employers submitting fraudulent claims or creating fictitious employment records.</li>
+                    <li><strong>Shell Company Identification:</strong> Detect employers with unusual network characteristics (e.g., many members with short employment, shared bank accounts).</li>
+                    <li><strong>Unusual Transaction Flows:</strong> Spot money laundering patterns or suspicious fund movements between entities.</li>
+                    <li><strong>Identity Theft Rings:</strong> Uncover networks where multiple accounts are controlled by a few individuals.</li>
+                    <li><strong>Early Warning System:</strong> Flag emerging anomalous subgraphs before large-scale fraud occurs.</li>
+                </ul>
+            </div>
+            <div class="modal-footer"><button onclick="closeModal('epfoFraudModal')" class="modal-button">Close</button></div>
+        </div>
+    </div>
+
+    <div id="researchGraphModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>Research Frontiers in Graph AI for Social Networks</h2></div>
+            <div class="modal-body">
+                <p class="mb-2">EPFO's network data can fuel cutting-edge research in graph AI:</p>
+                <ul class="list-disc list-inside space-y-1 text-sm">
+                    <li><strong>Heterogeneous Graphs:</strong> Model diverse entity types (members, employers, banks) and relationship types with specialized GNNs.</li>
+                    <li><strong>Temporal Graphs:</strong> Analyze how network structures and interactions evolve over time, capturing dynamic fraud patterns.</li>
+                    <li><strong>Scalability of Graph Algorithms:</strong> Develop methods to apply complex graph algorithms to nationwide datasets efficiently.</li>
+                    <li><strong>Graph Embeddings for Downstream Tasks:</strong> Learn rich vector representations of nodes and subgraphs for use in various predictive models.</li>
+                    <li><strong>Fairness and Bias in Graph AI:</strong> Ensure that graph-based fraud detection models are not unfairly targeting specific demographics or communities.</li>
+                </ul>
+            </div>
+            <div class="modal-footer"><button onclick="closeModal('researchGraphModal')" class="modal-button">Close</button></div>
+        </div>
+    </div>
+
+    <script>
+        // --- Dummy Data and Functions for Demonstration ---
+        const graphAnalysisData = {
+            stats: {
+                totalNodes: "5.5 M",
+                totalEdges: "12.3 M",
+                communitiesDetected: "1,250",
+                fraudRings: "42"
+            },
+            conceptualGraph: {
+                nodes: [
+                    { id: "E1", label: "Emp A", type: "employer", x: 100, y: 150, isAnomaly: false },
+                    { id: "M1", label: "Mem 1", type: "member", x: 200, y: 100, isAnomaly: false },
+                    { id: "M2", label: "Mem 2", type: "member", x: 220, y: 200, isAnomaly: false },
+                    { id: "E2", label: "Emp B", type: "employer", x: 350, y: 150, isAnomaly: true },
+                    { id: "M3", label: "Mem 3", type: "member", x: 450, y: 100, isAnomaly: true },
+                    { id: "M4", label: "Mem 4", type: "member", x: 470, y: 200, isAnomaly: true },
+                    { id: "FI1", label: "Bank X", type: "financial-institution", x: 300, y: 300, isAnomaly: false }
+                ],
+                edges: [
+                    { source: "E1", target: "M1" }, { source: "E1", target: "M2" },
+                    { source: "E2", target: "M3" }, { source: "E2", target: "M4" },
+                    { source: "M1", target: "FI1" }, { source: "M3", target: "FI1" },
+                    { source: "M3", target: "M4" } // Suspicious link
+                ]
+            },
+            communities: [
+                { id: "C1", name: "Community Alpha (Employer A Group)", size: 1500, description: "Employees primarily linked to Employer A." },
+                { id: "C2", name: "Community Beta (South Zone - Bank X Users)", size: 850, description: "Members in South Zone using Bank X for transactions." },
+                { id: "C3", name: "Community Gamma (Potential Fraud Cluster)", size: 35, description: "Small, tightly-knit group with unusual transaction patterns linked to Employer B." }
+            ],
+            influentialEntities: [
+                "Employer X (Node Degree: 5000+)",
+                "National Bank Y (PageRank Score: 0.025)",
+                "Admin Z (High Betweenness Centrality)"
+            ],
+            fraudIndicators: [
+                "Circular transactions involving 3+ members and a new employer.",
+                "Multiple members sharing the same bank account and address, linked to a recently registered employer.",
+                "Sudden surge in claims from a specific employer community post-policy change."
+            ]
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Populate Key Stats
+            document.getElementById('totalNodes').textContent = graphAnalysisData.stats.totalNodes;
+            document.getElementById('totalEdges').textContent = graphAnalysisData.stats.totalEdges;
+            document.getElementById('communitiesDetected').textContent = graphAnalysisData.stats.communitiesDetected;
+            document.getElementById('fraudRings').textContent = graphAnalysisData.stats.fraudRings;
+
+            // Populate Community List
+            const communityListDiv = document.getElementById('communityList');
+            if(communityListDiv){
+                graphAnalysisData.communities.forEach(community => {
+                    const item = document.createElement('div');
+                    item.className = 'community-card p-2 rounded-md text-sm';
+                    item.innerHTML = `
+                        <h4 class="font-semibold text-indigo-700">${community.name}</h4>
+                        <p class="text-xs text-indigo-600">Size: ${community.size} members</p>
+                        <p class="text-xs text-gray-500">${community.description}</p>
+                    `;
+                    communityListDiv.appendChild(item);
+                });
+            }
+
+            // Populate Influential Entities
+            const influentialList = document.getElementById('influentialEntitiesList');
+            if(influentialList){
+                graphAnalysisData.influentialEntities.forEach(entity => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = entity;
+                    influentialList.appendChild(listItem);
+                });
+            }
+            
+            // Populate Fraud Indicators
+            const fraudIndicatorsList = document.getElementById('fraudIndicatorsList');
+            if(fraudIndicatorsList){
+                graphAnalysisData.fraudIndicators.forEach(indicator => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = indicator;
+                    fraudIndicatorsList.appendChild(listItem);
+                });
+            }
+
+            // Render Conceptual Graph
+            const graphContainer = document.getElementById('graphVisualization');
+            if (graphContainer) {
+                const nodes = graphAnalysisData.conceptualGraph.nodes;
+                const edges = graphAnalysisData.conceptualGraph.edges;
+                const nodeElements = {};
+
+                nodes.forEach(node => {
+                    const nodeEl = document.createElement('div');
+                    nodeEl.className = `graph-node ${node.type} ${node.isAnomaly ? 'anomaly' : ''}`;
+                    nodeEl.style.left = `${node.x}px`;
+                    nodeEl.style.top = `${node.y}px`;
+                    nodeEl.textContent = node.label;
+                    nodeEl.title = `${node.type}: ${node.label}`;
+                    graphContainer.appendChild(nodeEl);
+                    nodeElements[node.id] = nodeEl;
+                });
+
+                edges.forEach(edge => {
+                    const sourceNode = nodeElements[edge.source];
+                    const targetNode = nodeElements[edge.target];
+
+                    if (sourceNode && targetNode) {
+                        const sourceRect = sourceNode.getBoundingClientRect();
+                        const targetRect = targetNode.getBoundingClientRect();
+                        const containerRect = graphContainer.getBoundingClientRect();
+
+                        // Calculate positions relative to the container
+                        const x1 = sourceNode.offsetLeft + sourceNode.offsetWidth / 2;
+                        const y1 = sourceNode.offsetTop + sourceNode.offsetHeight / 2;
+                        const x2 = targetNode.offsetLeft + targetNode.offsetWidth / 2;
+                        const y2 = targetNode.offsetTop + targetNode.offsetHeight / 2;
+
+                        const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+                        const angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
+
+                        const edgeEl = document.createElement('div');
+                        edgeEl.className = 'graph-edge';
+                        edgeEl.style.width = `${length}px`;
+                        edgeEl.style.left = `${x1}px`;
+                        edgeEl.style.top = `${y1}px`;
+                        edgeEl.style.transform = `rotate(${angle}deg)`;
+                        graphContainer.appendChild(edgeEl);
+                    }
+                });
+            }
+        });
+
+        // Modal functions
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = "block";
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            });
+        }
+    </script>
+</body>
+</html>
