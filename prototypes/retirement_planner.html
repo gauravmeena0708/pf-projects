@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPFO AI-Powered Retirement Planning Advisor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F3F4F6; /* gray-100 */
+        }
+        .hero-section {
+            background: linear-gradient(to right, #4F46E5, #7C3AED); /* indigo-600 to purple-600 */
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.5rem; /* rounded-lg */
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); /* shadow-md */
+        }
+        .progress-bar-bg {
+            background-color: #E5E7EB; /* gray-200 */
+            border-radius: 0.25rem; /* rounded */
+            overflow: hidden;
+        }
+        .progress-bar {
+            background-color: #22C55E; /* green-500 */
+            height: 100%;
+            transition: width 0.5s ease-in-out;
+        }
+        .tab-button.active {
+            border-color: #4F46E5; /* indigo-600 */
+            color: #4F46E5;
+            background-color: #EEF2FF; /* indigo-50 */
+        }
+        .recommendation-card {
+            border-left-width: 4px;
+        }
+        .recommendation-investment { border-left-color: #3B82F6; /* blue-500 */ }
+        .recommendation-contribution { border-left-color: #10B981; /* green-500 */ }
+        .recommendation-risk { border-left-color: #F59E0B; /* amber-500 */ }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen">
+        <nav class="bg-white shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center">
+                        <span class="font-bold text-xl text-indigo-600">EPFO Retire<span class="text-purple-600">Smart</span></span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="text-sm text-gray-600 mr-3">Welcome, <span id="memberNameNav" class="font-medium">Rakesh Sharma</span></span>
+                        <button class="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" aria-label="Notifications">
+                            <i class="fas fa-bell"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="hero-section text-white py-12 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-3xl sm:text-4xl font-bold mb-3">Your Personalized Retirement Roadmap</h1>
+                <p class="text-lg text-indigo-100 mb-6">Leveraging AI to help you achieve your retirement goals with confidence.</p>
+                <div class="card bg-white/20 backdrop-blur-sm p-6 rounded-lg inline-block">
+                    <p class="text-sm text-indigo-100 mb-1">Projected Retirement Corpus (Age 60)</p>
+                    <p id="projectedCorpusHero" class="text-4xl font-bold">₹ 1.85 Cr</p>
+                    <p id="corpusConfidenceHero" class="text-xs text-indigo-200">(AI Projection - Medium Confidence)</p>
+                </div>
+            </div>
+        </div>
+
+        <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="card p-6">
+                        <h2 class="text-xl font-semibold text-slate-700 mb-1 flex items-center">
+                            <i class="fas fa-chart-line mr-2 text-indigo-500"></i>Retirement Corpus Projection
+                        </h2>
+                        <p class="text-sm text-gray-500 mb-4">Estimated growth of your PF savings until retirement at age 60.</p>
+                        <div style="height: 300px;"> <canvas id="corpusProjectionChart"></canvas>
+                        </div>
+                        <div class="mt-4 text-xs text-gray-500">
+                            *Projections include estimated contributions, interest, and AI-optimized investment returns. Past performance is not indicative of future results.
+                        </div>
+                    </div>
+
+                    <div class="card p-6">
+                        <h2 class="text-xl font-semibold text-slate-700 mb-4 flex items-center">
+                            <i class="fas fa-robot mr-2 text-purple-500"></i>AI-Powered Recommendations
+                        </h2>
+                        <div class="space-y-4">
+                            <div class="recommendation-card recommendation-investment p-4 rounded-md bg-blue-50">
+                                <h3 class="font-semibold text-blue-700 mb-1 flex items-center"><i class="fas fa-piggy-bank mr-2"></i>Optimal Investment Allocation (AI Driven)</h3>
+                                <p class="text-sm text-blue-600 mb-2">Based on your risk profile and market projections (Reinforcement Learning Model):</p>
+                                <div id="investmentAllocation" class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+                                    <div>Equity: <span class="font-bold">40%</span></div>
+                                    <div>Debt: <span class="font-bold">50%</span></div>
+                                    <div>Govt. Securities: <span class="font-bold">10%</span></div>
+                                    <div>Liquid: <span class="font-bold">0%</span></div>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-2">Current Allocation: Equity 25%, Debt 75%</p>
+                            </div>
+                            <div class="recommendation-card recommendation-contribution p-4 rounded-md bg-green-50">
+                                <h3 class="font-semibold text-green-700 mb-1 flex items-center"><i class="fas fa-hand-holding-usd mr-2"></i>Contribution Boost</h3>
+                                <p class="text-sm text-green-600">Consider increasing your VPF by <span id="vpfSuggestion" class="font-bold">₹3,000/month</span>. This could add approx. <span id="vpfImpact" class="font-bold">₹15 Lakhs</span> to your final corpus.</p>
+                            </div>
+                            <div class="recommendation-card recommendation-risk p-4 rounded-md bg-amber-50">
+                                <h3 class="font-semibold text-amber-700 mb-1 flex items-center"><i class="fas fa-shield-alt mr-2"></i>Risk Profile Alignment</h3>
+                                <p class="text-sm text-amber-600">Your current risk tolerance is assessed as <span id="riskProfileText" class="font-bold">Moderate</span>. The suggested allocation aligns with this. <a href="#" class="text-indigo-600 hover:underline text-xs">Re-assess Risk Profile?</a></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card p-6">
+                        <h2 class="text-xl font-semibold text-slate-700 mb-1 flex items-center">
+                            <i class="fas fa-dice mr-2 text-teal-500"></i>Range of Potential Outcomes (Monte Carlo Simulation)
+                        </h2>
+                        <p class="text-sm text-gray-500 mb-4">Simulating 10,000 market scenarios to estimate potential corpus values at retirement.</p>
+                        <div style="height: 300px;"> <canvas id="monteCarloChart"></canvas>
+                        </div>
+                        <div class="mt-3 text-sm text-center">
+                            <p>Pessimistic (10th Percentile): <span id="mcPessimistic" class="font-semibold text-red-600">₹1.2 Cr</span></p>
+                            <p>Most Likely (50th Percentile): <span id="mcLikely" class="font-semibold text-slate-700">₹1.85 Cr</span></p>
+                            <p>Optimistic (90th Percentile): <span id="mcOptimistic" class="font-semibold text-green-600">₹2.5 Cr</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="card p-6">
+                        <h2 class="text-lg font-semibold text-slate-700 mb-3">Your Profile Summary</h2>
+                        <div class="space-y-2 text-sm text-gray-600">
+                            <div class="flex justify-between"><span>Age:</span> <span id="memberAge" class="font-medium text-slate-800">35 Years</span></div>
+                            <div class="flex justify-between"><span>Retirement Age:</span> <span id="retirementAge" class="font-medium text-slate-800">60 Years</span></div>
+                            <div class="flex justify-between"><span>Current PF Balance:</span> <span id="currentBalance" class="font-medium text-slate-800">₹25,00,000</span></div>
+                            <div class="flex justify-between"><span>Monthly Contribution:</span> <span id="monthlyContribution" class="font-medium text-slate-800">₹15,000</span></div>
+                            <div class="flex justify-between"><span>Years to Retirement:</span> <span id="yearsToRetirement" class="font-medium text-slate-800">25 Years</span></div>
+                        </div>
+                    </div>
+
+                    <div class="card p-6">
+                        <h2 class="text-lg font-semibold text-slate-700 mb-3">Retirement Goal Progress</h2>
+                        <div class="mb-2">
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Target Corpus: <span id="targetCorpus" class="font-medium">₹2.0 Cr</span></span>
+                                <span id="progressPercentage" class="font-medium text-indigo-600">70%</span>
+                            </div>
+                            <div class="progress-bar-bg h-3">
+                                <div id="progressBar" class="progress-bar" style="width: 70%;"></div>
+                            </div>
+                        </div>
+                        <p id="goalMessage" class="text-xs text-gray-500">You are on track, but boosting contributions can help you exceed your goal.</p>
+                        <button class="mt-3 w-full text-sm bg-indigo-500 hover:bg-indigo-600 text-white py-2 px-3 rounded-md"><i class="fas fa-edit mr-1"></i> Adjust Goal</button>
+                    </div>
+                    
+                    <div class="card p-6">
+                        <h2 class="text-lg font-semibold text-slate-700 mb-3">Financial Literacy Corner</h2>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="#" class="text-indigo-600 hover:underline flex items-center"><i class="fas fa-book-open mr-2"></i>Understanding VPF benefits</a></li>
+                            <li><a href="#" class="text-indigo-600 hover:underline flex items-center"><i class="fas fa-chart-pie mr-2"></i>Basics of Asset Allocation</a></li>
+                            <li><a href="#" class="text-indigo-600 hover:underline flex items-center"><i class="fas fa-calculator mr-2"></i>Impact of Inflation on Savings</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Static Data for Demonstration ---
+            const retirementData = {
+                memberName: "Rakesh Sharma",
+                projectedCorpusHero: "₹ 1.85 Cr",
+                corpusConfidenceHero: "(AI Projection - Medium Confidence)",
+                profile: {
+                    age: 35,
+                    retirementAge: 60,
+                    currentBalance: 2500000,
+                    monthlyContribution: 15000,
+                    yearsToRetirement: 25,
+                },
+                corpusProjection: { // For Chart.js line chart
+                    labels: Array.from({length: 26}, (_, i) => (new Date().getFullYear() + i).toString()), // Years from now to retirement
+                    currentStrategyData: Array.from({length: 26}, (_, i) => 2500000 * Math.pow(1.07, i) + (15000 * 12 * ((Math.pow(1.07, i) -1) / 0.07) ) ), // Simplified growth
+                    aiOptimizedData: Array.from({length: 26}, (_, i) => 2500000 * Math.pow(1.085, i) + (18000 * 12 * ((Math.pow(1.085, i) -1) / 0.085) ) ) // Simplified growth with AI
+                },
+                aiRecommendations: {
+                    investmentAllocation: { equity: 40, debt: 50, govtSec: 10, liquid: 0 },
+                    currentAllocation: { equity: 25, debt: 75},
+                    vpfSuggestion: 3000,
+                    vpfImpact: 1500000,
+                    riskProfileText: "Moderate"
+                },
+                monteCarlo: { // For Chart.js histogram-like bar chart
+                    labels: ['1.0-1.2Cr', '1.2-1.4Cr', '1.4-1.6Cr', '1.6-1.8Cr', '1.8-2.0Cr', '2.0-2.2Cr', '2.2-2.4Cr', '2.4-2.6Cr', '2.6-2.8Cr'],
+                    data: [500, 800, 1200, 2000, 2500, 1500, 800, 500, 200], // Frequencies for 10k simulations
+                    pessimistic: "₹1.2 Cr",
+                    likely: "₹1.85 Cr",
+                    optimistic: "₹2.5 Cr"
+                },
+                goal: {
+                    targetCorpus: 20000000, // 2 Cr
+                    progressPercentage: 70, // Calculated based on current vs target (example)
+                    goalMessage: "You are on track, but boosting contributions can help you exceed your goal."
+                }
+            };
+
+            // Populate Data
+            document.getElementById('memberNameNav').textContent = retirementData.memberName;
+            document.getElementById('projectedCorpusHero').textContent = retirementData.projectedCorpusHero;
+            document.getElementById('corpusConfidenceHero').textContent = retirementData.corpusConfidenceHero;
+
+            document.getElementById('memberAge').textContent = `${retirementData.profile.age} Years`;
+            document.getElementById('retirementAge').textContent = `${retirementData.profile.retirementAge} Years`;
+            document.getElementById('currentBalance').textContent = `₹${retirementData.profile.currentBalance.toLocaleString('en-IN')}`;
+            document.getElementById('monthlyContribution').textContent = `₹${retirementData.profile.monthlyContribution.toLocaleString('en-IN')}`;
+            document.getElementById('yearsToRetirement').textContent = `${retirementData.profile.yearsToRetirement} Years`;
+
+            const invAllocDiv = document.getElementById('investmentAllocation');
+            if (invAllocDiv) { // Check if element exists
+                invAllocDiv.innerHTML = `
+                    <div>Equity: <span class="font-bold">${retirementData.aiRecommendations.investmentAllocation.equity}%</span></div>
+                    <div>Debt: <span class="font-bold">${retirementData.aiRecommendations.investmentAllocation.debt}%</span></div>
+                    <div>Govt. Securities: <span class="font-bold">${retirementData.aiRecommendations.investmentAllocation.govtSec}%</span></div>
+                    <div>Liquid: <span class="font-bold">${retirementData.aiRecommendations.investmentAllocation.liquid}%</span></div>
+                `;
+                if (invAllocDiv.nextElementSibling) {
+                     invAllocDiv.nextElementSibling.textContent = `Current Allocation: Equity ${retirementData.aiRecommendations.currentAllocation.equity}%, Debt ${retirementData.aiRecommendations.currentAllocation.debt}%`;
+                }
+            }
+
+            document.getElementById('vpfSuggestion').textContent = `₹${retirementData.aiRecommendations.vpfSuggestion.toLocaleString('en-IN')}/month`;
+            document.getElementById('vpfImpact').textContent = `₹${retirementData.aiRecommendations.vpfImpact.toLocaleString('en-IN')}`;
+            document.getElementById('riskProfileText').textContent = retirementData.aiRecommendations.riskProfileText;
+
+            document.getElementById('targetCorpus').textContent = `₹${(retirementData.goal.targetCorpus / 10000000).toFixed(1)} Cr`;
+            document.getElementById('progressPercentage').textContent = `${retirementData.goal.progressPercentage}%`;
+            document.getElementById('progressBar').style.width = `${retirementData.goal.progressPercentage}%`;
+            document.getElementById('goalMessage').textContent = retirementData.goal.goalMessage;
+
+            document.getElementById('mcPessimistic').textContent = retirementData.monteCarlo.pessimistic;
+            document.getElementById('mcLikely').textContent = retirementData.monteCarlo.likely;
+            document.getElementById('mcOptimistic').textContent = retirementData.monteCarlo.optimistic;
+
+
+            // Chart.js - Corpus Projection Chart
+            const corpusCanvas = document.getElementById('corpusProjectionChart');
+            if (corpusCanvas) { // Check if canvas element exists
+                const corpusCtx = corpusCanvas.getContext('2d');
+                new Chart(corpusCtx, {
+                    type: 'line',
+                    data: {
+                        labels: retirementData.corpusProjection.labels,
+                        datasets: [
+                            {
+                                label: 'Current Strategy',
+                                data: retirementData.corpusProjection.currentStrategyData,
+                                borderColor: 'rgb(165, 180, 252)', // indigo-300
+                                backgroundColor: 'rgba(165, 180, 252, 0.1)',
+                                tension: 0.1,
+                                fill: true
+                            },
+                            {
+                                label: 'AI Optimized Strategy',
+                                data: retirementData.corpusProjection.aiOptimizedData,
+                                borderColor: 'rgb(79, 70, 229)', // indigo-600
+                                backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                                tension: 0.1,
+                                fill: true
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true, 
+                        maintainAspectRatio: false,
+                        scales: { y: { beginAtZero: false, ticks: { callback: value => `₹${(value/100000).toFixed(0)}L` } } },
+                        plugins: { legend: { position: 'top'} }
+                    }
+                });
+            }
+            
+            // Chart.js - Monte Carlo Simulation Chart (Histogram-like Bar Chart)
+            const monteCarloCanvas = document.getElementById('monteCarloChart');
+            if (monteCarloCanvas) { // Check if canvas element exists
+                const monteCarloCtx = monteCarloCanvas.getContext('2d');
+                new Chart(monteCarloCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: retirementData.monteCarlo.labels,
+                        datasets: [{
+                            label: 'Frequency of Outcomes',
+                            data: retirementData.monteCarlo.data,
+                            backgroundColor: 'rgba(20, 184, 166, 0.6)', // teal-500
+                            borderColor: 'rgba(13, 148, 136, 1)', // teal-600
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true, 
+                        maintainAspectRatio: false,
+                        scales: { 
+                            y: { title: { display: true, text: 'Number of Simulations (out of 10,000)'} },
+                            x: { title: { display: true, text: 'Projected Corpus Range'} }
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
