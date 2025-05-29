@@ -6,216 +6,296 @@
     <title>EPFO Transfer Claim Risk Analysis</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            background-color: #f5f5f4; /* stone-100 - Light beige/off-white */
         }
         .tab-button.active {
-            border-color: #4F46E5; /* indigo-600 */
-            color: #4F46E5;
-            background-color: #EEF2FF; /* indigo-50 */
+            border-color: #4f46e5; /* indigo-600 */
+            color: #4f46e5; /* indigo-600 */
+            background-color: #e0e7ff; /* indigo-100 */
+            font-weight: 600; /* semibold */
         }
         .tab-button {
-            transition: all 0.3s ease;
+            transition: all 0.2s ease-in-out;
+            padding-top: 0.75rem; /* py-3 */
+            padding-bottom: 0.75rem; /* py-3 */
+            padding-left: 1.25rem; /* px-5 */
+            padding-right: 1.25rem; /* px-5 */
+            font-size: 0.9rem; 
+            color: #4b5563; /* gray-600 */
         }
+        .tab-button:hover {
+            background-color: #e7e5e4; /* stone-200 - Slightly darker beige for hover */
+            color: #374151; /* gray-700 */
+        }
+
         .risk-score-high {
-            background-color: #FEE2E2; /* red-100 */
-            color: #B91C1C; /* red-700 */
-            border-color: #EF4444; /* red-500 */
+            background-color: #fff5f5; /* red-50 */
+            color: #c53030; /* red-700 */
+            border-color: #fc8181; /* red-400 */
         }
         .risk-score-medium {
-            background-color: #FEF3C7; /* amber-100 */
-            color: #B45309; /* amber-700 */
-            border-color: #F59E0B; /* amber-500 */
+            background-color: #fffaf0; /* orange-50 */
+            color: #dd6b20; /* orange-700 */
+            border-color: #fbd38d; /* orange-300 */
         }
         .risk-score-low {
-            background-color: #D1FAE5; /* green-100 */
-            color: #047857; /* green-700 */
-            border-color: #10B981; /* green-500 */
+            background-color: #f0fff4; /* green-50 */
+            color: #2f855a; /* green-700 */
+            border-color: #9ae6b4; /* green-300 */
         }
         .details-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.25rem;
         }
         .detail-item {
-            background-color: #F9FAFB; /* gray-50 */
-            padding: 0.75rem;
-            border-radius: 0.375rem; /* rounded-md */
-            border: 1px solid #E5E7EB; /* gray-200 */
+            background-color: #ffffff; 
+            padding: 1rem;
+            border-radius: 0.5rem; 
+            border: 1px solid #d6d3d1; /* stone-300 */
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+            transition: box-shadow 0.2s ease-in-out;
+        }
+        .detail-item:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
         }
         .detail-label {
-            font-weight: 500;
-            color: #4B5563; /* gray-600 */
+            font-weight: 500; 
+            color: #78716c; /* stone-500 */
+            font-size: 0.875rem; 
+            margin-bottom: 0.25rem; 
+            display: block;
         }
         .detail-value {
-            color: #1F2937; /* gray-800 */
+            color: #2d3748; 
+            font-size: 0.95rem; 
+            line-height: 1.4;
         }
-        /* Custom scrollbar for tab content if it overflows */
+        .detail-value.text-green-600 { color: #38a169; }
+        .detail-value.text-red-600 { color: #e53e3e; }
+        .detail-value.text-yellow-600 { color: #dd6b20; }
+
+
         .tab-content-wrapper::-webkit-scrollbar {
-            width: 6px;
+            width: 8px;
         }
         .tab-content-wrapper::-webkit-scrollbar-track {
-            background: #f1f1f1;
+            background: #e7e5e4; /* stone-200 */
             border-radius: 10px;
         }
         .tab-content-wrapper::-webkit-scrollbar-thumb {
-            background: #cbd5e1; /* slate-300 */
+            background: #a8a29e; /* stone-400 */
             border-radius: 10px;
         }
         .tab-content-wrapper::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8; /* slate-500 */
+            background: #78716c; /* stone-500 */
+        }
+        .action-buttons-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+        }
+        .action-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem; 
+            font-weight: 500; 
+            padding: 0.625rem 1rem; 
+            border-radius: 0.375rem; 
+            transition: all 0.2s ease-in-out;
+            font-size: 0.875rem; 
+            box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+        }
+        .action-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+        }
+        .sidebar-card {
+            background-color: #ffffff; 
+            padding: 1.25rem; 
+            border-radius: 0.5rem; 
+            border: 1px solid #d6d3d1; /* stone-300 */
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+        }
+        .section-title {
+            font-size: 1.125rem; 
+            font-weight: 600; 
+            color: #1a202c; /* gray-900 */
+            margin-bottom: 1.25rem; 
+            padding-bottom: 0.5rem; 
+            border-bottom: 1px solid #d6d3d1; /* stone-300 */
+        }
+        .list-disc li::marker {
+            color: #a8a29e; /* stone-400 */
         }
     </style>
 </head>
-<body class="bg-gray-100 p-4 md:p-8">
-    <div class="container mx-auto max-w-7xl bg-white shadow-xl rounded-lg p-6 md:p-8">
-        <header class="mb-6 md:mb-8">
-            <h1 class="text-2xl md:text-3xl font-bold text-indigo-700">EPFO Transfer Claim Risk Analysis</h1>
-            <p class="text-gray-600 text-sm">Claim ID: <span class="font-semibold" id="claimIdDisplay">TCL0012345678</span></p>
+<body class="bg-stone-100 p-4 md:p-6 lg:p-8">
+    <div class="container mx-auto max-w-screen-2xl bg-white shadow-2xl rounded-xl p-6 md:p-8">
+        <header class="mb-8 pb-4 border-b border-stone-200">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl md:text-4xl font-bold text-indigo-700">EPFO Transfer Claim Analysis</h1>
+                    <p class="text-stone-500 text-sm mt-1">Claim ID: <span class="font-semibold text-stone-700" id="claimIdDisplay"></span></p>
+                </div>
+                <img src="https://placehold.co/120x50/2563eb/white?text=EPFO+Logo&font=Inter" alt="EPFO Logo" class="h-10 md:h-12 rounded" onerror="this.style.display='none'">
+            </div>
         </header>
 
         <div class="flex flex-col lg:flex-row gap-6 md:gap-8">
             <div class="flex-grow lg:w-3/4">
-                <div class="mb-6 border-b border-gray-300">
+                <div class="mb-6 border-b border-stone-200">
                     <nav class="flex flex-wrap -mb-px" aria-label="Tabs">
-                        <button data-tab="oldEst" class="tab-button active text-sm md:text-base whitespace-nowrap py-3 px-4 border-b-2 font-medium rounded-t-lg hover:bg-indigo-50">
-                            Old Establishment
-                        </button>
-                        <button data-tab="memberAccount" class="tab-button text-sm md:text-base whitespace-nowrap py-3 px-4 border-b-2 font-medium rounded-t-lg hover:bg-indigo-50">
-                            Member Account
-                        </button>
-                        <button data-tab="newEst" class="tab-button text-sm md:text-base whitespace-nowrap py-3 px-4 border-b-2 font-medium rounded-t-lg hover:bg-indigo-50">
-                            New Establishment
-                        </button>
-                        <button data-tab="newEstCumulative" class="tab-button text-sm md:text-base whitespace-nowrap py-3 px-4 border-b-2 font-medium rounded-t-lg hover:bg-indigo-50">
-                            New Est. (Cumulative)
-                        </button>
-                        <button data-tab="flags" class="tab-button text-sm md:text-base whitespace-nowrap py-3 px-4 border-b-2 font-medium rounded-t-lg hover:bg-indigo-50">
-                            Anomalies/Flags
-                        </button>
+                        <button data-tab="oldEst" class="tab-button active"><i class="fas fa-building-shield mr-2 opacity-75"></i>Old Establishment</button>
+                        <button data-tab="memberAccount" class="tab-button"><i class="fas fa-user-tie mr-2 opacity-75"></i>Member Account</button>
+                        <button data-tab="newEst" class="tab-button"><i class="fas fa-building-circle-check mr-2 opacity-75"></i>New Establishment</button>
+                        <button data-tab="newEstCumulative" class="tab-button"><i class="fas fa-chart-pie mr-2 opacity-75"></i>New Est. (Cumulative)</button>
+                        <button data-tab="flags" class="tab-button"><i class="fas fa-triangle-exclamation mr-2 opacity-75"></i>Anomalies/Flags</button>
                     </nav>
                 </div>
 
-                <div id="tabContentWrapper" class="tab-content-wrapper overflow-y-auto" style="max-height: calc(100vh - 300px);">
-                    <div id="oldEst" class="tab-pane active p-1">
-                        <h2 class="text-xl font-semibold text-gray-700 mb-4">Old Establishment Details</h2>
+                <div id="tabContentWrapper" class="tab-content-wrapper overflow-y-auto bg-stone-50 p-4 rounded-lg" style="max-height: calc(100vh - 350px);">
+                    <div id="oldEst" class="tab-pane active p-2">
+                        <h2 class="section-title">Old Establishment Details</h2>
                         <div class="details-grid">
-                            <div class="detail-item"><span class="detail-label">Name:</span> <span class="detail-value" id="oldEstName">Global Tech Solutions Pvt. Ltd.</span></div>
-                            <div class="detail-item"><span class="detail-label">EPFO Code:</span> <span class="detail-value" id="oldEstCode">DL/GGN/0012345/000</span></div>
-                            <div class="detail-item"><span class="detail-label">Age of Est.:</span> <span class="detail-value" id="oldEstAge">15 Years</span></div>
-                            <div class="detail-item"><span class="detail-label">Compliance History:</span> <span class="detail-value text-green-600" id="oldEstCompliance">Good (Regular Payments)</span></div>
-                            <div class="detail-item"><span class="detail-label">Recent Transfer Claims:</span> <span class="detail-value" id="oldEstRecentTransfers">5 in last 3 months</span></div>
-                            <div class="detail-item"><span class="detail-label">Industry Type:</span> <span class="detail-value" id="oldEstIndustry">IT Services</span></div>
-                            <div class="detail-item"><span class="detail-label">Status:</span> <span class="detail-value" id="oldEstStatus">Active</span></div>
+                            <div class="detail-item"><span class="detail-label">Name</span> <span class="detail-value" id="oldEstName"></span></div>
+                            <div class="detail-item"><span class="detail-label">EPFO Code</span> <span class="detail-value" id="oldEstCode"></span></div>
+                            <div class="detail-item"><span class="detail-label">Date of Code Allotment</span> <span class="detail-value" id="oldEstCodeAllotmentDate"></span></div>
+                            <div class="detail-item"><span class="detail-label">Age of Est.</span> <span class="detail-value" id="oldEstAge"></span></div>
+                            <div class="detail-item"><span class="detail-label">Principal Employer</span> <span class="detail-value" id="oldEstPrincipalEmployer"></span></div>
+                            <div class="detail-item"><span class="detail-label">Compliance History</span> <span class="detail-value" id="oldEstCompliance"></span></div>
+                            <div class="detail-item"><span class="detail-label">Default History</span> <span class="detail-value" id="oldEstDefaultHistory"></span></div>
+                            <div class="detail-item"><span class="detail-label">Inspection History</span> <span class="detail-value" id="oldEstInspectionHistory"></span></div>
+                            <div class="detail-item"><span class="detail-label">Recent Transfer-Out Claims</span> <span class="detail-value" id="oldEstRecentTransfers"></span></div>
+                            <div class="detail-item"><span class="detail-label">Industry Type</span> <span class="detail-value" id="oldEstIndustry"></span></div>
+                            <div class="detail-item"><span class="detail-label">Exemption Status</span> <span class="detail-value" id="oldEstExemptionStatus"></span></div>
+                            <div class="detail-item"><span class="detail-label">Status</span> <span class="detail-value" id="oldEstStatus"></span></div>
                         </div>
                     </div>
 
-                    <div id="memberAccount" class="tab-pane hidden p-1">
-                        <h2 class="text-xl font-semibold text-gray-700 mb-4">Member Account Details (Claimant)</h2>
+                    <div id="memberAccount" class="tab-pane hidden p-2">
+                        <h2 class="section-title">Member Account Details (Claimant)</h2>
                         <div class="details-grid">
-                            <div class="detail-item"><span class="detail-label">Member Name:</span> <span class="detail-value" id="memberName">Rajesh Kumar</span></div>
-                            <div class="detail-item"><span class="detail-label">UAN:</span> <span class="detail-value" id="memberUan">100987654321</span></div>
-                            <div class="detail-item"><span class="detail-label">Claim Amount:</span> <span class="detail-value" id="memberClaimAmount">₹ 1,50,000</span></div>
-                            <div class="detail-item"><span class="detail-label">Member Age:</span> <span class="detail-value" id="memberAge">32 Years</span></div>
-                            <div class="detail-item"><span class="detail-label">Service (Old Est.):</span> <span class="detail-value" id="memberServiceOldEst">3 Years 2 Months</span></div>
-                            <div class="detail-item"><span class="detail-label">Last Contribution:</span> <span class="detail-value" id="memberLastContribution">25-Jan-2024 (4 months ago)</span></div>
-                            <div class="detail-item"><span class="detail-label">Past Transfers:</span> <span class="detail-value" id="memberPastTransfers">1 (5 years ago)</span></div>
-                            <div class="detail-item"><span class="detail-label">KYC Status:</span> <span class="detail-value text-green-600" id="memberKycStatus">Verified (Aadhaar, PAN, Bank)</span></div>
-                            <div class="detail-item"><span class="detail-label">Bank A/C No.:</span> <span class="detail-value" id="memberBankAc">******1234 (SBI)</span></div>
+                            <div class="detail-item"><span class="detail-label">Member Name</span> <span class="detail-value" id="memberName"></span></div>
+                            <div class="detail-item"><span class="detail-label">UAN</span> <span class="detail-value" id="memberUan"></span></div>
+                            <div class="detail-item"><span class="detail-label">Date of Birth</span> <span class="detail-value" id="memberDob"></span></div>
+                            <div class="detail-item"><span class="detail-label">Age</span> <span class="detail-value" id="memberAge"></span></div>
+                            <div class="detail-item"><span class="detail-label">Father's/Spouse's Name</span> <span class="detail-value" id="memberGuardianName"></span></div>
+                            <div class="detail-item"><span class="detail-label">Date of Joining (Old Est.)</span> <span class="detail-value" id="memberDojOldEst"></span></div>
+                            <div class="detail-item"><span class="detail-label">Date of Exit (Old Est.)</span> <span class="detail-value" id="memberDoeOldEst"></span></div>
+                            <div class="detail-item"><span class="detail-label">Reason for Leaving (Old Est.)</span> <span class="detail-value" id="memberReasonLeavingOldEst"></span></div>
+                            <div class="detail-item"><span class="detail-label">Service (Old Est.)</span> <span class="detail-value" id="memberServiceOldEst"></span></div>
+                            <div class="detail-item"><span class="detail-label">Last Contribution (Old Est.)</span> <span class="detail-value" id="memberLastContribution"></span></div>
+                            <div class="detail-item"><span class="detail-label">Total EPF (Old Est.)</span> <span class="detail-value" id="memberTotalEpf"></span></div>
+                            <div class="detail-item"><span class="detail-label">Total EPS (Old Est.)</span> <span class="detail-value" id="memberTotalEps"></span></div>
+                            <div class="detail-item"><span class="detail-label">Claim Amount (Transfer)</span> <span class="detail-value" id="memberClaimAmount"></span></div>
+                            <div class="detail-item"><span class="detail-label">Past Transfers</span> <span class="detail-value" id="memberPastTransfers"></span></div>
+                            <div class="detail-item"><span class="detail-label">KYC Status</span> <span class="detail-value" id="memberKycStatus"></span></div>
+                            <div class="detail-item"><span class="detail-label">Bank A/C No. (for KYC)</span> <span class="detail-value" id="memberBankAc"></span></div>
+                            <div class="detail-item"><span class="detail-label">Nomination Status</span> <span class="detail-value" id="memberNominationStatus"></span></div>
+                            <div class="detail-item"><span class="detail-label">Previous Member IDs</span> <span class="detail-value" id="memberPreviousIds"></span></div>
                         </div>
                     </div>
 
-                    <div id="newEst" class="tab-pane hidden p-1">
-                        <h2 class="text-xl font-semibold text-gray-700 mb-4">New Establishment Details</h2>
+                    <div id="newEst" class="tab-pane hidden p-2">
+                        <h2 class="section-title">New Establishment Details</h2>
                         <div class="details-grid">
-                            <div class="detail-item"><span class="detail-label">Name:</span> <span class="detail-value" id="newEstName">Innovative Startups Co.</span></div>
-                            <div class="detail-item"><span class="detail-label">EPFO Code:</span> <span class="detail-value" id="newEstCode">MH/PUN/0098765/000</span></div>
-                            <div class="detail-item"><span class="detail-label">Age of Est.:</span> <span class="detail-value text-red-600" id="newEstAge">3 Months (Newly Registered)</span></div>
-                            <div class="detail-item"><span class="detail-label">Contribution History:</span> <span class="detail-value text-yellow-600" id="newEstContribHistory">Minimal (1 payment cycle)</span></div>
-                            <div class="detail-item"><span class="detail-label">No. of Employees:</span> <span class="detail-value" id="newEstEmployees">8</span></div>
-                            <div class="detail-item"><span class="detail-label">Industry Type:</span> <span class="detail-value" id="newEstIndustry">Consulting</span></div>
-                            <div class="detail-item"><span class="detail-label">Address Verified:</span> <span class="detail-value text-yellow-600" id="newEstAddressVerified">Pending</span></div>
-                            <div class="detail-item"><span class="detail-label">Watchlist:</span> <span class="detail-value" id="newEstWatchlist">No</span></div>
+                            <div class="detail-item"><span class="detail-label">Name</span> <span class="detail-value" id="newEstName"></span></div>
+                            <div class="detail-item"><span class="detail-label">EPFO Code</span> <span class="detail-value" id="newEstCode"></span></div>
+                            <div class="detail-item"><span class="detail-label">Date of Code Allotment</span> <span class="detail-value" id="newEstCodeAllotmentDate"></span></div>
+                            <div class="detail-item"><span class="detail-label">Age of Est.</span> <span class="detail-value" id="newEstAge"></span></div>
+                            <div class="detail-item"><span class="detail-label">Principal Employer</span> <span class="detail-value" id="newEstPrincipalEmployer"></span></div>
+                            <div class="detail-item"><span class="detail-label">Contribution History</span> <span class="detail-value" id="newEstContribHistory"></span></div>
+                            <div class="detail-item"><span class="detail-label">First ECR Filing Date</span> <span class="detail-value" id="newEstFirstEcrDate"></span></div>
+                            <div class="detail-item"><span class="detail-label">No. of Employees (First ECR)</span> <span class="detail-value" id="newEstEmployeesFirstEcr"></span></div>
+                            <div class="detail-item"><span class="detail-label">No. of Employees (Last ECR)</span> <span class="detail-value" id="newEstEmployeesLastEcr"></span></div>
+                            <div class="detail-item"><span class="detail-label">Industry Type</span> <span class="detail-value" id="newEstIndustry"></span></div>
+                            <div class="detail-item"><span class="detail-label">Address Verified</span> <span class="detail-value" id="newEstAddressVerified"></span></div>
+                            <div class="detail-item"><span class="detail-label">Watchlist Status</span> <span class="detail-value" id="newEstWatchlist"></span></div>
+                             <div class="detail-item"><span class="detail-label">Bank Account Verified</span> <span class="detail-value" id="newEstBankVerified"></span></div>
+                        </div>
+                    </div>
+                    
+                    <div id="newEstCumulative" class="tab-pane hidden p-2">
+                        <h2 class="section-title">New Establishment - Cumulative Member Data</h2>
+                        <div class="details-grid">
+                            <div class="detail-item"><span class="detail-label">Total Recent Transfers In</span> <span class="detail-value" id="newEstTotalTransfersIn"></span></div>
+                            <div class="detail-item"><span class="detail-label">Avg. Age of Transferees</span> <span class="detail-value" id="newEstAvgAgeTransferees"></span></div>
+                            <div class="detail-item"><span class="detail-label">Avg. Service (Prev. Est)</span> <span class="detail-value" id="newEstAvgServicePrev"></span></div>
+                            <div class="detail-item"><span class="detail-label">Common Source Est. Count</span> <span class="detail-value" id="newEstCommonSource"></span></div>
+                            <div class="detail-item"><span class="detail-label">% Workforce from Transfers</span> <span class="detail-value" id="newEstPercentWorkforceTransfers"></span></div>
+                            <div class="detail-item"><span class="detail-label">Concentration Ratio (Transfers/Total Emp)</span> <span class="detail-value" id="newEstTransferConcentration"></span></div>
                         </div>
                     </div>
 
-                    <div id="newEstCumulative" class="tab-pane hidden p-1">
-                        <h2 class="text-xl font-semibold text-gray-700 mb-4">New Establishment - Cumulative Member Data</h2>
-                        <div class="details-grid">
-                            <div class="detail-item"><span class="detail-label">Total Recent Transfers In:</span> <span class="detail-value text-red-600" id="newEstTotalTransfersIn">6 (in last 1 month)</span></div>
-                            <div class="detail-item"><span class="detail-label">Avg. Age of Transferees:</span> <span class="detail-value" id="newEstAvgAgeTransferees">30 Years</span></div>
-                            <div class="detail-item"><span class="detail-label">Avg. Service (Prev. Est):</span> <span class="detail-value" id="newEstAvgServicePrev">2.5 Years</span></div>
-                            <div class="detail-item"><span class="detail-label">Common Source Est.:</span> <span class="detail-value text-red-600" id="newEstCommonSource">Yes (3 from 'Alpha Solutions')</span></div>
-                            <div class="detail-item"><span class="detail-label">% Workforce from Transfers:</span> <span class="detail-value text-red-600" id="newEstPercentWorkforceTransfers">75% (6 out of 8)</span></div>
-                        </div>
-                    </div>
-                     <div id="flags" class="tab-pane hidden p-1">
-                        <h2 class="text-xl font-semibold text-gray-700 mb-4">Key Anomalies & Flags Identified</h2>
-                        <ul id="anomaliesList" class="list-disc pl-5 space-y-2 text-gray-700">
-                            </ul>
+                    <div id="flags" class="tab-pane hidden p-2">
+                        <h2 class="section-title">Key Anomalies & Flags Identified</h2>
+                        <ul id="anomaliesList" class="list-disc pl-6 space-y-2.5 text-stone-700 text-sm">
+                        </ul>
                     </div>
                 </div>
             </div>
 
             <div class="lg:w-1/4 space-y-6">
-                <div id="riskScoreCard" class="p-6 rounded-lg border-2 shadow-md"> <h3 class="text-lg font-semibold mb-1">Overall Risk Score</h3>
-                    <p id="riskScoreValue" class="text-5xl font-bold mb-2">--</p>
-                    <p id="riskLevel" class="text-xl font-semibold mb-4">Calculating...</p>
-                    <div class="text-xs">
-                        <p><span class="font-semibold">Model Version:</span> <span id="modelVersion">RS_v1.2</span></p>
-                        <p><span class="font-semibold">Scored On:</span> <span id="scoredDate">29-May-2025</span></p>
+                <div id="riskScoreCard" class="sidebar-card p-6 rounded-lg border-2 shadow-lg">
+                    <h3 class="text-lg font-semibold mb-1 text-center text-stone-700">Overall Risk Score</h3>
+                    <p id="riskScoreValue" class="text-6xl font-bold mb-2 text-center">--</p>
+                    <p id="riskLevel" class="text-2xl font-semibold mb-4 text-center">Calculating...</p>
+                    <div class="text-xs text-stone-500 text-center space-y-0.5">
+                        <p><i class="fas fa-cogs mr-1"></i>Model: <span id="modelVersion" class="font-medium text-stone-700"></span></p>
+                        <p><i class="fas fa-calendar-alt mr-1"></i>Scored: <span id="scoredDate" class="font-medium text-stone-700"></span></p>
                     </div>
                 </div>
 
-                <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                    <h3 class="text-md font-semibold text-gray-800 mb-3">Key Contributing Factors:</h3>
-                    <ul id="keyRiskFactorsList" class="list-disc pl-5 space-y-1 text-sm text-gray-600">
-                        </ul>
+                <div class="sidebar-card">
+                    <h3 class="text-base font-semibold text-stone-800 mb-3 pb-2 border-b border-stone-200">Key Contributing Factors</h3>
+                    <ul id="keyRiskFactorsList" class="list-disc pl-5 space-y-1.5 text-sm text-stone-600">
+                    </ul>
+                </div>
+                
+                <div class="sidebar-card">
+                    <h3 class="text-base font-semibold text-stone-800 mb-3 pb-2 border-b border-stone-200">Verifier Comments</h3>
+                    <textarea id="verifierComments" rows="4" class="w-full p-2.5 border border-stone-300 rounded-md focus:ring-2 focus:ring-indigo-300 focus:border-indigo-500 text-sm shadow-sm" placeholder="Enter comments for audit trail..."></textarea>
                 </div>
 
-                <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                    <h3 class="text-md font-semibold text-gray-800 mb-3">Actions</h3>
-                    <div class="space-y-2">
-                        <button class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition duration-150 ease-in-out">
-                            Approve Claim
-                        </button>
-                        <button class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded-lg transition duration-150 ease-in-out">
-                            Send for Review
-                        </button>
-                        <button class="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition duration-150 ease-in-out">
-                            Reject Claim
-                        </button>
-                         <button class="w-full mt-2 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition duration-150 ease-in-out">
-                            Request More Info
-                        </button>
+                <div class="sidebar-card">
+                    <h3 class="text-base font-semibold text-stone-800 mb-3 pb-2 border-b border-stone-200">Actions</h3>
+                    <div class="action-buttons-grid">
+                        <button class="action-button bg-green-600 hover:bg-green-700 text-white"><i class="fas fa-check-circle mr-1.5"></i>Approve</button>
+                        <button class="action-button bg-yellow-500 hover:bg-yellow-600 text-white"><i class="fas fa-user-shield mr-1.5"></i>Send for Review</button>
+                        <button class="action-button bg-red-600 hover:bg-red-700 text-white"><i class="fas fa-times-circle mr-1.5"></i>Reject</button>
+                        <button class="action-button bg-blue-600 hover:bg-blue-700 text-white"><i class="fas fa-info-circle mr-1.5"></i>Request More Info</button>
+                        <button class="action-button bg-purple-600 hover:bg-purple-700 text-white"><i class="fas fa-search-location mr-1.5"></i>Field Inquiry</button>
+                        <button class="action-button bg-gray-700 hover:bg-gray-800 text-white"><i class="fas fa-shield-halved mr-1.5"></i>Refer Vigilance</button>
                     </div>
                 </div>
             </div>
         </div>
+        <footer class="mt-10 pt-6 border-t border-stone-200 text-center text-xs text-stone-500">
+            <p>&copy; <span id="currentYear"></span> Employees' Provident Fund Organisation, India. All rights reserved.</p>
+            <p>This tool is for internal analysis purposes only. Decisions should be based on comprehensive verification.</p>
+        </footer>
     </div>
 
     <script>
-        // DOM Elements
-        const tabs = document.querySelectorAll('.tab-button');
-        const panes = document.querySelectorAll('.tab-pane');
-        const riskScoreCard = document.getElementById('riskScoreCard');
-        const riskScoreValueEl = document.getElementById('riskScoreValue');
-        const riskLevelEl = document.getElementById('riskLevel');
-        const keyRiskFactorsList = document.getElementById('keyRiskFactorsList');
-        const anomaliesListEl = document.getElementById('anomaliesList');
-
-        // --- Data for the current claim (This would typically come from a backend API) ---
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
         const currentClaimData = {
             claimId: "TCL0012345678",
-            riskProfile: "high", // Can be "low", "medium", or "high"
+            riskProfile: "high", 
             riskScore: 82,
             riskLevel: "High Risk",
             keyFactors: [
-                { text: "New Est. Age: Very Young", severity: "high" },
-                { text: "High % Transferees in New Est.", severity: "high" },
+                { text: "New Est. Age: Very Young (3 Months)", severity: "high" },
+                { text: "High % Transferees in New Est. (75%)", severity: "high" },
                 { text: "New Est. Address Unverified", severity: "medium" },
-                { text: "Common Source Est. for Transfers", severity: "low" } // Example: low severity factor
+                { text: "Common Source Est. for Transfers (Alpha Solutions)", severity: "high" },
+                { text: "Claim filed shortly after joining New Est.", severity: "medium"},
+                { text: "Old Est. has minor compliance flags.", severity: "low" }
             ],
             anomalies: [
                 { text: "New establishment is very young (3 months).", severity: "high" },
@@ -223,188 +303,244 @@
                 { text: "New establishment address verification pending.", severity: "medium" },
                 { text: "Last contribution by member was 4 months ago (borderline, monitor).", severity: "low" },
                 { text: "Multiple members (3) transferred from 'Alpha Solutions' to this new establishment recently.", severity: "high" },
-                { text: "Claim amount is moderately high for service length.", severity: "low" }
+                { text: "Claim amount (₹ 1,50,000) is moderately high for service length (3 Yrs 2 Mos).", severity: "low" },
+                { text: "Date of Exit from Old Est. (20-Jan-2024) and Date of Joining New Est. (22-Jan-2024) has minimal gap.", severity: "low"},
+                { text: "Member's KYC (Bank A/C) was updated 15 days prior to transfer claim.", severity: "medium"},
+                { text: "New establishment shows sudden spike in employee count from 2 to 8 in last ECR, coinciding with transfers.", severity: "high"},
+                { text: "Old establishment ('Global Tech Solutions') has a pending minor query on ECR for Q4 2023.", severity: "low"},
+                { text: "Claim filed 5 days after joining new establishment.", severity: "high"},
+                { text: "Mismatch in Father's Name (UAN: 'Suresh Kumar', Claim Form: 'Suresh K.' - minor).", severity: "low"}
             ],
-            modelVersion: "RS_v1.3",
-            scoredDate: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric'}), // Formats as DD-Mon-YYYY
-            
-            // Detailed data for tabs (example structure)
+            modelVersion: "RS_v1.4.2", 
+            scoredDate: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric'}),
+
             oldEstablishment: {
                 name: "Global Tech Solutions Pvt. Ltd.",
                 epfoCode: "DL/GGN/0012345/000",
+                codeAllotmentDate: "15-Mar-2009",
                 age: "15 Years",
-                complianceHistory: "Good (Regular Payments)",
+                principalEmployer: "Self (Prop. Mr. Anil Verma)",
+                complianceHistory: "Generally Good (Regular Payments)",
                 complianceClass: "text-green-600",
+                defaultHistory: "Minor delay in Q2 2021, rectified.",
+                defaultHistoryClass: "text-yellow-600",
+                inspectionHistory: "Last Inspected: 10-Jul-2022, Outcome: Clean",
+                inspectionHistoryClass: "text-green-600",
                 recentTransferClaims: "5 in last 3 months",
-                industryType: "IT Services",
+                industryType: "IT Services & Consulting",
+                exemptionStatus: "Unexempted",
                 status: "Active"
             },
             memberAccount: {
-                name: "Rajesh Kumar",
+                name: "Rajesh Kumar Sharma",
                 uan: "100987654321",
-                claimAmount: "₹ 1,50,000",
+                dob: "10-May-1992",
                 age: "32 Years",
+                guardianName: "Suresh Kumar Sharma (Father)",
+                dojOldEst: "01-Dec-2020",
+                doeOldEst: "20-Jan-2024",
+                reasonLeavingOldEst: "Resigned - Better Prospects",
                 serviceOldEst: "3 Years 2 Months",
-                lastContribution: "25-Jan-2024 (4 months ago)",
-                pastTransfers: "1 (5 years ago)",
+                lastContribution: "Jan-2024 (Contr. for Jan recd. 15-Feb-2024)",
+                totalEpf: "₹ 1,20,000",
+                totalEps: "₹ 30,000",
+                claimAmount: "₹ 1,50,000",
+                pastTransfers: "1 (5 years ago, from Acme Corp to Global Tech)",
                 kycStatus: "Verified (Aadhaar, PAN, Bank)",
                 kycClass: "text-green-600",
-                bankAc: "******1234 (SBI)"
+                bankAc: "******1234 (SBI, Updated: 10-May-2024)",
+                nominationStatus: "Filed (e-Nomination, Smt. Priya Sharma - Spouse)",
+                previousIds: "MH/PUN/0054321/000/0000001 (Acme Corp)"
             },
             newEstablishment: {
-                name: "Innovative Startups Co.",
+                name: "Innovative AI Startups Co.",
                 epfoCode: "MH/PUN/0098765/000",
+                codeAllotmentDate: "01-Mar-2024",
                 age: "3 Months (Newly Registered)",
                 ageClass: "text-red-600",
-                contribHistory: "Minimal (1 payment cycle)",
+                principalEmployer: "Mr. Alok Sharma (Director)",
+                contribHistory: "Minimal (1 payment cycle for Mar-2024)",
                 contribHistoryClass: "text-yellow-600",
-                employees: "8",
-                industryType: "Consulting",
-                addressVerified: "Pending",
+                firstEcrDate: "15-Apr-2024 (for Mar-2024)",
+                employeesFirstEcr: "2",
+                employeesLastEcr: "8 (for Apr-2024, filed 15-May-2024)",
+                industryType: "AI & ML Solutions",
+                addressVerified: "Pending (Physical verification scheduled)",
                 addressVerifiedClass: "text-yellow-600",
-                watchlist: "No"
+                watchlist: "No",
+                bankVerified: "Yes (ICICI Bank, Current A/C - Verified)"
             },
             newEstablishmentCumulative: {
-                totalRecentTransfersIn: "6 (in last 1 month)",
+                totalRecentTransfersIn: "6 (in last 1 month, including current claim)",
                 totalRecentTransfersInClass: "text-red-600",
                 avgAgeTransferees: "30 Years",
                 avgServicePrevEst: "2.5 Years",
-                commonSourceEst: "Yes (3 from 'Alpha Solutions')",
+                commonSourceEst: "Yes (3 from 'Alpha Solutions', 1 from 'Beta Innovations')",
                 commonSourceEstClass: "text-red-600",
-                percentWorkforceFromTransfers: "75% (6 out of 8)",
-                percentWorkforceFromTransfersClass: "text-red-600"
+                percentWorkforceFromTransfers: "75% (6 out of 8 current employees)",
+                percentWorkforceFromTransfersClass: "text-red-600",
+                transferConcentration: "0.75"
             }
         };
 
-        // Function to populate data into the UI fields
         function populateClaimData(data) {
             document.getElementById('claimIdDisplay').textContent = data.claimId;
             document.getElementById('modelVersion').textContent = data.modelVersion;
             document.getElementById('scoredDate').textContent = data.scoredDate;
 
-            // Old Establishment
-            document.getElementById('oldEstName').textContent = data.oldEstablishment.name;
-            document.getElementById('oldEstCode').textContent = data.oldEstablishment.epfoCode;
-            document.getElementById('oldEstAge').textContent = data.oldEstablishment.age;
-            document.getElementById('oldEstCompliance').textContent = data.oldEstablishment.complianceHistory;
-            document.getElementById('oldEstCompliance').className = `detail-value ${data.oldEstablishment.complianceClass || ''}`;
-            document.getElementById('oldEstRecentTransfers').textContent = data.oldEstablishment.recentTransferClaims;
-            document.getElementById('oldEstIndustry').textContent = data.oldEstablishment.industryType;
-            document.getElementById('oldEstStatus').textContent = data.oldEstablishment.status;
+            const oldEst = data.oldEstablishment;
+            document.getElementById('oldEstName').textContent = oldEst.name;
+            document.getElementById('oldEstCode').textContent = oldEst.epfoCode;
+            document.getElementById('oldEstCodeAllotmentDate').textContent = oldEst.codeAllotmentDate;
+            document.getElementById('oldEstAge').textContent = oldEst.age;
+            document.getElementById('oldEstPrincipalEmployer').textContent = oldEst.principalEmployer;
+            document.getElementById('oldEstCompliance').textContent = oldEst.complianceHistory;
+            document.getElementById('oldEstCompliance').className = `detail-value ${oldEst.complianceClass || 'text-stone-700'}`;
+            document.getElementById('oldEstDefaultHistory').textContent = oldEst.defaultHistory;
+            document.getElementById('oldEstDefaultHistory').className = `detail-value ${oldEst.defaultHistoryClass || 'text-stone-700'}`;
+            document.getElementById('oldEstInspectionHistory').textContent = oldEst.inspectionHistory;
+            document.getElementById('oldEstInspectionHistory').className = `detail-value ${oldEst.inspectionHistoryClass || 'text-stone-700'}`;
+            document.getElementById('oldEstRecentTransfers').textContent = oldEst.recentTransferClaims;
+            document.getElementById('oldEstIndustry').textContent = oldEst.industryType;
+            document.getElementById('oldEstExemptionStatus').textContent = oldEst.exemptionStatus;
+            document.getElementById('oldEstStatus').textContent = oldEst.status;
+
+            const member = data.memberAccount;
+            document.getElementById('memberName').textContent = member.name;
+            document.getElementById('memberUan').textContent = member.uan;
+            document.getElementById('memberDob').textContent = member.dob;
+            document.getElementById('memberAge').textContent = member.age;
+            document.getElementById('memberGuardianName').textContent = member.guardianName;
+            document.getElementById('memberDojOldEst').textContent = member.dojOldEst;
+            document.getElementById('memberDoeOldEst').textContent = member.doeOldEst;
+            document.getElementById('memberReasonLeavingOldEst').textContent = member.reasonLeavingOldEst;
+            document.getElementById('memberServiceOldEst').textContent = member.serviceOldEst;
+            document.getElementById('memberLastContribution').textContent = member.lastContribution;
+            document.getElementById('memberTotalEpf').textContent = member.totalEpf;
+            document.getElementById('memberTotalEps').textContent = member.totalEps;
+            document.getElementById('memberClaimAmount').textContent = member.claimAmount;
+            document.getElementById('memberPastTransfers').textContent = member.pastTransfers;
+            document.getElementById('memberKycStatus').textContent = member.kycStatus;
+            document.getElementById('memberKycStatus').className = `detail-value ${member.kycClass || 'text-stone-700'}`;
+            document.getElementById('memberBankAc').textContent = member.bankAc;
+            document.getElementById('memberNominationStatus').textContent = member.nominationStatus;
+            document.getElementById('memberPreviousIds').textContent = member.previousIds;
             
-            // Member Account
-            document.getElementById('memberName').textContent = data.memberAccount.name;
-            document.getElementById('memberUan').textContent = data.memberAccount.uan;
-            document.getElementById('memberClaimAmount').textContent = data.memberAccount.claimAmount;
-            document.getElementById('memberAge').textContent = data.memberAccount.age;
-            document.getElementById('memberServiceOldEst').textContent = data.memberAccount.serviceOldEst;
-            document.getElementById('memberLastContribution').textContent = data.memberAccount.lastContribution;
-            document.getElementById('memberPastTransfers').textContent = data.memberAccount.pastTransfers;
-            document.getElementById('memberKycStatus').textContent = data.memberAccount.kycStatus;
-            document.getElementById('memberKycStatus').className = `detail-value ${data.memberAccount.kycClass || ''}`;
-            document.getElementById('memberBankAc').textContent = data.memberAccount.bankAc;
+            const newEst = data.newEstablishment;
+            document.getElementById('newEstName').textContent = newEst.name;
+            document.getElementById('newEstCode').textContent = newEst.epfoCode;
+            document.getElementById('newEstCodeAllotmentDate').textContent = newEst.codeAllotmentDate;
+            document.getElementById('newEstAge').textContent = newEst.age;
+            document.getElementById('newEstAge').className = `detail-value ${newEst.ageClass || 'text-stone-700'}`;
+            document.getElementById('newEstPrincipalEmployer').textContent = newEst.principalEmployer;
+            document.getElementById('newEstContribHistory').textContent = newEst.contribHistory;
+            document.getElementById('newEstContribHistory').className = `detail-value ${newEst.contribHistoryClass || 'text-stone-700'}`;
+            document.getElementById('newEstFirstEcrDate').textContent = newEst.firstEcrDate;
+            document.getElementById('newEstEmployeesFirstEcr').textContent = newEst.employeesFirstEcr;
+            document.getElementById('newEstEmployeesLastEcr').textContent = newEst.employeesLastEcr;
+            document.getElementById('newEstIndustry').textContent = newEst.industryType;
+            document.getElementById('newEstAddressVerified').textContent = newEst.addressVerified;
+            document.getElementById('newEstAddressVerified').className = `detail-value ${newEst.addressVerifiedClass || 'text-stone-700'}`;
+            document.getElementById('newEstWatchlist').textContent = newEst.watchlist;
+            document.getElementById('newEstBankVerified').textContent = newEst.bankVerified;
 
-            // New Establishment
-            document.getElementById('newEstName').textContent = data.newEstablishment.name;
-            document.getElementById('newEstCode').textContent = data.newEstablishment.epfoCode;
-            document.getElementById('newEstAge').textContent = data.newEstablishment.age;
-            document.getElementById('newEstAge').className = `detail-value ${data.newEstablishment.ageClass || ''}`;
-            document.getElementById('newEstContribHistory').textContent = data.newEstablishment.contribHistory;
-            document.getElementById('newEstContribHistory').className = `detail-value ${data.newEstablishment.contribHistoryClass || ''}`;
-            document.getElementById('newEstEmployees').textContent = data.newEstablishment.employees;
-            document.getElementById('newEstIndustry').textContent = data.newEstablishment.industryType;
-            document.getElementById('newEstAddressVerified').textContent = data.newEstablishment.addressVerified;
-            document.getElementById('newEstAddressVerified').className = `detail-value ${data.newEstablishment.addressVerifiedClass || ''}`;
-            document.getElementById('newEstWatchlist').textContent = data.newEstablishment.watchlist;
-
-            // New Establishment Cumulative
-            document.getElementById('newEstTotalTransfersIn').textContent = data.newEstablishmentCumulative.totalRecentTransfersIn;
-            document.getElementById('newEstTotalTransfersIn').className = `detail-value ${data.newEstablishmentCumulative.totalRecentTransfersInClass || ''}`;
-            document.getElementById('newEstAvgAgeTransferees').textContent = data.newEstablishmentCumulative.avgAgeTransferees;
-            document.getElementById('newEstAvgServicePrev').textContent = data.newEstablishmentCumulative.avgServicePrevEst;
-            document.getElementById('newEstCommonSource').textContent = data.newEstablishmentCumulative.commonSourceEst;
-            document.getElementById('newEstCommonSource').className = `detail-value ${data.newEstablishmentCumulative.commonSourceEstClass || ''}`;
-            document.getElementById('newEstPercentWorkforceTransfers').textContent = data.newEstablishmentCumulative.percentWorkforceFromTransfers;
-            document.getElementById('newEstPercentWorkforceTransfers').className = `detail-value ${data.newEstablishmentCumulative.percentWorkforceFromTransfersClass || ''}`;
+            const newEstCum = data.newEstablishmentCumulative;
+            document.getElementById('newEstTotalTransfersIn').textContent = newEstCum.totalRecentTransfersIn;
+            document.getElementById('newEstTotalTransfersIn').className = `detail-value ${newEstCum.totalRecentTransfersInClass || 'text-stone-700'}`;
+            document.getElementById('newEstAvgAgeTransferees').textContent = newEstCum.avgAgeTransferees;
+            document.getElementById('newEstAvgServicePrev').textContent = newEstCum.avgServicePrevEst;
+            document.getElementById('newEstCommonSource').textContent = newEstCum.commonSourceEst;
+            document.getElementById('newEstCommonSource').className = `detail-value ${newEstCum.commonSourceEstClass || 'text-stone-700'}`;
+            document.getElementById('newEstPercentWorkforceTransfers').textContent = newEstCum.percentWorkforceFromTransfers;
+            document.getElementById('newEstPercentWorkforceTransfers').className = `detail-value ${newEstCum.percentWorkforceFromTransfersClass || 'text-stone-700'}`;
+            document.getElementById('newEstTransferConcentration').textContent = newEstCum.transferConcentration;
         }
 
-
-        // Function to update risk display (called once on load)
         function displayOverallRisk(claim) {
+            const riskScoreValueEl = document.getElementById('riskScoreValue');
+            const riskLevelEl = document.getElementById('riskLevel');
+            const riskScoreCard = document.getElementById('riskScoreCard');
+            const keyRiskFactorsList = document.getElementById('keyRiskFactorsList');
+            const anomaliesListEl = document.getElementById('anomaliesList');
+
             riskScoreValueEl.textContent = claim.riskScore;
             riskLevelEl.textContent = claim.riskLevel;
-            
-            // Set card class based on risk profile
-            riskScoreCard.classList.remove('risk-score-low', 'risk-score-medium', 'risk-score-high');
-            if (claim.riskProfile === "low") riskScoreCard.classList.add('risk-score-low');
-            else if (claim.riskProfile === "medium") riskScoreCard.classList.add('risk-score-medium');
-            else if (claim.riskProfile === "high") riskScoreCard.classList.add('risk-score-high');
 
-            // Populate Key Risk Factors
-            keyRiskFactorsList.innerHTML = ''; // Clear previous factors
+            riskScoreCard.classList.remove('risk-score-low', 'risk-score-medium', 'risk-score-high', 'border-green-300', 'border-orange-300', 'border-red-400');
+            riskLevelEl.classList.remove('text-green-700', 'text-orange-700', 'text-red-700');
+            
+            if (claim.riskProfile === "low") {
+                riskScoreCard.classList.add('risk-score-low', 'border-green-300');
+                riskLevelEl.classList.add('text-green-700');
+            } else if (claim.riskProfile === "medium") {
+                riskScoreCard.classList.add('risk-score-medium', 'border-orange-300');
+                riskLevelEl.classList.add('text-orange-700');
+            } else if (claim.riskProfile === "high") {
+                riskScoreCard.classList.add('risk-score-high', 'border-red-400');
+                riskLevelEl.classList.add('text-red-700');
+            }
+            
+            keyRiskFactorsList.innerHTML = ''; 
             claim.keyFactors.forEach(factor => {
                 const li = document.createElement('li');
-                if (factor.severity === 'high') li.classList.add('text-red-500');
-                else if (factor.severity === 'medium') li.classList.add('text-orange-500');
-                // else 'low' severity factors get default text color
-                li.textContent = factor.text;
+                let iconClass = 'fas fa-info-circle text-gray-500';
+                if (factor.severity === 'high') iconClass = 'fas fa-exclamation-triangle text-red-500';
+                else if (factor.severity === 'medium') iconClass = 'fas fa-exclamation-circle text-orange-500';
+                
+                li.innerHTML = `<i class="${iconClass} mr-2"></i>${factor.text}`;
                 keyRiskFactorsList.appendChild(li);
             });
 
-            // Populate Anomalies/Flags tab
             anomaliesListEl.innerHTML = '';
             claim.anomalies.forEach(anomaly => {
                 const li = document.createElement('li');
-                 if (anomaly.severity === 'high') li.classList.add('text-red-600', 'font-medium');
-                else if (anomaly.severity === 'medium') li.classList.add('text-yellow-600', 'font-medium');
-                // else 'low' severity anomalies get default text color and font weight
-                li.textContent = anomaly.text;
+                let severityClass = 'text-stone-700'; 
+                let icon = 'fa-regular fa-circle-check text-green-500';
+
+                if (anomaly.severity === 'high') {
+                    severityClass = 'text-red-600 font-medium';
+                    icon = 'fa-solid fa-radiation text-red-600';
+                } else if (anomaly.severity === 'medium') {
+                    severityClass = 'text-orange-600 font-medium';
+                    icon = 'fa-solid fa-triangle-exclamation text-orange-600';
+                } else { 
+                     icon = 'fa-solid fa-circle-info text-blue-500';
+                }
+                li.className = severityClass;
+                li.innerHTML = `<i class="${icon} mr-2.5 opacity-80"></i>${anomaly.text}`;
                 anomaliesListEl.appendChild(li);
             });
         }
 
-        // Tab switching logic
-        tabs.forEach(tab => {
+        document.querySelectorAll('.tab-button').forEach(tab => {
             tab.addEventListener('click', () => {
-                // Deactivate all tabs and panes
-                tabs.forEach(t => {
+                document.querySelectorAll('.tab-button').forEach(t => {
                     t.classList.remove('active');
-                    // More specific class removal and addition for better style management
-                    t.classList.remove('border-indigo-600', 'text-indigo-600', 'bg-indigo-50');
-                    t.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
                 });
-                panes.forEach(pane => {
+                document.querySelectorAll('.tab-pane').forEach(pane => {
                     pane.classList.add('hidden');
+                    pane.classList.remove('active');
                 });
 
-                // Activate clicked tab and corresponding pane
                 tab.classList.add('active');
-                tab.classList.add('border-indigo-600', 'text-indigo-600', 'bg-indigo-50');
-                tab.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
-                
                 const targetPaneId = tab.getAttribute('data-tab');
                 const targetPane = document.getElementById(targetPaneId);
                 if (targetPane) {
                     targetPane.classList.remove('hidden');
+                    targetPane.classList.add('active');
                 }
-                // IMPORTANT: The risk score display is NOT updated on tab click anymore.
-                // It's set once on page load.
             });
         });
-        
-        // --- Initialize page on load ---
+                
         document.addEventListener('DOMContentLoaded', () => {
-            populateClaimData(currentClaimData); // Populate all data fields
-            displayOverallRisk(currentClaimData); // Display the static overall risk score and factors
-
-            // Ensure the first tab is correctly styled as active
-            const initialActiveTab = document.querySelector('.tab-button.active');
+            populateClaimData(currentClaimData);
+            displayOverallRisk(currentClaimData);
+            
+            const initialActiveTab = document.querySelector('.tab-button[data-tab="oldEst"]');
             if (initialActiveTab) {
-                initialActiveTab.classList.add('border-indigo-600', 'text-indigo-600', 'bg-indigo-50');
-                initialActiveTab.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+                initialActiveTab.click(); 
             }
         });
-
     </script>
 </body>
 </html>
