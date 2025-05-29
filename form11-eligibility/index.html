@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <title>Pension Contribution Eligibility Checker</title>
-    <!-- Include Bootstrap CSS -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
@@ -10,111 +9,313 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
-  </head>
-  <body>
-    <div class="container mt-5">
-      <h1 class="mb-4">Pension Contribution Eligibility Checker</h1>
-      <div id="date-of-joining-form">
-        <div class="form-group">
-          <label for="date-of-joining">Date of Joining:</label>
-          <input type="text" class="form-control datepicker" id="date-of-joining" data-provide="datepicker" data-date-format="dd-mm-yyyy" required>
+    <style>
+        /* Custom styles for better visual appeal and spacing */
+        body {
+            font-family: 'Inter', sans-serif; /* Using Inter font as per guidelines */
+            background-color: #f8f9fa; /* Light gray background */
+        }
+        .container {
+            max-width: 700px; /* Limit container width for better readability on larger screens */
+        }
+        .card {
+            border: none; /* Remove default card border */
+            border-radius: 0.75rem; /* Softer rounded corners for the card */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Subtle shadow for depth */
+        }
+        .card-header {
+            background-color: #007bff; /* Primary blue for header */
+            color: white;
+            border-bottom: none;
+            border-top-left-radius: 0.75rem;
+            border-top-right-radius: 0.75rem;
+            padding: 1rem 1.5rem;
+        }
+        .card-title {
+             margin-bottom: 0; /* Ensure title within card-header is aligned well */
+             font-weight: 500; /* Medium font weight for title */
+        }
+        .card-body {
+            padding: 2rem; /* More padding inside the card body */
+        }
+        .form-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background-color: #ffffff;
+            border-radius: 0.5rem; /* Rounded corners for form sections */
+            border: 1px solid #e9ecef; /* Light border for sections */
+        }
+        .form-section:last-of-type {
+            margin-bottom: 0;
+        }
+        .form-group label {
+            font-weight: 500; /* Slightly bolder labels */
+            color: #495057; /* Darker gray for labels */
+        }
+        .form-control {
+            border-radius: 0.375rem; /* Consistent rounded corners for inputs */
+            border: 1px solid #ced4da;
+        }
+        .form-control:focus {
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            border-radius: 0.375rem;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .btn-outline-secondary {
+            border-radius: 0.375rem;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+        }
+        .alert {
+            border-radius: 0.375rem; /* Rounded corners for alerts */
+            padding: 1rem;
+        }
+        .card-footer {
+            background-color: #f1f3f5; /* Lighter footer background */
+            border-top: 1px solid #e9ecef;
+            border-bottom-left-radius: 0.75rem;
+            border-bottom-right-radius: 0.75rem;
+            padding: 1rem 1.5rem;
+        }
+        /* Responsive adjustments */
+        @media (max-width: 576px) {
+            .card-body {
+                padding: 1.5rem;
+            }
+            .form-section {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5 mb-5">
+        <div class="card">
+            <div class="card-header">
+                <h1 class="card-title h4">EPS Pension Eligibility Checker</h1>
+            </div>
+            <div class="card-body">
+                <p class="card-text text-muted mb-4">
+                    Answer a few questions to check your indicative eligibility for pension contributions under the Employees' Pension Scheme (EPS), 1995.
+                </p>
+
+                <div id="date-of-joining-form" class="form-section">
+                    <h5 class="mb-3 font-weight-bold">Step 1: Your Date of Joining</h5>
+                    <div class="form-group">
+                        <label for="date-of-joining">Date of Joining this employment:</label>
+                        <input type="text" class="form-control datepicker" id="date-of-joining" data-provide="datepicker" data-date-format="dd-mm-yyyy" placeholder="DD-MM-YYYY" required>
+                        <small class="form-text text-muted">Select the date you joined the current establishment.</small>
+                    </div>
+                    <button type="button" class="btn btn-primary" id="date-of-joining-submit">Next <i class="fas fa-arrow-right ml-1"></i></button>
+                </div>
+
+                <div id="pension-service-form" class="form-section d-none">
+                    <h5 class="mb-3 font-weight-bold">Step 2: Previous Pension Service Status</h5>
+                    <p class="text-muted">This question is relevant as your Date of Joining is before 01-09-2014.</p>
+                    <div class="form-group">
+                        <label>Was your pension for any *previous* service (before the Date of Joining you just entered) already settled?
+                            <small class="form-text text-muted mt-1">"Settled" means you have taken a withdrawal benefit or received a scheme certificate for that prior service period.</small>
+                        </label>
+                        <div class="form-check mt-2">
+                            <input class="form-check-input" type="radio" name="pension-service-settled" id="pension-service-settled-yes" value="yes" required>
+                            <label class="form-check-label" for="pension-service-settled-yes">Yes, it was settled</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="pension-service-settled" id="pension-service-settled-no" value="no">
+                            <label class="form-check-label" for="pension-service-settled-no">No, it was not settled (or I had no previous service)</label>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary" id="pension-service-submit">Check Eligibility</button>
+                    <button type="button" class="btn btn-outline-secondary ml-2" id="back-to-doj-from-service"><i class="fas fa-arrow-left mr-1"></i>Back</button>
+                </div>
+
+                <div id="joining-salary-form" class="form-section d-none">
+                    <h5 class="mb-3 font-weight-bold">Step 2: Salary at Joining</h5>
+                     <p class="text-muted">This question is relevant as your Date of Joining is on or after 01-09-2014.</p>
+                    <div class="form-group">
+                        <label for="joining-salary">Monthly PF Wages at time of joining:</label>
+                        <div class="input-group">
+                             <div class="input-group-prepend">
+                                <span class="input-group-text">₹</span>
+                            </div>
+                            <input type="number" class="form-control" id="joining-salary" placeholder="Enter amount" min="0" required>
+                        </div>
+                        <small class="form-text text-muted mt-1">Enter your basic pay plus dearness allowance (DA) per month at the time of joining this employment. Do not enter amounts greater than 15000 if this form is shown to you for date of joining on or after 01.09.2014 and you are a new joinee to EPF scheme on or after 01.09.2014</small>
+                    </div>
+                    <button type="button" class="btn btn-primary" id="joining-salary-submit">Check Eligibility</button>
+                    <button type="button" class="btn btn-outline-secondary ml-2" id="back-to-doj-from-salary"><i class="fas fa-arrow-left mr-1"></i>Back</button>
+                </div>
+
+                <div id="result" class="mt-4 d-none">
+                    <h4 class="mb-3 font-weight-bold">Eligibility Result:</h4>
+                    <div id="result-message-container">
+                        </div>
+                    <button type="button" class="btn btn-info mt-3" id="restart-button"><i class="fas fa-redo mr-1"></i>Start Over / Check Another Scenario</button>
+                </div>
+            </div>
+            <div class="card-footer text-muted small">
+                <strong>Disclaimer:</strong> This checker provides an indication based on the information you provide and simplified common scenarios. Actual eligibility is subject to the prevailing provisions of the Employees' Pension Scheme, 1995, and verification by the Employees' Provident Fund Organisation (EPFO). Always consult official EPFO resources or personnel for definitive advice.
+            </div>
         </div>
-        <button type="submit" class="btn btn-primary" id="date-of-joining-submit">Submit</button>
-      </div>
-      <div id="pension-service-form" class="d-none">
-        <div class="form-group">
-          <label>Is your pension service settled?</label>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="pension-service-settled" id="pension-service-settled-yes" value="yes" required>
-            <label class="form-check-label" for="pension-service-settled-yes">Yes</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="pension-service-settled" id="pension-service-settled-no" value="no">
-            <label class="form-check-label" for="pension-service-settled-no">No</label>
-          </div>
-        </div>
-        <button type="submit" class="btn btn-primary" id="pension-service-submit">Submit</button>
-      </div>
-      <div id="joining-salary-form" class="d-none">
-        <div class="form-group">
-          <label for="joining-salary">Joining Salary:</label>
-          <input type="number" class="form-control" id="joining-salary" required>
-        </div>
-        <button type="submit" class="btn btn-primary" id="joining-salary-submit">Submit</button>
-      </div>
-      <div id="result" class="d-none">
-        <h2 class="mt-4" id="result-message"></h2>
-      </div>
     </div>
-    
-    
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+
     <script>
-		$(document).ready(function() {
-			// Submit date of joining form
-			function date_convert(dateString) {
-					[day, month, year] = dateString.split('-');
-					date = new Date(year, month - 1, day);
-					return date;
-			}
-			
-			$('#date-of-joining-submit').click(function() {
-			  var dateOfJoining = date_convert($('#date-of-joining').val());
-			  console.log(dateOfJoining);
-			  if (new Date(dateOfJoining) < new Date('2014-09-01')) {
-				// Show pension service form
-				$('#pension-service-form').removeClass('d-none');
-				$('#date-of-joining-form').addClass('d-none');
-			  } else {
-				// Show joining salary form
-				$('#joining-salary-form').removeClass('d-none');
-				$('#date-of-joining-form').addClass('d-none');
-				}
-			});
-			
-				// Submit pension service form
-			$('#pension-service-submit').click(function() {
-			  var pensionServiceSettled = $('input[name="pension-service-settled"]:checked').val();
-			  if (pensionServiceSettled === 'no') {
-				// Show result
-				$('#result-message').text('You are eligible for pension contribution');
-				$('#result').removeClass('d-none');
-				$('#pension-service-form').addClass('d-none');
-			  } else {
-				  // Show message and ask for earliest unsettled service
-				  $('#result-message').text('This service is settled hence not counted. Please fill the form again by entering the details of the earliest unsettled service.');
-				  $('#result').removeClass('d-none');
-				  $('#pension-service-form').addClass('d-none');
-				  $('#next-date-of-joining-form').removeClass('d-none');
-				}
-			});
+        $(document).ready(function() {
+            // Initialize datepicker
+            $('.datepicker').datepicker({
+                format: 'dd-mm-yyyy',
+                autoclose: true,
+                todayHighlight: true,
+                endDate: "0d" // Disallow future dates
+            });
 
-			// Submit joining salary form
-			$('#joining-salary-submit').click(function() {
-			  var joiningSalary = $('#joining-salary').val();
-			  if (joiningSalary < 15000) {
-				// Show result
-				$('#result-message').text('You are eligible for pension contribution');
-				$('#result').removeClass('d-none');
-				$('#joining-salary-form').addClass('d-none');
-			  } else {
-				// Show result
-				$('#result-message').text('You are not eligible for pension contribution');
-				$('#result').removeClass('d-none');
-				$('#joining-salary-form').addClass('d-none');
-			  }
-			});
-		});
-	</script>
-	
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-S5CYX1SZD6"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+            let storedDateOfJoining; // To store the date for navigation and logic
 
-  gtag('config', 'G-S5CYX1SZD6');
-</script>
+            // Function to convert DD-MM-YYYY string to Date object
+            function date_convert(dateString) {
+                if (!dateString) return null;
+                const parts = dateString.split('-');
+                if (parts.length === 3) {
+                    // Ensure parts are numbers and within valid ranges if needed (basic check here)
+                    const day = parseInt(parts[0], 10);
+                    const month = parseInt(parts[1], 10); // month is 1-indexed from input
+                    const year = parseInt(parts[2], 10);
+                    if (isNaN(day) || isNaN(month) || isNaN(year)) return null;
+                    return new Date(year, month - 1, day); // Date constructor month is 0-indexed
+                }
+                return null;
+            }
 
- </body>
+            // Function to show a specific form section and hide others
+            function showForm(formIdToShow) {
+                // Hide all primary sections first
+                $('#date-of-joining-form, #pension-service-form, #joining-salary-form, #result').addClass('d-none');
+                // Show the target section
+                if (formIdToShow) {
+                    $('#' + formIdToShow).removeClass('d-none');
+                }
+            }
+            
+            // Function to display result message in a Bootstrap alert
+            function displayResult(message, type) {
+                // Determine alert class based on type (success, warning, danger)
+                const alertClass = type === 'success' ? 'alert-success' : (type === 'warning' ? 'alert-warning' : 'alert-danger');
+                // Construct the alert HTML
+                const alertHtml = `<div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+                                      ${message}
+                                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                      </button>
+                                  </div>`;
+                $('#result-message-container').html(alertHtml); // Set the HTML of the container
+                showForm('result'); // Show the result section
+            }
+
+            // Event handler for Date of Joining submission
+            $('#date-of-joining-submit').click(function() {
+                var dateOfJoiningStr = $('#date-of-joining').val();
+                if (!dateOfJoiningStr) {
+                    // Using a custom modal or inline message instead of alert()
+                    displayResult('<strong>Error:</strong> Please select a Date of Joining. This field cannot be empty.', 'danger');
+                    $('#result').find('#restart-button').addClass('d-none'); // Hide restart if error is for first step
+                    return;
+                }
+                storedDateOfJoining = date_convert(dateOfJoiningStr);
+                
+                if (!storedDateOfJoining) {
+                     displayResult('<strong>Error:</strong> Invalid date format. Please use DD-MM-YYYY and ensure it is a valid date.', 'danger');
+                     $('#result').find('#restart-button').addClass('d-none');
+                     return;
+                }
+
+                // Benchmark date: 1st September 2014
+                var benchmarkDate = new Date(2014, 8, 1); // Month is 0-indexed (8 for September)
+
+                if (storedDateOfJoining < benchmarkDate) {
+                    showForm('pension-service-form'); // Go to pension service question
+                } else {
+                    showForm('joining-salary-form'); // Go to joining salary question
+                }
+            });
+            
+            // Event handler for Pension Service form submission
+            $('#pension-service-submit').click(function() {
+                var pensionServiceSettled = $('input[name="pension-service-settled"]:checked').val();
+                if (!pensionServiceSettled) {
+                    displayResult('<strong>Error:</strong> Please select an option regarding your previous pension service settlement.', 'danger');
+                    return;
+                }
+
+                if (pensionServiceSettled === 'no') {
+                    displayResult('<strong>Eligible (Indicative):</strong> Based on the information provided (Date of Joining before 01-09-2014 and previous pension service not settled or no previous service), you appear to be eligible for pension contribution under EPS, 1995 for this period of service. This assumes you meet other scheme conditions.', 'success');
+                } else {
+                    displayResult('<strong>Potentially Not Eligible (or Further Info Needed):</strong> Since your previous pension service was settled, eligibility for this period (joined before 01-09-2014) is typically not available based on that settled service. If you had an *earlier, unsettled* period of service, please use the "Start Over" button and enter details for that earliest unsettled service. Otherwise, you may not be eligible based on this information.', 'warning');
+                }
+            });
+
+            // Event handler for Joining Salary form submission
+            $('#joining-salary-submit').click(function() {
+                var joiningSalaryStr = $('#joining-salary').val();
+                if (joiningSalaryStr === '' || joiningSalaryStr === null) {
+                    displayResult('<strong>Error:</strong> Please enter your joining salary. This field cannot be empty.', 'danger');
+                    return;
+                }
+                var joiningSalary = parseFloat(joiningSalaryStr);
+                 if (isNaN(joiningSalary) || joiningSalary < 0) {
+                    displayResult('<strong>Error:</strong> Please enter a valid positive number for your joining salary.', 'danger');
+                    return;
+                }
+
+                // Salary threshold for EPS eligibility for new joinees on/after 01-09-2014
+                const salaryThreshold = 15000;
+
+                if (joiningSalary < salaryThreshold) {
+                    displayResult(`<strong>Eligible (Indicative):</strong> As your monthly PF wages (₹${joiningSalary.toLocaleString()}) at the time of joining (on or after 01-09-2014) were less than ₹${salaryThreshold.toLocaleString()}, you appear to be eligible for pension contribution under EPS, 1995.`, 'success');
+                } else {
+                    displayResult(`<strong>Not Eligible (Indicative):</strong> As your monthly PF wages (₹${joiningSalary.toLocaleString()}) at the time of joining (on or after 01-09-2014) were ₹${salaryThreshold.toLocaleString()} or more, you generally are not eligible for mandatory pension contribution under EPS, 1995. This applies if you are a new member of the EPS scheme from this date. If you were already an EPS member prior to 01-09-2014 with wages below the then-ceiling and continued membership, different rules might apply; consult EPFO for such specific cases.`, 'danger');
+                }
+            });
+
+            // Event handler for the "Start Over" button
+            $('#restart-button').click(function() {
+                // Clear all input fields
+                $('#date-of-joining').val('');
+                $('#joining-salary').val('');
+                $('input[name="pension-service-settled"]').prop('checked', false);
+                storedDateOfJoining = null; // Reset stored date
+                // Show the initial form
+                showForm('date-of-joining-form');
+            });
+
+            // Event handlers for "Back" buttons
+            $('#back-to-doj-from-service, #back-to-doj-from-salary').click(function() {
+                showForm('date-of-joining-form'); // Go back to the first step
+            });
+
+            // Initial setup: Show the first form section
+            showForm('date-of-joining-form');
+        });
+    </script>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-S5CYX1SZD6"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'G-S5CYX1SZD6');
+    </script>
+</body>
 </html>
