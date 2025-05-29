@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPFO Information Extraction System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F9FA; /* Light gray */
+        }
+        .header-section {
+            background: linear-gradient(to right, #059669, #3B82F6); /* Green to Blue gradient for knowledge/extraction */
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -1px rgba(0,0,0,0.05);
+        }
+        .stat-card {
+            border-left-width: 4px;
+        }
+        .stat-card-green { border-left-color: #22C55E; }
+        .stat-card-blue { border-left-color: #3B82F6; }
+        .stat-card-teal { border-left-color: #14B8A6; }
+        .stat-card-emerald { border-left-color: #10B981; }
+
+        .info-box {
+            background-color: #E6FFFA; /* Lightest teal for info */
+            border-left: 4px solid #14B8A6; /* Teal border */
+        }
+         .research-box {
+            background-color: #F0F9FF; /* Lightest sky for research focus */
+            border-left: 4px solid #0EA5E9; /* Sky border */
+        }
+        .epfo-box {
+            background-color: #EFF6FF; /* Lightest blue for EPFO focus */
+            border-left: 4px solid #3B82F6; /* Blue border */
+        }
+        .extracted-entity {
+            background-color: #E0E7FF; /* Indigo-100 */
+            color: #3730A3; /* Indigo-800 */
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.9rem; /* pill shape */
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+            border: 1px solid #C7D2FE; /* Indigo-200 */
+        }
+        .document-item {
+             border-bottom: 1px solid #E5E7EB; /* gray-200 */
+             padding-bottom: 0.75rem;
+             margin-bottom: 0.75rem;
+        }
+        .document-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        /* Custom modal styles */
+        .modal {
+            display: none; position: fixed; z-index: 1000; 
+            left: 0; top: 0; width: 100%; height: 100%;
+            overflow: auto; background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: #fefefe; margin: 10% auto; padding: 25px;
+            border: 1px solid #888; width: 80%; max-width: 700px;
+            border-radius: 0.5rem; text-align: left;
+        }
+        .modal-header { padding-bottom: 10px; border-bottom: 1px solid #eee; }
+        .modal-header h2 { margin: 0; font-size: 1.5rem; color: #333; }
+        .modal-body { padding-top:15px; padding-bottom:15px; font-size: 1rem; color: #555;}
+        .modal-footer { padding-top: 10px; border-top: 1px solid #eee; text-align: right; }
+        .modal-button {
+            background-color: #16A34A; color: white; padding: 10px 18px;
+            border: none; border-radius: 0.375rem; cursor: pointer; font-size: 0.9rem;
+        }
+        .modal-button:hover { background-color: #15803D; }
+    </style>
+</head>
+<body class="text-slate-800">
+    <div class="min-h-screen">
+        <nav class="bg-white shadow-md">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center">
+                        <i class="fas fa-file-invoice text-2xl text-green-600 mr-2"></i>
+                        <span class="font-bold text-xl text-green-700">EPFO Information<span class="text-green-500">Extractor</span></span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="text-sm text-gray-600 mr-3">Knowledge Management AI</span>
+                         <button class="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" aria-label="Help">
+                            <i class="fas fa-question-circle"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+        <div class="header-section text-white py-10 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-3xl sm:text-4xl font-bold mb-2">Intelligent Information Extraction from EPFO Documents</h1>
+                <p class="text-lg text-green-100">Automatically extracting and organizing key data from unstructured documents.</p>
+            </div>
+        </div>
+
+        <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="card stat-card stat-card-green p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Documents Processed</h3>
+                    <p id="docsProcessed" class="text-2xl font-semibold text-green-600">5.8 M</p>
+                </div>
+                <div class="card stat-card stat-card-blue p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Entities Extracted (Avg/Doc)</h3>
+                    <p id="avgEntitiesExtracted" class="text-2xl font-semibold text-blue-600">25</p>
+                </div>
+                <div class="card stat-card stat-card-teal p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Extraction Accuracy (Policy ID)</h3>
+                    <p id="extractionAccuracy" class="text-2xl font-semibold text-teal-600">97.2%</p>
+                </div>
+                <div class="card stat-card stat-card-emerald p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Time Saved (Est. Annually)</h3>
+                    <p id="timeSaved" class="text-2xl font-semibold text-emerald-600">10K+ Hrs</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="card p-6">
+                        <h2 class="text-xl font-semibold text-slate-700 mb-4 flex items-center">
+                            <i class="fas fa-file-upload mr-2 text-green-500"></i>Process Document for Information Extraction
+                        </h2>
+                        <div>
+                            <label for="documentText" class="block text-sm font-medium text-gray-700">Paste Document Text (Simulated):</label>
+                            <textarea id="documentText" rows="6" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="Paste text from a policy document, member communication, or procedural manual here..."></textarea>
+                        </div>
+                        <button onclick="extractInformation()" class="mt-3 w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-md">
+                            Extract Information
+                        </button>
+                        
+                        <div id="extractionResult" class="mt-4 p-4 bg-green-50 rounded-md hidden">
+                            <h3 class="text-md font-semibold text-green-800 mb-2">Extracted Information:</h3>
+                            <div id="extractedEntitiesContainer" class="mb-3">
+                                </div>
+                            <h4 class="text-sm font-semibold text-green-700">Summary:</h4>
+                            <p id="documentSummary" class="text-xs text-green-600">--</p>
+                            <p class="text-xs text-gray-500 mt-2">Note: This is a simulated information extraction result.</p>
+                        </div>
+                    </div>
+
+                    <div class="card p-6">
+                        <h2 class="text-xl font-semibold text-slate-700 mb-1 flex items-center">
+                            <i class="fas fa-stream mr-2 text-blue-500"></i>Recently Processed Documents (Sample)
+                        </h2>
+                        <p class="text-sm text-gray-500 mb-4">Quick view of information extracted from recent documents.</p>
+                        <div id="recentDocumentsQueue" class="space-y-2 max-h-80 overflow-y-auto">
+                            </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="card p-6 info-box">
+                        <h2 class="text-lg font-semibold text-teal-700 mb-2 flex items-center">
+                            <i class="fas fa-microchip mr-2"></i>ML Techniques for Extraction
+                        </h2>
+                        <p class="text-sm text-teal-600 mb-2">Models identify and organize key information:</p>
+                        <ul class="list-disc list-inside text-xs text-teal-600 space-y-1">
+                            <li><strong>Named Entity Recognition (NER):</strong> Identifies predefined entities like names, dates, UANs, policy numbers, monetary values.</li>
+                            <li><strong>Relation Extraction (RE):</strong> Discovers semantic relationships between entities (e.g., "Member X is associated with Policy Y").</li>
+                            <li><strong>Document Classification:</strong> Categorizes documents (e.g., claim form, policy update, internal memo).</li>
+                            <li><strong>Text Summarization:</strong> Generates concise summaries of long documents.</li>
+                            <li><strong>Knowledge Graph Population:</strong> Structures extracted information into a queryable knowledge graph.</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card p-6">
+                        <h2 class="text-lg font-semibold text-slate-700 mb-3 flex items-center">
+                            <i class="fas fa-tags mr-2 text-emerald-500"></i>Extracted Entity Types Distribution
+                        </h2>
+                        <p class="text-sm text-gray-500 mb-3">Common types of information extracted across documents.</p>
+                        <div style="height: 280px;"><canvas id="entityTypesChart"></canvas></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="card p-6 epfo-box">
+                    <h2 class="text-xl font-semibold text-blue-700 mb-3 flex items-center"><i class="fas fa-landmark mr-2"></i>EPFO: Enhanced Access & Efficiency</h2>
+                    <ul class="list-disc list-inside space-y-2 text-sm text-blue-600">
+                        <li>Rapidly locate specific clauses, dates, or figures within lengthy documents.</li>
+                        <li>Automate data entry from forms or communications into structured databases.</li>
+                        <li>Improve consistency in interpreting policy details across departments.</li>
+                        <li>Support compliance by easily identifying relevant regulatory information.</li>
+                        <li>Facilitate faster onboarding for new staff by providing quick access to procedural knowledge.</li>
+                    </ul>
+                    <button onclick="showModal('epfoAccessModal')" class="mt-4 text-sm bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md w-full md:w-auto">View Access Benefits</button>
+                </div>
+                <div class="card p-6 research-box">
+                    <h2 class="text-xl font-semibold text-sky-700 mb-3 flex items-center"><i class="fas fa-flask mr-2"></i>Research: Advancing Document Intelligence</h2>
+                     <ul class="list-disc list-inside space-y-2 text-sm text-sky-600">
+                        <li>Develop robust NER/RE models for legal and financial documents with complex language.</li>
+                        <li>Research techniques for information extraction from scanned documents (OCR + NLP).</li>
+                        <li>Explore few-shot or zero-shot learning for extracting information about new entity types.</li>
+                        <li>Investigate methods for building and querying knowledge graphs from extracted information.</li>
+                        <li>Publish on applications of document intelligence in public sector and large enterprises.</li>
+                    </ul>
+                     <button onclick="showModal('researchDocIntelModal')" class="mt-4 text-sm bg-sky-500 hover:bg-sky-600 text-white py-2 px-4 rounded-md w-full md:w-auto">Explore Document AI Research</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="epfoAccessModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>EPFO: Benefits of Intelligent Information Extraction</h2></div>
+            <div class="modal-body">
+                <p class="mb-2">Automated information extraction significantly improves how EPFO handles its documents:</p>
+                <ul class="list-disc list-inside space-y-1 text-sm">
+                    <li><strong>Reduced Search Time:</strong> Staff can find specific pieces of information in seconds instead of manually reading through pages.</li>
+                    <li><strong>Improved Data Accuracy:</strong> Minimizes human error in data entry and interpretation.</li>
+                    <li><strong>Knowledge Management:</strong> Turns static documents into a dynamic, searchable knowledge resource.</li>
+                    <li><strong>Better Compliance Checks:</strong> Quickly verify if documents adhere to specific guidelines or contain required information.</li>
+                    <li><strong>Streamlined Reporting:</strong> Aggregate extracted data for various reports and analyses more easily.</li>
+                </ul>
+            </div>
+            <div class="modal-footer"><button onclick="closeModal('epfoAccessModal')" class="modal-button">Close</button></div>
+        </div>
+    </div>
+
+    <div id="researchDocIntelModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>Research Frontiers in Document Intelligence</h2></div>
+            <div class="modal-body">
+                <p class="mb-2">EPFO's document corpus offers a rich field for document AI research:</p>
+                <ul class="list-disc list-inside space-y-1 text-sm">
+                    <li><strong>Table Extraction and Understanding:</strong> Advanced models to accurately extract and interpret tabular data within documents.</li>
+                    <li><strong>Cross-Document Information Synthesis:</strong> Combining information from multiple related documents to answer complex queries.</li>
+                    <li><strong>Understanding Document Layout and Structure:</strong> Using visual cues along with text for more accurate extraction (Visual Document Understanding).</li>
+                    <li><strong>Handling Ambiguity and Nuance:</strong> Developing models that can better interpret context-dependent or vaguely worded information.</li>
+                    <li><strong>Continuous Learning Systems:</strong> Models that improve their extraction capabilities over time as they process more documents and receive feedback.</li>
+                </ul>
+            </div>
+            <div class="modal-footer"><button onclick="closeModal('researchDocIntelModal')" class="modal-button">Close</button></div>
+        </div>
+    </div>
+
+    <script>
+        // --- Dummy Data and Functions for Demonstration ---
+        const docExtractionData = {
+            stats: {
+                docsProcessed: "5.8 M",
+                avgEntitiesExtracted: "25",
+                extractionAccuracy: "97.2%",
+                timeSaved: "10K+ Hrs"
+            },
+            sampleProcessedDocs: [
+                { id: "DOC001", title: "Policy Circular XYZ/2024/01", date: "2024-05-15", summary: "Revision of withdrawal limits for housing advance...", entities: ["Policy ID: XYZ/2024/01", "Effective Date: 01-06-2024", "Subject: Housing Advance"] },
+                { id: "DOC002", title: "Member Communication Ref: UAN100X..", date: "2024-05-20", summary: "Query regarding claim status for medical withdrawal.", entities: ["UAN: 100XXXXXX123", "Claim Type: Medical", "Query Date: 20-05-2024"] },
+                { id: "DOC003", title: "Procedural Manual Update - Ch. 4", date: "2024-04-30", summary: "Updated steps for online KYC verification.", entities: ["Manual Version: 3.2", "Section: KYC", "Last Updated: 30-04-2024"] }
+            ],
+            entityTypesDistribution: {
+                labels: ['Policy Number', 'Effective Date', 'Member ID (UAN)', 'Claim Type', 'Monetary Value', 'Section/Clause', 'Other'],
+                data: [20, 18, 25, 15, 10, 7, 5] // Percentages
+            },
+            // Sample entities that might be extracted from a typical EPFO document
+            sampleEntitiesFromText: [
+                { type: "Policy ID", value: "CIR/HRD/2024/789" },
+                { type: "Effective Date", value: "01/07/2024" },
+                { type: "Subject", value: "Revision of guidelines for partial withdrawal" },
+                { type: "Clause", value: "Paragraph 68-J" },
+                { type: "UAN", value: "100123456789" },
+                { type: "Amount", value: "Rs. 50,000" },
+                { type: "Reason", value: "Higher Education" }
+            ]
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Populate Key Stats
+            document.getElementById('docsProcessed').textContent = docExtractionData.stats.docsProcessed;
+            document.getElementById('avgEntitiesExtracted').textContent = docExtractionData.stats.avgEntitiesExtracted;
+            document.getElementById('extractionAccuracy').textContent = docExtractionData.stats.extractionAccuracy;
+            document.getElementById('timeSaved').textContent = docExtractionData.stats.timeSaved;
+
+            // Populate Sample Recently Processed Documents
+            const recentDocsQueue = document.getElementById('recentDocumentsQueue');
+            if(recentDocsQueue){
+                docExtractionData.sampleProcessedDocs.forEach(doc => {
+                    const item = document.createElement('div');
+                    item.className = 'document-item';
+                    item.innerHTML = `
+                        <h4 class="font-semibold text-sm text-blue-700">${doc.title} <span class="text-xs text-gray-500">(${doc.date})</span></h4>
+                        <p class="text-xs text-gray-600 mt-1">${doc.summary}</p>
+                        <div class="mt-1">
+                            ${doc.entities.map(e => `<span class="extracted-entity text-xs !py-0.5 !px-1.5">${e}</span>`).join('')}
+                        </div>
+                    `;
+                    recentDocsQueue.appendChild(item);
+                });
+            }
+
+            // Chart.js - Entity Types Distribution Chart
+            const entityTypesCtx = document.getElementById('entityTypesChart');
+            if(entityTypesCtx){
+                 new Chart(entityTypesCtx.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: docExtractionData.entityTypesDistribution.labels,
+                        datasets: [{
+                            label: 'Extracted Entity Types',
+                            data: docExtractionData.entityTypesDistribution.data,
+                            backgroundColor: [
+                                'rgba(34, 197, 94, 0.7)', 'rgba(59, 130, 246, 0.7)', 
+                                'rgba(20, 184, 166, 0.7)', 'rgba(139, 92, 246, 0.7)',
+                                'rgba(245, 158, 11, 0.7)', 'rgba(239, 68, 68, 0.7)',
+                                'rgba(107, 114, 128, 0.7)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom'} }
+                    }
+                });
+            }
+        });
+
+        function extractInformation() {
+            const docText = document.getElementById('documentText').value;
+            if (!docText.trim()) {
+                // In a real app, use a nicer notification
+                const resultDiv = document.getElementById('extractionResult');
+                resultDiv.classList.remove('hidden');
+                document.getElementById('extractedEntitiesContainer').innerHTML = '<p class="text-red-500 text-xs">Please paste some document text to extract information.</p>';
+                document.getElementById('documentSummary').textContent = '--';
+                return;
+            }
+
+            // Simulate NLP Processing for Information Extraction
+            const extractedEntitiesContainer = document.getElementById('extractedEntitiesContainer');
+            const documentSummaryEl = document.getElementById('documentSummary');
+            const resultDiv = document.getElementById('extractionResult');
+            
+            extractedEntitiesContainer.innerHTML = ''; // Clear previous
+            
+            // Simulate finding entities based on keywords in the pasted text
+            const foundEntities = [];
+            docExtractionData.sampleEntitiesFromText.forEach(entityPattern => {
+                if (docText.toLowerCase().includes(entityPattern.type.toLowerCase().split(" ")[0]) || docText.includes(entityPattern.value)) {
+                     // Simplified matching for demo
+                    if (entityPattern.type === "UAN" && docText.match(/\d{12}/)) {
+                         foundEntities.push({type: entityPattern.type, value: docText.match(/\d{12}/)[0]});
+                    } else if (entityPattern.type === "Amount" && docText.match(/Rs\.?\s*[\d,]+/i)) {
+                         foundEntities.push({type: entityPattern.type, value: docText.match(/Rs\.?\s*[\d,]+/i)[0]});
+                    } else if (docText.toLowerCase().includes(entityPattern.value.toLowerCase().substring(0,5))) { // Match part of value
+                        foundEntities.push(entityPattern);
+                    }
+                }
+            });
+            // Add some generic ones if specific keywords are found
+            if(docText.toLowerCase().includes("policy") || docText.toLowerCase().includes("circular")){
+                if(!foundEntities.some(e => e.type === "Policy ID")) foundEntities.push({type: "Document Type", value: "Policy/Circular"});
+            }
+             if(docText.toLowerCase().includes("member") || docText.toLowerCase().includes("uan")){
+                if(!foundEntities.some(e => e.type === "UAN")) foundEntities.push({type: "Mention", value: "Member/UAN"});
+            }
+
+
+            if (foundEntities.length > 0) {
+                foundEntities.forEach(entity => {
+                    const entityEl = document.createElement('span');
+                    entityEl.className = 'extracted-entity';
+                    entityEl.textContent = `${entity.type}: ${entity.value}`;
+                    extractedEntitiesContainer.appendChild(entityEl);
+                });
+            } else {
+                extractedEntitiesContainer.innerHTML = '<p class="text-xs text-gray-500">No specific entities recognized based on predefined patterns.</p>';
+            }
+
+            // Simulate summarization
+            const words = docText.split(/\s+/);
+            const summary = words.slice(0, Math.min(words.length, 25)).join(' ') + (words.length > 25 ? '...' : '');
+            documentSummaryEl.textContent = summary || "Could not generate summary for short text.";
+            
+            resultDiv.classList.remove('hidden');
+        }
+
+        // Modal functions
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = "block";
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            });
+        }
+    </script>
+</body>
+</html>
