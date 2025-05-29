@@ -26,33 +26,21 @@
 
 # Possible Projects
 
-## I. Projects Focused on Improving EPFO's Internal Operations
-### 1. Fraud Detection and Anomaly Detection in Claims Processing
-### 2. Predictive Modeling for Grievance Redressal
-### 3. Automation of KYC and Data Validation
-### 4. Optimizing Contribution Collection and Reconciliation
-
----
-
-## II. Projects Focused on Member Services and Policy Insights
-
-### 1. Personalized Retirement Planning Tool
-### 2. Analysis of Withdrawal Patterns and Early Exits
-### 3. Impact Assessment of Policy Changes
-
-
-
-
-#Others 
-
-## 1. Temporal Analysis of EPFO Transactions
-## 2. Graph-Based Analysis of EPFO Member Networks
-## 3. Information Retrieval System for EPFO Records
-## 4. Knowledge Base Construction for Policy Impact Assessment
-## 5: Social Network Analysis for Fraud Detection in EPFO
-## 6: Predictive Modeling of Member Behavior in EPFO
-## 7: Automated Processing of EPFO Grievances Using NLP
-## 8: Optimization of EPFO's Data Processing Algorithms
-## 9: Statistical Analysis of EPFO Member Demographics
-## 10: Semi-Supervised Learning for EPFO Data Classification
-## 11: Graphical Model-Based Risk Assessment in EPFO
+I. Projects Focused on Improving EPFO's Internal Operations
+1. Fraud Detection and Anomaly Detection in Claims Processing
+2. Predictive Modeling for Grievance Redressal
+3. Automation of KYC and Data Validation
+4. Optimizing Contribution Collection and Reconciliation
+6. Personalized Retirement Planning Tool
+8. Impact Assessment of Policy Changes
+9. Temporal Analysis of EPFO Transactions
+10. Graph-Based Analysis of EPFO Member Networks
+11. Information Retrieval System for EPFO Records
+12. Knowledge Base Construction for Policy Impact Assessment
+13: Social Network Analysis for Fraud Detection in EPFO
+14: Predictive Modeling of Member Behavior in EPFO
+15: Automated Processing of EPFO Grievances Using NLP
+16: Optimization of EPFO's Data Processing Algorithms
+17: Statistical Analysis of EPFO Member Demographics
+18: Semi-Supervised Learning for EPFO Data Classification
+19: Graphical Model-Based Risk Assessment in EPFO
