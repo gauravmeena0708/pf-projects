@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPFO Automated KYC Verification</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .status-verified { background-color: #D1FAE5; color: #065F46; border-left-color: #10B981;}
+        .status-mismatch { background-color: #FEF3C7; color: #92400E; border-left-color: #F59E0B;}
+        .status-failed { background-color: #FEE2E2; color: #991B1B; border-left-color: #EF4444;}
+        .status-pending { background-color: #E0E7FF; color: #3730A3; border-left-color: #4F46E5;}
+
+        .document-preview {
+            border: 2px dashed #D1D5DB; /* gray-300 */
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #F9FAFB; /* gray-50 */
+        }
+        .validation-item {
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            border-width: 1px;
+            border-left-width: 4px;
+        }
+        .comparison-table td {
+            padding: 0.5rem 0.75rem;
+            vertical-align: top;
+        }
+        .ocr-text {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #F3F4F6;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-4 md:p-8">
+    <div class="container mx-auto max-w-5xl bg-white shadow-xl rounded-lg">
+        <header class="bg-indigo-700 text-white p-6 rounded-t-lg">
+            <div class="flex flex-col md:flex-row justify-between md:items-center">
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold">Automated KYC Verification & Data Validation</h1>
+                    <p id="memberUanHeader" class="text-sm text-indigo-200">UAN: 100987654321 | Member: Rakesh Sharma</p>
+                </div>
+                <div id="overallVerificationStatus" class="mt-4 md:mt-0 text-left md:text-right">
+                    <span class="text-sm text-indigo-200 block">Overall Status</span>
+                    <span id="statusText" class="text-2xl font-bold text-amber-300">PARTIAL MISMATCH</span>
+                    <span id="confidenceScore" class="text-base block">(Confidence: 75%)</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="p-6 md:p-8 space-y-6">
+            <section>
+                <h2 class="text-xl font-semibold text-slate-700 mb-3 border-b pb-2">KYC Documents Submitted</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="p-4 border rounded-lg bg-white shadow">
+                        <h3 class="font-semibold text-slate-600 mb-2 flex items-center"><i class="fas fa-id-card mr-2 text-blue-500"></i>Aadhaar Card</h3>
+                        <div class="document-preview mb-2">
+                            <img src="https://placehold.co/200x150/EBF4FF/3B82F6?text=Aadhaar+Scan" alt="Aadhaar Preview" class="max-h-full max-w-full rounded">
+                        </div>
+                        <button class="text-xs text-blue-600 hover:underline">View Full Document</button>
+                        <div id="aadhaarStatus" class="mt-2 text-sm validation-item status-verified">
+                            <i class="fas fa-check-circle mr-1"></i> Verified (OCR + Database Match)
+                        </div>
+                    </div>
+                    <div class="p-4 border rounded-lg bg-white shadow">
+                        <h3 class="font-semibold text-slate-600 mb-2 flex items-center"><i class="fas fa-address-card mr-2 text-orange-500"></i>PAN Card</h3>
+                        <div class="document-preview mb-2">
+                             <img src="https://placehold.co/200x150/FFFBEB/F59E0B?text=PAN+Scan" alt="PAN Preview" class="max-h-full max-w-full rounded">
+                        </div>
+                        <button class="text-xs text-blue-600 hover:underline">View Full Document</button>
+                        <div id="panStatus" class="mt-2 text-sm validation-item status-mismatch">
+                            <i class="fas fa-exclamation-triangle mr-1"></i> Name Mismatch (Minor)
+                        </div>
+                    </div>
+                    <div class="p-4 border rounded-lg bg-white shadow">
+                        <h3 class="font-semibold text-slate-600 mb-2 flex items-center"><i class="fas fa-university mr-2 text-green-500"></i>Bank Proof</h3>
+                        <div class="document-preview mb-2">
+                             <img src="https://placehold.co/200x150/F0FDF4/10B981?text=Bank+Proof+Scan" alt="Bank Proof Preview" class="max-h-full max-w-full rounded">
+                        </div>
+                        <button class="text-xs text-blue-600 hover:underline">View Full Document</button>
+                        <div id="bankStatus" class="mt-2 text-sm validation-item status-verified">
+                            <i class="fas fa-check-circle mr-1"></i> Verified (OCR + IFSC Validation)
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="pt-4">
+                <h2 class="text-xl font-semibold text-slate-700 mb-4 border-b pb-2">Data Extraction & Validation Details</h2>
+                
+                <div class="bg-white p-4 border rounded-lg shadow">
+                    <table class="w-full comparison-table text-sm">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="text-left font-medium text-gray-600">Parameter</th>
+                                <th class="text-left font-medium text-gray-600">EPFO Database</th>
+                                <th class="text-left font-medium text-gray-600">Document (OCR Extracted)</th>
+                                <th class="text-left font-medium text-gray-600">Validation Status & AI Insights</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr id="nameValidationRow">
+                                <td class="font-medium text-slate-700">Name</td>
+                                <td id="dbName">Rakesh Kumar Sharma</td>
+                                <td>
+                                    Aadhaar: <span class="ocr-text" id="ocrNameAadhaar">Rakesh Kumar Sharma</span><br>
+                                    PAN: <span class="ocr-text highlight-amber" id="ocrNamePan">Rakesh K Sharma</span>
+                                </td>
+                                <td id="nameValidationStatus" class="status-mismatch">
+                                    <i class="fas fa-exclamation-triangle mr-1"></i> PAN Name Mismatch (Levenshtein Distance: 2). Suggests minor variation.
+                                    <p class="text-xs text-gray-500 mt-1">NLP Match Score (Aadhaar): 100% | (PAN): 85%</p>
+                                </td>
+                            </tr>
+                            <tr id="dobValidationRow">
+                                <td class="font-medium text-slate-700">Date of Birth</td>
+                                <td id="dbDob">15-07-1985</td>
+                                <td>
+                                    Aadhaar: <span class="ocr-text" id="ocrDobAadhaar">15/07/1985</span><br>
+                                    PAN: <span class="ocr-text" id="ocrDobPan">15-JUL-1985</span>
+                                </td>
+                                <td id="dobValidationStatus" class="status-verified">
+                                    <i class="fas fa-check-circle mr-1"></i> Verified. Formats normalized.
+                                    <p class="text-xs text-gray-500 mt-1">Date Parser Confidence: 99%</p>
+                                </td>
+                            </tr>
+                            <tr id="fatherNameValidationRow">
+                                <td class="font-medium text-slate-700">Father's Name</td>
+                                <td id="dbFatherName">Suresh Sharma</td>
+                                <td>
+                                    PAN: <span class="ocr-text" id="ocrFatherNamePan">Suresh Sharma</span>
+                                </td>
+                                <td id="fatherNameValidationStatus" class="status-verified">
+                                    <i class="fas fa-check-circle mr-1"></i> Verified.
+                                </td>
+                            </tr>
+                             <tr id="bankAcValidationRow">
+                                <td class="font-medium text-slate-700">Bank A/C No.</td>
+                                <td id="dbBankAc">XXXXXXXX1234</td>
+                                <td>
+                                    Bank Proof: <span class="ocr-text" id="ocrBankAc">110022001234</span>
+                                </td>
+                                <td id="bankAcValidationStatus" class="status-verified">
+                                    <i class="fas fa-check-circle mr-1"></i> Verified (Matches after masking).
+                                    <p class="text-xs text-gray-500 mt-1">Penny Drop Verification: Success (Optional)</p>
+                                </td>
+                            </tr>
+                             <tr id="ifscValidationRow">
+                                <td class="font-medium text-slate-700">IFSC Code</td>
+                                <td id="dbIfsc">SBIN0000XXX</td>
+                                <td>
+                                    Bank Proof: <span class="ocr-text" id="ocrIfsc">SBIN0000123</span>
+                                </td>
+                                <td id="ifscValidationStatus" class="status-verified">
+                                    <i class="fas fa-check-circle mr-1"></i> Verified. Validated against RBI master.
+                                </td>
+                            </tr>
+                            <tr id="addressValidationRow">
+                                <td class="font-medium text-slate-700">Address</td>
+                                <td id="dbAddress">H.No 123, Sector 10, Delhi</td>
+                                <td>
+                                    Aadhaar: <span class="ocr-text" id="ocrAddressAadhaar">H.No 123, S-10, New Delhi</span>
+                                </td>
+                                <td id="addressValidationStatus" class="status-pending">
+                                    <i class="fas fa-question-circle mr-1"></i> Minor Variation.
+                                    <p class="text-xs text-gray-500 mt-1">Address Similarity Score: 92% (Requires Review)</p>
+                                    <p class="text-xs text-red-500 mt-1">Anomaly: Address Pincode (1100XX) differs from member's service region Pincode (Mumbai - 4000XX).</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <section class="pt-4">
+                <h2 class="text-xl font-semibold text-slate-700 mb-3 border-b pb-2">Data Quality & Anomaly Checks</h2>
+                <ul id="anomalyList" class="list-disc pl-5 space-y-2 text-sm">
+                    <li class="text-amber-600"><i class="fas fa-exclamation-triangle mr-1"></i>Minor name mismatch between PAN and Aadhaar/Database.</li>
+                    <li class="text-red-600"><i class="fas fa-map-marker-alt mr-1"></i>Address pincode on Aadhaar (Delhi) is significantly different from the member's primary establishment region (Mumbai). This could be legitimate but warrants a check.</li>
+                    <li class="text-green-600"><i class="fas fa-check mr-1"></i>No unusual activity detected in KYC update frequency.</li>
+                    <li class="text-green-600"><i class="fas fa-check mr-1"></i>Document image quality (OCR): Good (Avg. Confidence > 90%).</li>
+                </ul>
+            </section>
+
+            <section class="pt-6 border-t border-gray-300">
+                <h2 class="text-xl font-semibold text-gray-700 mb-3">System Recommendation & Actions</h2>
+                <div class="bg-blue-50 p-4 rounded-md mb-4">
+                    <p id="systemRecommendation" class="text-blue-700 font-medium"><i class="fas fa-robot mr-2"></i>System Recommendation: Approve with flag for PAN name. Manual review suggested for address anomaly if member has active service in Mumbai.</p>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <button class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-check-double mr-2"></i>Approve KYC</button>
+                    <button class="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-user-edit mr-2"></i>Send for Manual Review</button>
+                    <button class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-times-circle mr-2"></i>Reject KYC Update</button>
+                    <button class="bg-sky-500 hover:bg-sky-600 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-comment-dots mr-2"></i>Request Clarification</button>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        // --- Static Data for Demonstration (would come from backend) ---
+        const kycVerificationData = {
+            uan: "100987654321",
+            memberName: "Rakesh Sharma",
+            overallStatus: {
+                text: "PARTIAL MISMATCH",
+                confidence: 75,
+                textClass: "text-amber-300" // E.g., text-green-300, text-red-300
+            },
+            documents: {
+                aadhaar: { status: "Verified", statusClass: "status-verified", icon: "fas fa-check-circle", details: "OCR + Database Match" },
+                pan: { status: "Name Mismatch (Minor)", statusClass: "status-mismatch", icon: "fas fa-exclamation-triangle", details: "" },
+                bank: { status: "Verified", statusClass: "status-verified", icon: "fas fa-check-circle", details: "OCR + IFSC Validation" }
+            },
+            validationDetails: {
+                name: { 
+                    db: "Rakesh Kumar Sharma", 
+                    ocrAadhaar: "Rakesh Kumar Sharma", 
+                    ocrPan: "Rakesh K Sharma", ocrPanClass: "highlight-amber",
+                    statusClass: "status-mismatch", 
+                    icon: "fas fa-exclamation-triangle",
+                    aiInsight: "PAN Name Mismatch (Levenshtein Distance: 2). Suggests minor variation.",
+                    nlpScores: "NLP Match Score (Aadhaar): 100% | (PAN): 85%"
+                },
+                dob: { 
+                    db: "15-07-1985", 
+                    ocrAadhaar: "15/07/1985", 
+                    ocrPan: "15-JUL-1985",
+                    statusClass: "status-verified", 
+                    icon: "fas fa-check-circle",
+                    aiInsight: "Verified. Formats normalized.",
+                    nlpScores: "Date Parser Confidence: 99%"
+                },
+                fatherName: {
+                    db: "Suresh Sharma",
+                    ocrPan: "Suresh Sharma",
+                    statusClass: "status-verified",
+                    icon: "fas fa-check-circle",
+                    aiInsight: "Verified.",
+                },
+                bankAc: {
+                    db: "XXXXXXXX1234", // Masked for display
+                    ocr: "110022001234",
+                    statusClass: "status-verified",
+                    icon: "fas fa-check-circle",
+                    aiInsight: "Verified (Matches after masking).",
+                    nlpScores: "Penny Drop Verification: Success (Optional)"
+                },
+                ifsc: {
+                    db: "SBIN0000XXX", // Masked for display
+                    ocr: "SBIN0000123",
+                    statusClass: "status-verified",
+                    icon: "fas fa-check-circle",
+                    aiInsight: "Verified. Validated against RBI master."
+                },
+                address: {
+                    db: "H.No 123, Sector 10, Delhi",
+                    ocrAadhaar: "H.No 123, S-10, New Delhi",
+                    statusClass: "status-pending", // Example of pending/anomaly
+                    icon: "fas fa-question-circle",
+                    aiInsight: "Minor Variation.",
+                    nlpScores: "Address Similarity Score: 92% (Requires Review)",
+                    anomaly: "Anomaly: Address Pincode (1100XX) differs from member's service region Pincode (Mumbai - 4000XX)."
+                }
+            },
+            anomalies: [
+                { text: "Minor name mismatch between PAN and Aadhaar/Database.", class: "text-amber-600", icon: "fas fa-exclamation-triangle" },
+                { text: "Address pincode on Aadhaar (Delhi) is significantly different from the member's primary establishment region (Mumbai). This could be legitimate but warrants a check.", class: "text-red-600", icon: "fas fa-map-marker-alt" },
+                { text: "No unusual activity detected in KYC update frequency.", class: "text-green-600", icon: "fas fa-check" },
+                { text: "Document image quality (OCR): Good (Avg. Confidence > 90%).", class: "text-green-600", icon: "fas fa-check" }
+            ],
+            systemRecommendation: "Approve with flag for PAN name. Manual review suggested for address anomaly if member has active service in Mumbai."
+        };
+
+        // Populate Header
+        document.getElementById('memberUanHeader').textContent = `UAN: ${kycVerificationData.uan} | Member: ${kycVerificationData.memberName}`;
+        document.getElementById('statusText').textContent = kycVerificationData.overallStatus.text;
+        document.getElementById('statusText').className = `text-2xl font-bold ${kycVerificationData.overallStatus.textClass}`;
+        document.getElementById('confidenceScore').textContent = `(Confidence: ${kycVerificationData.overallStatus.confidence}%)`;
+
+        // Populate Document Status
+        Object.keys(kycVerificationData.documents).forEach(docKey => {
+            const doc = kycVerificationData.documents[docKey];
+            const el = document.getElementById(`${docKey}Status`);
+            if (el) {
+                el.className = `mt-2 text-sm validation-item ${doc.statusClass}`;
+                el.innerHTML = `<i class="${doc.icon} mr-1"></i> ${doc.status} ${doc.details ? '('+doc.details+')' : ''}`;
+            }
+        });
+
+        // Populate Validation Table
+        function populateRow(paramKey, data) {
+            const row = document.getElementById(`${paramKey}ValidationRow`);
+            if (!row) return;
+
+            document.getElementById(`db${paramKey.charAt(0).toUpperCase() + paramKey.slice(1)}`).textContent = data.db;
+            
+            if(data.ocrAadhaar) document.getElementById(`ocr${paramKey.charAt(0).toUpperCase() + paramKey.slice(1)}Aadhaar`).textContent = data.ocrAadhaar;
+            if(data.ocrPan) {
+                const panEl = document.getElementById(`ocr${paramKey.charAt(0).toUpperCase() + paramKey.slice(1)}Pan`);
+                panEl.textContent = data.ocrPan;
+                if(data.ocrPanClass) panEl.className = `ocr-text ${data.ocrPanClass}`;
+            }
+             if(data.ocr) document.getElementById(`ocr${paramKey.charAt(0).toUpperCase() + paramKey.slice(1)}`).textContent = data.ocr;
+
+
+            const statusCell = document.getElementById(`${paramKey}ValidationStatus`);
+            statusCell.className = data.statusClass;
+            let insightsHTML = `<i class="${data.icon} mr-1"></i> ${data.aiInsight}`;
+            if (data.nlpScores) insightsHTML += `<p class="text-xs text-gray-500 mt-1">${data.nlpScores}</p>`;
+            if (data.anomaly) insightsHTML += `<p class="text-xs text-red-500 mt-1">${data.anomaly}</p>`;
+            statusCell.innerHTML = insightsHTML;
+        }
+
+        populateRow('name', kycVerificationData.validationDetails.name);
+        populateRow('dob', kycVerificationData.validationDetails.dob);
+        populateRow('fatherName', kycVerificationData.validationDetails.fatherName);
+        populateRow('bankAc', kycVerificationData.validationDetails.bankAc);
+        populateRow('ifsc', kycVerificationData.validationDetails.ifsc);
+        populateRow('address', kycVerificationData.validationDetails.address);
+
+
+        // Populate Anomaly List
+        const anomalyListUl = document.getElementById('anomalyList');
+        anomalyListUl.innerHTML = ''; // Clear defaults
+        kycVerificationData.anomalies.forEach(anomaly => {
+            const li = document.createElement('li');
+            li.className = anomaly.class;
+            li.innerHTML = `<i class="${anomaly.icon} mr-1"></i> ${anomaly.text}`;
+            anomalyListUl.appendChild(li);
+        });
+        
+        // Populate System Recommendation
+        document.getElementById('systemRecommendation').innerHTML = `<i class="fas fa-robot mr-2"></i>System Recommendation: ${kycVerificationData.systemRecommendation}`;
+
+    </script>
+</body>
+</html>
