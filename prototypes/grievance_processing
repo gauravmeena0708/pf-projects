@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPFO Automated Grievance Processing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F9FA; /* Light gray */
+        }
+        .header-section {
+            background: linear-gradient(to right, #4F46E5, #06B6D4); /* Indigo to Cyan gradient for communication/efficiency */
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -1px rgba(0,0,0,0.05);
+        }
+        .stat-card {
+            border-left-width: 4px;
+        }
+        .stat-card-indigo { border-left-color: #6366F1; }
+        .stat-card-cyan { border-left-color: #06B6D4; }
+        .stat-card-sky { border-left-color: #0EA5E9; }
+        .stat-card-blue { border-left-color: #3B82F6; }
+
+        .info-box {
+            background-color: #EEF2FF; /* Light indigo for info */
+            border-left: 4px solid #6366F1; /* Indigo border */
+        }
+         .research-box {
+            background-color: #E0F2FE; /* Light sky for research focus */
+            border-left: 4px solid #0EA5E9; /* Sky border */
+        }
+        .epfo-box {
+            background-color: #F0F9FF; /* Lightest blue for EPFO focus */
+            border-left: 4px solid #3B82F6; /* Blue border */
+        }
+        .grievance-item {
+            border: 1px solid #E5E7EB; /* gray-200 */
+        }
+        .priority-high { background-color: #FEE2E2; border-left: 4px solid #EF4444; } /* Red */
+        .priority-medium { background-color: #FEF3C7; border-left: 4px solid #F59E0B; } /* Amber */
+        .priority-low { background-color: #D1FAE5; border-left: 4px solid #10B981; } /* Green */
+
+        /* Custom modal styles */
+        .modal {
+            display: none; position: fixed; z-index: 1000; 
+            left: 0; top: 0; width: 100%; height: 100%;
+            overflow: auto; background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: #fefefe; margin: 10% auto; padding: 25px;
+            border: 1px solid #888; width: 80%; max-width: 700px;
+            border-radius: 0.5rem; text-align: left;
+        }
+        .modal-header { padding-bottom: 10px; border-bottom: 1px solid #eee; }
+        .modal-header h2 { margin: 0; font-size: 1.5rem; color: #333; }
+        .modal-body { padding-top:15px; padding-bottom:15px; font-size: 1rem; color: #555;}
+        .modal-footer { padding-top: 10px; border-top: 1px solid #eee; text-align: right; }
+        .modal-button {
+            background-color: #4F46E5; color: white; padding: 10px 18px;
+            border: none; border-radius: 0.375rem; cursor: pointer; font-size: 0.9rem;
+        }
+        .modal-button:hover { background-color: #4338CA; }
+    </style>
+</head>
+<body class="text-slate-800">
+    <div class="min-h-screen">
+        <nav class="bg-white shadow-md">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center">
+                        <i class="fas fa-headset text-2xl text-indigo-600 mr-2"></i>
+                        <span class="font-bold text-xl text-indigo-700">EPFO Automated Grievance<span class="text-indigo-500">Processor</span></span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="text-sm text-gray-600 mr-3">Member Support AI</span>
+                         <button class="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" aria-label="Help">
+                            <i class="fas fa-question-circle"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+        <div class="header-section text-white py-10 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-3xl sm:text-4xl font-bold mb-2">Automated Processing of EPFO Grievances using NLP</h1>
+                <p class="text-lg text-indigo-100">Efficiently categorizing, prioritizing, and routing member concerns for faster resolution.</p>
+            </div>
+        </div>
+
+        <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="card stat-card stat-card-indigo p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Grievances Processed Today</h3>
+                    <p id="grievancesToday" class="text-2xl font-semibold text-indigo-600">1,570</p>
+                </div>
+                <div class="card stat-card stat-card-cyan p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Avg. Categorization Time</h3>
+                    <p id="avgCategorizationTime" class="text-2xl font-semibold text-cyan-600">0.05 s</p>
+                </div>
+                <div class="card stat-card stat-card-sky p-4">
+                    <h3 class="text-sm font-medium text-gray-500">NLP Classification Accuracy</h3>
+                    <p id="nlpClassAccuracy" class="text-2xl font-semibold text-sky-600">95.5%</p>
+                </div>
+                <div class="card stat-card stat-card-blue p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Avg. Reduction in TAT</h3>
+                    <p id="avgTatReduction" class="text-2xl font-semibold text-blue-600">35%</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="card p-6">
+                        <h2 class="text-xl font-semibold text-slate-700 mb-4 flex items-center">
+                            <i class="fas fa-edit mr-2 text-indigo-500"></i>Submit & Process Grievance (Simulated)
+                        </h2>
+                        <div>
+                            <label for="grievanceText" class="block text-sm font-medium text-gray-700">Enter Grievance Text:</label>
+                            <textarea id="grievanceText" rows="4" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="E.g., 'My claim for housing advance submitted on 15th May has not been processed yet. My UAN is 100XXXXXX123.'"></textarea>
+                        </div>
+                        <button onclick="processGrievance()" class="mt-3 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-md">
+                            Process with NLP
+                        </button>
+                        
+                        <div id="grievanceProcessingResult" class="mt-4 p-4 bg-indigo-50 rounded-md hidden">
+                            <h3 class="text-md font-semibold text-indigo-800">Automated Processing Result:</h3>
+                            <p class="text-sm text-indigo-700 mt-1">Category: <span id="grievanceCategory" class="font-bold">--</span></p>
+                            <p class="text-sm text-indigo-700">Priority: <span id="grievancePriority" class="font-bold">--</span></p>
+                            <p class="text-sm text-indigo-700">Suggested Action: <span id="suggestedAction" class="font-bold">--</span></p>
+                            <p class="text-xs text-gray-500 mt-2">Note: This is a simulated NLP processing result.</p>
+                        </div>
+                    </div>
+
+                    <div class="card p-6">
+                        <h2 class="text-xl font-semibold text-slate-700 mb-1 flex items-center">
+                            <i class="fas fa-tasks mr-2 text-cyan-500"></i>Live Grievance Queue (Sample)
+                        </h2>
+                        <p class="text-sm text-gray-500 mb-4">Illustrative view of incoming grievances automatically categorized and prioritized.</p>
+                        <div id="grievanceQueue" class="space-y-3 max-h-96 overflow-y-auto">
+                            </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="card p-6 info-box">
+                        <h2 class="text-lg font-semibold text-indigo-700 mb-2 flex items-center">
+                            <i class="fas fa-language mr-2"></i>NLP Techniques Used
+                        </h2>
+                        <p class="text-sm text-indigo-600 mb-2">Algorithms interpret and classify grievances:</p>
+                        <ul class="list-disc list-inside text-xs text-indigo-600 space-y-1">
+                            <li><strong>Text Preprocessing:</strong> Cleaning, tokenization, stemming/lemmatization.</li>
+                            <li><strong>Named Entity Recognition (NER):</strong> Identifying UANs, dates, claim types.</li>
+                            <li><strong>Sentiment Analysis:</strong> Gauging urgency or member frustration.</li>
+                            <li><strong>Text Classification:</strong> Assigning to predefined categories (e.g., TF-IDF + SVM, BERT-based models).</li>
+                            <li><strong>Topic Modeling:</strong> Discovering emerging themes in grievances.</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card p-6">
+                        <h2 class="text-lg font-semibold text-slate-700 mb-3 flex items-center">
+                            <i class="fas fa-chart-bar mr-2 text-sky-500"></i>Grievance Category Distribution
+                        </h2>
+                        <p class="text-sm text-gray-500 mb-3">Breakdown of grievances by automatically assigned categories.</p>
+                        <div style="height: 280px;"><canvas id="categoryDistributionChart"></canvas></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="card p-6 epfo-box">
+                    <h2 class="text-xl font-semibold text-blue-700 mb-3 flex items-center"><i class="fas fa-landmark mr-2"></i>EPFO: Improved Efficiency & Member Satisfaction</h2>
+                    <ul class="list-disc list-inside space-y-2 text-sm text-blue-600">
+                        <li>Faster routing of grievances to the correct department/officer.</li>
+                        <li>Reduced manual effort in sorting and prioritizing complaints.</li>
+                        <li>Quicker resolution times, leading to higher member satisfaction.</li>
+                        <li>Consistent handling of similar grievances.</li>
+                        <li>Identification of systemic issues based on recurring grievance themes.</li>
+                    </ul>
+                    <button onclick="showModal('epfoEfficiencyModal')" class="mt-4 text-sm bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md w-full md:w-auto">View Efficiency Gains</button>
+                </div>
+                <div class="card p-6 research-box">
+                    <h2 class="text-xl font-semibold text-sky-700 mb-3 flex items-center"><i class="fas fa-flask mr-2"></i>Research: Advancing NLP for Public Services</h2>
+                     <ul class="list-disc list-inside space-y-2 text-sm text-sky-600">
+                        <li>Develop domain-specific NLP models for EPFO terminology and grievance types.</li>
+                        <li>Research multilingual grievance processing for diverse member base.</li>
+                        <li>Explore automated response generation or summarization for common queries.</li>
+                        <li>Investigate fairness and bias in NLP models to ensure equitable grievance handling.</li>
+                        <li>Publish findings on applying NLP to improve public service delivery and citizen engagement.</li>
+                    </ul>
+                     <button onclick="showModal('researchNLPModal')" class="mt-4 text-sm bg-sky-500 hover:bg-sky-600 text-white py-2 px-4 rounded-md w-full md:w-auto">Explore NLP Research Areas</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="epfoEfficiencyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>EPFO: Efficiency Gains from Automated Grievance Processing</h2></div>
+            <div class="modal-body">
+                <p class="mb-2">Automating grievance handling with NLP brings significant operational improvements:</p>
+                <ul class="list-disc list-inside space-y-1 text-sm">
+                    <li><strong>Reduced Turnaround Time (TAT):</strong> Automatic categorization and prioritization significantly cuts down initial processing delays.</li>
+                    <li><strong>Optimized Workforce Allocation:</strong> Staff can focus on complex cases and resolution rather than manual sorting.</li>
+                    <li><strong>Scalability:</strong> Easily handle fluctuations in grievance volumes without proportional increases in manpower.</li>
+                    <li><strong>Data-Driven Insights:</strong> Analytics on categorized grievances reveal pain points and areas for systemic improvement.</li>
+                    <li><strong>Standardized Responses:</strong> For common issues, NLP can suggest standardized responses, ensuring consistency.</li>
+                </ul>
+            </div>
+            <div class="modal-footer"><button onclick="closeModal('epfoEfficiencyModal')" class="modal-button">Close</button></div>
+        </div>
+    </div>
+
+    <div id="researchNLPModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>Research Frontiers in NLP for Public Grievance Redressal</h2></div>
+            <div class="modal-body">
+                <p class="mb-2">Applying NLP to EPFO grievances opens various research avenues:</p>
+                <ul class="list-disc list-inside space-y-1 text-sm">
+                    <li><strong>Zero-shot or Few-shot Learning:</strong> Classifying new or rare grievance types with minimal training data.</li>
+                    <li><strong>Causal NLP:</strong> Understanding the root causes behind grievances from the text.</li>
+                    <li><strong>Argument Mining:</strong> Identifying key arguments and evidence within grievance submissions.</li>
+                    <li><strong>Emotion-Aware Routing:</strong> Prioritizing or routing grievances based on the detected emotional intensity.</li>
+                    <li><strong>Automated Quality Assessment:</strong> Using NLP to assess the quality and completeness of resolved grievances.</li>
+                </ul>
+            </div>
+            <div class="modal-footer"><button onclick="closeModal('researchNLPModal')" class="modal-button">Close</button></div>
+        </div>
+    </div>
+
+    <script>
+        // --- Dummy Data and Functions for Demonstration ---
+        const grievanceProcessingData = {
+            stats: {
+                grievancesToday: "1,570",
+                avgCategorizationTime: "0.05 s",
+                nlpClassAccuracy: "95.5%",
+                avgTatReduction: "35%"
+            },
+            sampleGrievances: [
+                { id: "GRV001", text: "Claim not settled for UAN 100XXXXXX789, applied on 1st June for medical emergency.", category: "Claim Settlement Delay", priority: "High", assignedTo: "Claims Dept Zone A" },
+                { id: "GRV002", text: "Unable to update bank account details on the portal. Getting error message.", category: "Portal Technical Issue", priority: "Medium", assignedTo: "IT Support Team" },
+                { id: "GRV003", text: "Request for information regarding pension calculation for service period 2005-2023.", category: "Information Request", priority: "Low", assignedTo: "Pension Cell" },
+                { id: "GRV004", text: "My employer has not deposited PF contribution for the last 3 months. Please investigate.", category: "Contribution Default", priority: "High", assignedTo: "Compliance Division" }
+            ],
+            categoryDistribution: {
+                labels: ['Claim Delay', 'Contribution Issue', 'Portal Issue', 'Info Request', 'Pension Related', 'Other'],
+                data: [35, 25, 15, 10, 8, 7] // Percentages
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Populate Key Stats
+            document.getElementById('grievancesToday').textContent = grievanceProcessingData.stats.grievancesToday;
+            document.getElementById('avgCategorizationTime').textContent = grievanceProcessingData.stats.avgCategorizationTime;
+            document.getElementById('nlpClassAccuracy').textContent = grievanceProcessingData.stats.nlpClassAccuracy;
+            document.getElementById('avgTatReduction').textContent = grievanceProcessingData.stats.avgTatReduction;
+
+            // Populate Sample Grievance Queue
+            const queueDiv = document.getElementById('grievanceQueue');
+            if(queueDiv){
+                grievanceProcessingData.sampleGrievances.forEach(g => {
+                    let priorityClass = '';
+                    if (g.priority === 'High') priorityClass = 'priority-high';
+                    else if (g.priority === 'Medium') priorityClass = 'priority-medium';
+                    else priorityClass = 'priority-low';
+
+                    const item = document.createElement('div');
+                    item.className = `grievance-item p-3 rounded-md ${priorityClass}`;
+                    item.innerHTML = `
+                        <div class="flex justify-between items-start">
+                            <h4 class="font-semibold text-sm text-slate-800">${g.id} - ${g.category}</h4>
+                            <span class="text-xs font-bold px-2 py-0.5 rounded-full 
+                                ${g.priority === 'High' ? 'bg-red-200 text-red-700' : (g.priority === 'Medium' ? 'bg-amber-200 text-amber-700' : 'bg-green-200 text-green-700')}">
+                                ${g.priority}
+                            </span>
+                        </div>
+                        <p class="text-xs text-gray-600 mt-1 truncate">${g.text}</p>
+                        <p class="text-xs text-gray-500 mt-1">Assigned to: ${g.assignedTo}</p>
+                    `;
+                    queueDiv.appendChild(item);
+                });
+            }
+
+            // Chart.js - Category Distribution Chart
+            const categoryCtx = document.getElementById('categoryDistributionChart');
+            if(categoryCtx){
+                 new Chart(categoryCtx.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: grievanceProcessingData.categoryDistribution.labels,
+                        datasets: [{
+                            label: 'Grievance Categories',
+                            data: grievanceProcessingData.categoryDistribution.data,
+                            backgroundColor: 'rgba(6, 182, 212, 0.6)', // Cyan-500
+                            borderColor: 'rgba(8, 145, 178, 1)',     // Cyan-600
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y', 
+                        responsive: true, maintainAspectRatio: false,
+                        scales: { x: { beginAtZero: true, title: { display: true, text: '% of Grievances'} } },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+        });
+
+        function processGrievance() {
+            const grievanceText = document.getElementById('grievanceText').value;
+            if (!grievanceText.trim()) {
+                alert("Please enter grievance text.");
+                return;
+            }
+
+            // Simulate NLP Processing
+            let category = "Unknown";
+            let priority = "Low";
+            let action = "Route to General Queries";
+
+            if (grievanceText.toLowerCase().includes("claim") && grievanceText.toLowerCase().includes("delay")) {
+                category = "Claim Settlement Delay";
+                priority = "High";
+                action = "Route to Senior Claims Officer; Flag for TAT monitoring.";
+            } else if (grievanceText.toLowerCase().includes("portal") || grievanceText.toLowerCase().includes("error")) {
+                category = "Portal Technical Issue";
+                priority = "Medium";
+                action = "Route to IT Support; Log error details.";
+            } else if (grievanceText.toLowerCase().includes("contribution") && grievanceText.toLowerCase().includes("not deposited")) {
+                category = "Contribution Default by Employer";
+                priority = "High";
+                action = "Route to Compliance Division; Initiate employer verification.";
+            } else if (grievanceText.toLowerCase().includes("pension") || grievanceText.toLowerCase().includes("calculation")) {
+                category = "Pension Related Query";
+                priority = "Medium";
+                action = "Route to Pension Cell; Provide standard calculation worksheet if applicable.";
+            }
+
+
+            document.getElementById('grievanceCategory').textContent = category;
+            document.getElementById('grievancePriority').textContent = priority;
+            document.getElementById('suggestedAction').textContent = action;
+            document.getElementById('grievanceProcessingResult').classList.remove('hidden');
+        }
+
+        // Modal functions
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = "block";
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            });
+        }
+    </script>
+</body>
+</html>
