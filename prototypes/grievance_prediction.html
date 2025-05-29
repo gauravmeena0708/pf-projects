@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPFO Grievance Prediction & Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .summary-card {
+            background-color: #F9FAFB; /* gray-50 */
+            border: 1px solid #E5E7EB; /* gray-200 */
+            border-left-width: 4px;
+        }
+        .summary-card-volume { border-left-color: #3B82F6; /* blue-500 */ }
+        .summary-card-category { border-left-color: #8B5CF6; /* violet-500 */ }
+        .summary-card-sentiment { border-left-color: #10B981; /* green-500 */ }
+        
+        .detail-group {
+            background-color: #F9FAFB; /* gray-50 */
+            padding: 1rem;
+            border-radius: 0.375rem; /* rounded-md */
+            border: 1px solid #E5E7EB; /* gray-200 */
+        }
+        .detail-label {
+            font-weight: 500;
+            color: #4B5563; /* gray-600 */
+            min-width: 180px;
+        }
+        .detail-value {
+            color: #1F2937; /* gray-800 */
+        }
+        .highlight-red { color: #DC2626; font-weight: 500; }
+        .highlight-amber { color: #D97706; font-weight: 500; }
+        .highlight-green { color: #16A34A; font-weight: 500; }
+
+        .collapsible-header {
+            cursor: pointer;
+            background-color: #F3F4F6; /* gray-100 */
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s ease;
+            border: 1px solid #E5E7EB; /* gray-200 */
+        }
+        .collapsible-header:hover {
+            background-color: #E5E7EB; /* gray-200 */
+        }
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+            background-color: #fff;
+            border: 1px solid #E5E7EB;
+            border-top: none;
+            border-radius: 0 0 0.375rem 0.375rem;
+            padding: 0 1rem;
+        }
+        .collapsible-content.open {
+            max-height: 1500px; /* Adjust as needed */
+            padding: 1rem;
+        }
+        .icon-indicator {
+            transition: transform 0.3s ease;
+        }
+        .icon-indicator.open {
+            transform: rotate(90deg);
+        }
+        .topic-tag {
+            background-color: #E0E7FF; /* indigo-100 */
+            color: #4338CA; /* indigo-700 */
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px; /* pill shape */
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-4 md:p-8">
+    <div class="container mx-auto max-w-6xl bg-white shadow-xl rounded-lg">
+        <header class="bg-cyan-700 text-white p-6 rounded-t-lg">
+            <div class="flex flex-col md:flex-row justify-between md:items-center">
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold">Grievance Prediction & Analysis Dashboard</h1>
+                    <p id="predictionDateHeader" class="text-sm text-cyan-200">Predictions for: June 2025 (Generated: 29-May-2025)</p>
+                </div>
+                <div class="mt-4 md:mt-0 text-left md:text-right">
+                     <span class="text-sm text-cyan-200 block">Model Version</span>
+                     <span id="modelVersion" class="text-lg font-semibold">GP_v2.1</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="p-6 md:p-8 space-y-6">
+            <section>
+                <h2 class="text-xl font-semibold text-slate-700 mb-3 border-b pb-2">Overall Prediction Summary (Next 30 Days)</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="summary-card summary-card-volume p-4 rounded-md">
+                        <div class="flex items-center text-blue-600 mb-2">
+                            <i class="fas fa-chart-line fa-lg mr-2"></i>
+                            <h3 class="font-semibold">Predicted Grievance Volume</h3>
+                        </div>
+                        <p id="predictedVolume" class="text-3xl font-bold text-slate-800">12,500 <span class="text-lg font-normal text-slate-500">(±800)</span></p>
+                        <p id="volumeTrend" class="text-sm text-green-600"><i class="fas fa-arrow-down"></i> 5% decrease from last month</p>
+                    </div>
+                    <div class="summary-card summary-card-category p-4 rounded-md">
+                        <div class="flex items-center text-violet-600 mb-2">
+                            <i class="fas fa-tags fa-lg mr-2"></i>
+                            <h3 class="font-semibold">Top Predicted Categories</h3>
+                        </div>
+                        <ul id="topCategories" class="text-sm text-slate-700 list-disc pl-5 space-y-1">
+                            <li>Claim Settlement Delays (35%)</li>
+                            <li>KYC Update Issues (20%)</li>
+                            <li>Pension Calculation Errors (15%)</li>
+                        </ul>
+                    </div>
+                    <div class="summary-card summary-card-sentiment p-4 rounded-md">
+                        <div class="flex items-center text-green-600 mb-2">
+                            <i class="fas fa-smile-beam fa-lg mr-2"></i>
+                            <h3 class="font-semibold">Overall Sentiment Trend</h3>
+                        </div>
+                        <p id="overallSentiment" class="text-3xl font-bold text-slate-800">Slightly Negative</p>
+                        <p id="sentimentScore" class="text-sm text-slate-500">Avg. Score: -0.25 (NLP Model)</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="pt-4">
+                <h2 class="text-xl font-semibold text-slate-700 mb-4 border-b pb-2">Detailed Predictions & Insights</h2>
+                
+                <div class="mb-6 p-4 border rounded-lg bg-white">
+                    <h3 class="text-lg font-semibold text-slate-600 mb-3 flex items-center"><i class="fas fa-calendar-alt mr-2 text-blue-500"></i>Grievance Volume Forecast (Chart Placeholder)</h3>
+                    <div class="bg-gray-50 p-4 rounded-md text-center">
+                        <canvas id="grievanceVolumeChart" height="120"></canvas>
+                        <p class="text-xs text-gray-500 mt-2">Note: This is a placeholder. A dynamic chart would show daily/weekly forecasts.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="p-4 border rounded-lg bg-white">
+                        <h3 class="text-lg font-semibold text-slate-600 mb-3 flex items-center"><i class="fas fa-list-ul mr-2 text-violet-500"></i>Predicted Grievance Type Breakdown</h3>
+                        <ul id="categoryBreakdownList" class="space-y-2 text-sm">
+                            </ul>
+                    </div>
+                    <div class="p-4 border rounded-lg bg-white">
+                        <h3 class="text-lg font-semibold text-slate-600 mb-3 flex items-center"><i class="fas fa-lightbulb mr-2 text-yellow-500"></i>Emerging Topics & Themes (Topic Modeling)</h3>
+                        <div id="emergingTopicsList" class="flex flex-wrap gap-2">
+                            </div>
+                        <p class="text-xs text-gray-500 mt-3">Identified via LDA analysis on recent unresolved grievances.</p>
+                    </div>
+                </div>
+
+                <div class="p-4 border rounded-lg bg-white mb-6">
+                     <h3 class="text-lg font-semibold text-slate-600 mb-3 flex items-center"><i class="fas fa-grin-stars mr-2 text-green-500"></i>Sentiment Analysis by Category</h3>
+                     <div id="sentimentByCategory" class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200 text-sm">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-2 text-left font-medium text-gray-500">Category</th>
+                                    <th class="px-4 py-2 text-left font-medium text-gray-500">Positive (%)</th>
+                                    <th class="px-4 py-2 text-left font-medium text-gray-500">Neutral (%)</th>
+                                    <th class="px-4 py-2 text-left font-medium text-gray-500">Negative (%)</th>
+                                    <th class="px-4 py-2 text-left font-medium text-gray-500">Key Negative Phrases</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sentimentTableBody" class="bg-white divide-y divide-gray-200">
+                                </tbody>
+                        </table>
+                     </div>
+                </div>
+            </section>
+
+            <section class="pt-4">
+                <h2 class="text-xl font-semibold text-slate-700 mb-3 border-b pb-2">Key Influencing Factors</h2>
+                <div class="mb-4">
+                    <div class="collapsible-header flex justify-between items-center" data-target="demographicInsights">
+                        <h3 class="text-lg font-semibold text-slate-600">Demographic & Regional Insights</h3>
+                        <i class="fas fa-chevron-right icon-indicator"></i>
+                    </div>
+                    <div id="demographicInsights" class="collapsible-content space-y-3">
+                        <div class="detail-group"><span class="detail-label">Age Group (High Volume):</span> <span id="ageGroupFactor" class="detail-value">50-58 years (Pension-related queries)</span></div>
+                        <div class="detail-group"><span class="detail-label">Regional Hotspot:</span> <span id="regionalFactor" class="detail-value highlight-amber">North Zone (22% of total, mainly claim rejections)</span></div>
+                        <div class="detail-group"><span class="detail-label">Common Member Profile:</span> <span id="memberProfileFactor" class="detail-value">Members with recent job changes (Transfer/KYC issues)</span></div>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <div class="collapsible-header flex justify-between items-center" data-target="policyInsights">
+                        <h3 class="text-lg font-semibold text-slate-600">Policy & System Insights</h3>
+                        <i class="fas fa-chevron-right icon-indicator"></i>
+                    </div>
+                    <div id="policyInsights" class="collapsible-content space-y-3">
+                        <div class="detail-group"><span class="detail-label">Recent Policy Change Impact:</span> <span id="policyFactor" class="detail-value">New e-nomination rule (Increased queries on process)</span></div>
+                        <div class="detail-group"><span class="detail-label">System Bottleneck:</span> <span id="systemFactor" class="detail-value">Online portal slowdown during peak hours (Access complaints)</span></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="pt-6 border-t border-gray-300">
+                <h2 class="text-xl font-semibold text-gray-700 mb-3">Proactive Measures & Resource Allocation</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                     <div class="p-4 border rounded-lg bg-white">
+                        <h3 class="text-lg font-semibold text-slate-600 mb-3 flex items-center"><i class="fas fa-users-cog mr-2 text-teal-500"></i>Resource Allocation Suggestions</h3>
+                        <ul id="resourceSuggestions" class="list-disc pl-5 space-y-1 text-sm text-slate-700">
+                           <li>Increase staffing for Pension department by 10%.</li>
+                           <li>Allocate 2 additional agents for KYC support helpline.</li>
+                           <li>Conduct training on new e-nomination process for front-desk staff.</li>
+                        </ul>
+                    </div>
+                    <div class="p-4 border rounded-lg bg-white">
+                        <h3 class="text-lg font-semibold text-slate-600 mb-3 flex items-center"><i class="fas fa-bullhorn mr-2 text-indigo-500"></i>Policy & Communication Recommendations</h3>
+                        <ul id="policySuggestions" class="list-disc pl-5 space-y-1 text-sm text-slate-700">
+                            <li>Issue clearer FAQs regarding e-nomination process.</li>
+                            <li>Review claim rejection reasons in North Zone for systemic issues.</li>
+                            <li>Optimize portal performance during peak load times.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <button class="bg-sky-600 hover:bg-sky-700 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-file-export mr-2"></i>Generate Detailed Report</button>
+                    <button class="bg-orange-500 hover:bg-orange-600 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-broadcast-tower mr-2"></i>Alert Regional Offices</button>
+                    <button class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-tasks mr-2"></i>Create Action Items</button>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        // --- Static Data for Demonstration (would come from backend) ---
+        const grievancePredictionData = {
+            predictionDate: "June 2025",
+            generatedDate: "29-May-2025",
+            modelVersion: "GP_v2.1",
+            predictedVolume: {
+                total: "12,500",
+                uncertainty: "±800",
+                trendPercentage: "5%",
+                trendDirection: "decrease", // "increase" or "decrease"
+            },
+            topCategories: [
+                { name: "Claim Settlement Delays", percentage: 35 },
+                { name: "KYC Update Issues", percentage: 20 },
+                { name: "Pension Calculation Errors", percentage: 15 },
+                { name: "Online Portal Access", percentage: 12 },
+                { name: "Transfer Process Queries", percentage: 10 },
+            ],
+            overallSentiment: {
+                label: "Slightly Negative",
+                score: -0.25
+            },
+            volumeForecastData: { // For Chart.js
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                data: [3000, 3200, 2800, 3500] 
+            },
+            emergingTopics: [
+                "e-nomination difficulties", "delayed Form 10C processing", 
+                "incorrect service history", "password reset problems", "death claim document verification"
+            ],
+            sentimentByCategory: [
+                { category: "Claim Settlement Delays", positive: 5, neutral: 15, negative: 80, phrases: "still waiting, no update, very slow" },
+                { category: "KYC Update Issues", positive: 10, neutral: 30, negative: 60, phrases: "unable to link, rejected, portal error" },
+                { category: "Pension Calculation", positive: 15, neutral: 25, negative: 60, phrases: "less amount, wrong calculation" },
+                { category: "Online Portal Access", positive: 20, neutral: 40, negative: 40, phrases: "login failed, site down, OTP not received" }
+            ],
+            influencingFactors: {
+                ageGroup: "50-58 years (Pension-related queries)",
+                regionalHotspot: "North Zone (22% of total, mainly claim rejections)", regionalClass: "highlight-amber",
+                memberProfile: "Members with recent job changes (Transfer/KYC issues)",
+                policyChange: "New e-nomination rule (Increased queries on process)",
+                systemBottleneck: "Online portal slowdown during peak hours (Access complaints)"
+            },
+            resourceSuggestions: [
+               "Increase staffing for Pension department by 10%.",
+               "Allocate 2 additional agents for KYC support helpline.",
+               "Conduct training on new e-nomination process for front-desk staff."
+            ],
+            policySuggestions: [
+                "Issue clearer FAQs regarding e-nomination process.",
+                "Review claim rejection reasons in North Zone for systemic issues.",
+                "Optimize portal performance during peak load times."
+            ]
+        };
+
+        // Populate Header & Summary
+        document.getElementById('predictionDateHeader').textContent = `Predictions for: ${grievancePredictionData.predictionDate} (Generated: ${grievancePredictionData.generatedDate})`;
+        document.getElementById('modelVersion').textContent = grievancePredictionData.modelVersion;
+        
+        document.getElementById('predictedVolume').innerHTML = `${grievancePredictionData.predictedVolume.total} <span class="text-lg font-normal text-slate-500">(${grievancePredictionData.predictedVolume.uncertainty})</span>`;
+        const volumeTrendEl = document.getElementById('volumeTrend');
+        volumeTrendEl.innerHTML = `<i class="fas fa-arrow-${grievancePredictionData.predictedVolume.trendDirection === 'decrease' ? 'down' : 'up'}"></i> ${grievancePredictionData.predictedVolume.trendPercentage} ${grievancePredictionData.predictedVolume.trendDirection} from last month`;
+        volumeTrendEl.className = `text-sm ${grievancePredictionData.predictedVolume.trendDirection === 'decrease' ? 'text-green-600' : 'text-red-600'}`;
+
+        const topCategoriesUl = document.getElementById('topCategories');
+        topCategoriesUl.innerHTML = ''; // Clear defaults
+        grievancePredictionData.topCategories.slice(0, 3).forEach(cat => { // Show top 3
+            const li = document.createElement('li');
+            li.textContent = `${cat.name} (${cat.percentage}%)`;
+            topCategoriesUl.appendChild(li);
+        });
+
+        document.getElementById('overallSentiment').textContent = grievancePredictionData.overallSentiment.label;
+        document.getElementById('sentimentScore').textContent = `Avg. Score: ${grievancePredictionData.overallSentiment.score} (NLP Model)`;
+
+        // Populate Category Breakdown List
+        const categoryBreakdownListUl = document.getElementById('categoryBreakdownList');
+        categoryBreakdownListUl.innerHTML = '';
+        grievancePredictionData.topCategories.forEach(cat => {
+            const li = document.createElement('li');
+            li.className = "flex justify-between items-center py-1";
+            li.innerHTML = `
+                <span><i class="fas fa-folder text-gray-400 mr-2"></i>${cat.name}</span>
+                <span class="font-semibold text-slate-600">${cat.percentage}%</span>
+            `;
+            categoryBreakdownListUl.appendChild(li);
+        });
+        
+        // Populate Emerging Topics
+        const emergingTopicsDiv = document.getElementById('emergingTopicsList');
+        emergingTopicsDiv.innerHTML = '';
+        grievancePredictionData.emergingTopics.forEach(topic => {
+            const span = document.createElement('span');
+            span.className = "topic-tag";
+            span.textContent = topic;
+            emergingTopicsDiv.appendChild(span);
+        });
+
+        // Populate Sentiment by Category Table
+        const sentimentTableBody = document.getElementById('sentimentTableBody');
+        sentimentTableBody.innerHTML = '';
+        grievancePredictionData.sentimentByCategory.forEach(item => {
+            const row = sentimentTableBody.insertRow();
+            row.innerHTML = `
+                <td class="px-4 py-2 whitespace-nowrap">${item.category}</td>
+                <td class="px-4 py-2 text-green-600">${item.positive}%</td>
+                <td class="px-4 py-2 text-gray-500">${item.neutral}%</td>
+                <td class="px-4 py-2 text-red-600">${item.negative}%</td>
+                <td class="px-4 py-2 text-xs text-gray-500">${item.phrases}</td>
+            `;
+        });
+        
+        // Populate Influencing Factors
+        document.getElementById('ageGroupFactor').textContent = grievancePredictionData.influencingFactors.ageGroup;
+        document.getElementById('regionalFactor').textContent = grievancePredictionData.influencingFactors.regionalHotspot;
+        document.getElementById('regionalFactor').className = `detail-value ${grievancePredictionData.influencingFactors.regionalClass || ''}`;
+        document.getElementById('memberProfileFactor').textContent = grievancePredictionData.influencingFactors.memberProfile;
+        document.getElementById('policyFactor').textContent = grievancePredictionData.influencingFactors.policyChange;
+        document.getElementById('systemFactor').textContent = grievancePredictionData.influencingFactors.systemBottleneck;
+
+        // Populate Recommendations
+        const resourceSuggestionsUl = document.getElementById('resourceSuggestions');
+        resourceSuggestionsUl.innerHTML = '';
+        grievancePredictionData.resourceSuggestions.forEach(sugg => {
+            const li = document.createElement('li');
+            li.textContent = sugg;
+            resourceSuggestionsUl.appendChild(li);
+        });
+        const policySuggestionsUl = document.getElementById('policySuggestions');
+        policySuggestionsUl.innerHTML = '';
+        grievancePredictionData.policySuggestions.forEach(sugg => {
+            const li = document.createElement('li');
+            li.textContent = sugg;
+            policySuggestionsUl.appendChild(li);
+        });
+
+
+        // Collapsible section script
+        const collapsibles = document.querySelectorAll('.collapsible-header');
+        collapsibles.forEach(collapsible => {
+            collapsible.addEventListener('click', function() {
+                const contentId = this.dataset.target;
+                const content = document.getElementById(contentId);
+                const icon = this.querySelector('.icon-indicator');
+
+                if (content.classList.contains('open')) {
+                    content.classList.remove('open');
+                    icon.classList.remove('open');
+                } else {
+                    content.classList.add('open');
+                    icon.classList.add('open');
+                }
+            });
+        });
+        
+        // Auto-open the first details section by default if needed
+        // const firstCollapsibleHeader = document.querySelector('.collapsible-header');
+        //  if (firstCollapsibleHeader) {
+        //     const firstContentId = firstCollapsibleHeader.dataset.target;
+        //     document.getElementById(firstContentId).classList.add('open');
+        //     firstCollapsibleHeader.querySelector('.icon-indicator').classList.add('open');
+        // }
+
+        // Chart.js - Grievance Volume Forecast (Simple Bar Chart Example)
+        const ctx = document.getElementById('grievanceVolumeChart').getContext('2d');
+        const grievanceVolumeChart = new Chart(ctx, {
+            type: 'bar', // Could be 'line' for time series
+            data: {
+                labels: grievancePredictionData.volumeForecastData.labels,
+                datasets: [{
+                    label: 'Predicted Grievances',
+                    data: grievancePredictionData.volumeForecastData.data,
+                    backgroundColor: 'rgba(59, 130, 246, 0.5)', // blue-500 with opacity
+                    borderColor: 'rgba(59, 130, 246, 1)', // blue-500
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: 'Number of Grievances'}
+                    },
+                    x: {
+                         title: { display: true, text: 'Period'}
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `Predicted: ${context.raw}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>
