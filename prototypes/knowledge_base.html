@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPFO Knowledge Base for Policy Impact Assessment</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F9FA; /* Light gray */
+        }
+        .header-section {
+            background: linear-gradient(to right, #0D9488, #22C55E); /* Teal to Green gradient */
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -1px rgba(0,0,0,0.05);
+        }
+        .stat-card {
+            border-left-width: 4px;
+        }
+        .stat-card-teal { border-left-color: #14B8A6; }
+        .stat-card-green { border-left-color: #22C55E; }
+        .stat-card-emerald { border-left-color: #10B981; }
+        .stat-card-lime { border-left-color: #84CC16; }
+
+        .info-box {
+            background-color: #E6FFFA; /* Lightest teal for info */
+            border-left: 4px solid #14B8A6; /* Teal border */
+        }
+         .research-box {
+            background-color: #F0FFF4; /* Lightest green for research focus */
+            border-left: 4px solid #22C55E; /* Green border */
+        }
+        .epfo-box {
+            background-color: #F3FBF7; /* Very light green/teal for EPFO focus */
+            border-left: 4px solid #10B981; /* Emerald border */
+        }
+        .data-source-item {
+            background-color: #F0FDF4; /* Light green */
+            border: 1px solid #A7F3D0; /* Green-200 */
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+        }
+        .relationship-item {
+             background-color: #ECFDF5; /* Emerald-50 */
+             border-left: 3px solid #10B981; /* Emerald-500 */
+             padding: 0.5rem 0.75rem;
+        }
+
+        /* Custom modal styles */
+        .modal {
+            display: none; position: fixed; z-index: 1000; 
+            left: 0; top: 0; width: 100%; height: 100%;
+            overflow: auto; background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: #fefefe; margin: 10% auto; padding: 25px;
+            border: 1px solid #888; width: 80%; max-width: 700px;
+            border-radius: 0.5rem; text-align: left;
+        }
+        .modal-header { padding-bottom: 10px; border-bottom: 1px solid #eee; }
+        .modal-header h2 { margin: 0; font-size: 1.5rem; color: #333; }
+        .modal-body { padding-top:15px; padding-bottom:15px; font-size: 1rem; color: #555;}
+        .modal-footer { padding-top: 10px; border-top: 1px solid #eee; text-align: right; }
+        .modal-button {
+            background-color: #10B981; color: white; padding: 10px 18px;
+            border: none; border-radius: 0.375rem; cursor: pointer; font-size: 0.9rem;
+        }
+        .modal-button:hover { background-color: #059669; }
+    </style>
+</head>
+<body class="text-slate-800">
+    <div class="min-h-screen">
+        <nav class="bg-white shadow-md">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center">
+                        <i class="fas fa-database text-2xl text-teal-600 mr-2"></i>
+                        <span class="font-bold text-xl text-teal-700">EPFO Knowledge Base for<span class="text-teal-500">Policy Impact</span></span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="text-sm text-gray-600 mr-3">Policy Evaluation Hub</span>
+                         <button class="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500" aria-label="Help">
+                            <i class="fas fa-question-circle"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="header-section text-white py-10 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-3xl sm:text-4xl font-bold mb-2">Building a Knowledge Base for Policy Impact Assessment</h1>
+                <p class="text-lg text-teal-100">Integrating data to understand policy effectiveness and drive evidence-based decisions.</p>
+            </div>
+        </div>
+
+        <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="card stat-card stat-card-teal p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Data Sources Integrated</h3>
+                    <p id="dataSources" class="text-2xl font-semibold text-teal-600">15+</p>
+                </div>
+                <div class="card stat-card stat-card-green p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Relationships Discovered</h3>
+                    <p id="relationshipsDiscovered" class="text-2xl font-semibold text-green-600">500K+</p>
+                </div>
+                <div class="card stat-card stat-card-emerald p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Policies Evaluated</h3>
+                    <p id="policiesEvaluatedKB" class="text-2xl font-semibold text-emerald-600">25</p>
+                </div>
+                <div class="card stat-card stat-card-lime p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Knowledge Graph Nodes</h3>
+                    <p id="kgNodes" class="text-2xl font-semibold text-lime-600">20 M</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="card p-6">
+                        <h2 class="text-xl font-semibold text-slate-700 mb-4 flex items-center">
+                            <i class="fas fa-link mr-2 text-teal-500"></i>Data Integration & Knowledge Base Core
+                        </h2>
+                        <p class="text-sm text-gray-500 mb-3">Combining diverse data sources to build a unified view for analysis.</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+                            <div class="data-source-item"><i class="fas fa-file-alt mr-1 text-teal-600"></i>Policy Documents</div>
+                            <div class="data-source-item"><i class="fas fa-exchange-alt mr-1 text-teal-600"></i>Transaction Data</div>
+                            <div class="data-source-item"><i class="fas fa-users mr-1 text-teal-600"></i>Member Demographics</div>
+                            <div class="data-source-item"><i class="fas fa-building mr-1 text-teal-600"></i>Employer Records</div>
+                            <div class="data-source-item"><i class="fas fa-chart-line mr-1 text-teal-600"></i>Economic Indicators</div>
+                            <div class="data-source-item"><i class="fas fa-comments mr-1 text-teal-600"></i>Member Feedback</div>
+                        </div>
+                         <div class="info-box p-3 mt-4 rounded-md text-sm">
+                            <p><i class="fas fa-info-circle mr-1"></i><strong>Data Integration:</strong> The process of combining data from different sources and providing users with a unified view. This is foundational for building a comprehensive knowledge base.</p>
+                        </div>
+                    </div>
+
+                    <div class="card p-6">
+                        <h2 class="text-xl font-semibold text-slate-700 mb-3 flex items-center">
+                            <i class="fas fa-project-diagram mr-2 text-green-500"></i>Discovered Relationships & Patterns
+                        </h2>
+                        <p class="text-sm text-gray-500 mb-3">Examples of insights derived from analyzing connections within the integrated data.</p>
+                        <div id="relationshipList" class="space-y-2 max-h-60 overflow-y-auto">
+                            </div>
+                         <div class="info-box p-3 mt-3 rounded-md text-sm">
+                           <p><i class="fas fa-info-circle mr-1"></i><strong>Relationship Discovery:</strong> AI algorithms identify meaningful connections and patterns between entities (e.g., members, policies, transactions) that might not be obvious through manual analysis.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="card p-6">
+                        <h2 class="text-lg font-semibold text-slate-700 mb-3 flex items-center">
+                            <i class="fas fa-balance-scale-right mr-2 text-emerald-500"></i>Causal Inference from Knowledge Base
+                        </h2>
+                        <p class="text-sm text-gray-500 mb-3">Assessing the impact of specific policies using the integrated knowledge.</p>
+                        <div style="height: 300px;"><canvas id="causalInferenceKBChart"></canvas></div>
+                        <p id="causalInsightText" class="text-xs text-gray-600 mt-2 text-center">Policy Y (e.g., increased VPF awareness) led to a 3.5% rise in VPF adoption among members aged 30-40 within 6 months.</p>
+                        <div class="info-box p-3 mt-3 rounded-md text-sm">
+                           <p><i class="fas fa-info-circle mr-1"></i><strong>Causal Inference:</strong> Statistical methods used to determine cause-and-effect relationships. Applied here to evaluate how policy changes (cause) affect member behaviors or scheme outcomes (effect).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="card p-6 epfo-box">
+                    <h2 class="text-xl font-semibold text-emerald-700 mb-3 flex items-center"><i class="fas fa-landmark mr-2"></i>EPFO: Evidence-Based Policy Formulation</h2>
+                    <ul class="list-disc list-inside space-y-2 text-sm text-emerald-600">
+                        <li>Gain a holistic understanding of how different factors interact to influence policy outcomes.</li>
+                        <li>Simulate potential impacts of new policies with greater accuracy using the rich knowledge base.</li>
+                        <li>Identify unintended consequences of past policies.</li>
+                        <li>Improve the targeting and effectiveness of interventions.</li>
+                        <li>Enhance transparency and accountability in policymaking.</li>
+                    </ul>
+                    <button onclick="showModal('epfoPolicyCycleModal')" class="mt-4 text-sm bg-emerald-500 hover:bg-emerald-600 text-white py-2 px-4 rounded-md w-full md:w-auto">View Policy Cycle Integration</button>
+                </div>
+                <div class="card p-6 research-box">
+                    <h2 class="text-xl font-semibold text-green-700 mb-3 flex items-center"><i class="fas fa-flask mr-2"></i>Research: Advancing Policy Evaluation Methodologies</h2>
+                     <ul class="list-disc list-inside space-y-2 text-sm text-green-600">
+                        <li>Develop novel data integration techniques for complex, heterogeneous social security data.</li>
+                        <li>Apply advanced relationship discovery algorithms (e.g., from graph theory, NLP) to policy-related data.</li>
+                        <li>Refine causal inference methods for observational data in public policy contexts.</li>
+                        <li>Build comprehensive knowledge graphs for social security systems.</li>
+                        <li>Publish research on the construction and application of knowledge bases for policy impact assessment.</li>
+                    </ul>
+                     <button onclick="showModal('researchKBModal')" class="mt-4 text-sm bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md w-full md:w-auto">Explore KB Research Areas</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="epfoPolicyCycleModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>EPFO: Integrating Knowledge Base into Policy Cycle</h2></div>
+            <div class="modal-body">
+                <p class="mb-2">A comprehensive knowledge base enhances every stage of the policy cycle:</p>
+                <ul class="list-disc list-inside space-y-1 text-sm">
+                    <li><strong>Agenda Setting:</strong> Identify emerging issues and trends from integrated data that require policy attention.</li>
+                    <li><strong>Policy Formulation:</strong> Use the knowledge base to understand potential impacts, target populations, and resource requirements for different policy options.</li>
+                    <li><strong>Decision Making:</strong> Provide policymakers with robust, evidence-based scenarios.</li>
+                    <li><strong>Implementation Planning:</strong> Leverage insights on member segments and regional variations for effective rollout.</li>
+                    <li><strong>Monitoring & Evaluation:</strong> Continuously update the knowledge base with new data to track policy performance and conduct rigorous causal evaluations.</li>
+                </ul>
+            </div>
+            <div class="modal-footer"><button onclick="closeModal('epfoPolicyCycleModal')" class="modal-button">Close</button></div>
+        </div>
+    </div>
+
+    <div id="researchKBModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>Research Frontiers in Knowledge Base Construction for Policy</h2></div>
+            <div class="modal-body">
+                <p class="mb-2">Building and utilizing such knowledge bases offers rich research avenues:</p>
+                <ul class="list-disc list-inside space-y-1 text-sm">
+                    <li><strong>Automated Knowledge Base Population:</strong> Techniques to automatically extract information and relationships from unstructured policy documents and news.</li>
+                    <li><strong>Temporal Knowledge Graphs:</strong> Representing how relationships and policy impacts evolve over time.</li>
+                    <li><strong>Explainable AI for Policy Insights:</strong> Making the reasoning behind AI-driven policy recommendations transparent and understandable.</li>
+                    <li><strong>Integrating Qualitative Data:</strong> Methods to incorporate insights from surveys, interviews, and expert opinions into the quantitative knowledge base.</li>
+                    <li><strong>Cross-Domain Knowledge Transfer:</strong> Applying learnings from one policy area or social security scheme to another.</li>
+                </ul>
+            </div>
+            <div class="modal-footer"><button onclick="closeModal('researchKBModal')" class="modal-button">Close</button></div>
+        </div>
+    </div>
+
+    <script>
+        // --- Dummy Data and Functions for Demonstration ---
+        const kbPolicyImpactData = {
+            stats: {
+                dataSources: "15+",
+                relationshipsDiscovered: "500K+",
+                policiesEvaluatedKB: "25",
+                kgNodes: "20 M"
+            },
+            relationships: [
+                { text: "Strong correlation found between 'Higher Education Withdrawal Policy' and increased withdrawals among members aged 22-28 in urban areas.", type: "Policy-Demographic Link" },
+                { text: "Members contributing via VPF for >5 years show 15% higher retirement corpus, controlling for income.", type: "Behavior-Outcome Link" },
+                { text: "Introduction of 'Online Claim Submission' policy reduced average claim processing time by 3 days nationally.", type: "Policy-Operational Link" },
+                { text: "Economic downturns (GDP < 5%) show a 10% increase in premature withdrawals for 'Other Reasons'.", type: "Economic-Behavior Link" }
+            ],
+            causalInferenceChart: { // For Diff-in-Diff style visualization
+                labels: ['Q1 Pre-Policy', 'Q2 Pre-Policy', 'Q3 Post-Policy Y', 'Q4 Post-Policy Y', 'Q1 Follow-up', 'Q2 Follow-up'],
+                affectedGroupData: [2.0, 2.1, 2.2, 3.5, 3.8, 3.9], // % VPF adoption
+                controlGroupData: [2.0, 2.05, 2.1, 2.15, 2.2, 2.25]
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Populate Key Stats
+            document.getElementById('dataSources').textContent = kbPolicyImpactData.stats.dataSources;
+            document.getElementById('relationshipsDiscovered').textContent = kbPolicyImpactData.stats.relationshipsDiscovered;
+            document.getElementById('policiesEvaluatedKB').textContent = kbPolicyImpactData.stats.policiesEvaluatedKB;
+            document.getElementById('kgNodes').textContent = kbPolicyImpactData.stats.kgNodes;
+
+            // Populate Relationship List
+            const relationshipListDiv = document.getElementById('relationshipList');
+            if(relationshipListDiv){
+                kbPolicyImpactData.relationships.forEach(rel => {
+                    const item = document.createElement('div');
+                    item.className = 'relationship-item text-sm mb-2';
+                    item.innerHTML = `
+                        <p class="font-medium text-gray-800">${rel.text}</p>
+                        <p class="text-xs text-emerald-700">Type: ${rel.type}</p>
+                    `;
+                    relationshipListDiv.appendChild(item);
+                });
+            }
+            
+            // Chart.js - Causal Inference Chart (Diff-in-Diff style)
+            const causalKBCanvas = document.getElementById('causalInferenceKBChart');
+            if(causalKBCanvas){
+                const causalKBCtx = causalKBCanvas.getContext('2d');
+                new Chart(causalKBCtx, {
+                    type: 'line',
+                    data: {
+                        labels: kbPolicyImpactData.causalInferenceChart.labels,
+                        datasets: [
+                            {
+                                label: 'Affected Group (VPF Adoption %)',
+                                data: kbPolicyImpactData.causalInferenceChart.affectedGroupData,
+                                borderColor: 'rgb(16, 185, 129)', // Emerald
+                                tension: 0.1,
+                                fill: false
+                            },
+                            {
+                                label: 'Control Group (VPF Adoption %)',
+                                data: kbPolicyImpactData.causalInferenceChart.controlGroupData,
+                                borderColor: 'rgb(107, 114, 128)', // Gray
+                                tension: 0.1,
+                                fill: false,
+                                borderDash: [5,5]
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        scales: { 
+                            y: { title: { display: true, text: 'VPF Adoption Rate (%)'} },
+                            x: { title: { display: true, text: 'Time (Quarters)'} }
+                        },
+                        plugins: { 
+                            legend: { position: 'top'},
+                            tooltip: { mode: 'index', intersect: false }
+                        }
+                    }
+                });
+            }
+        });
+
+        // Modal functions
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = "block";
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            });
+        }
+    </script>
+</body>
+</html>
