@@ -37,10 +37,10 @@ I. Projects Focused on Improving EPFO's Internal Operations
 10. Graph-Based Analysis of EPFO Member Networks
 11. Information Retrieval System for EPFO Records
 12. Knowledge Base Construction for Policy Impact Assessment
-13: Social Network Analysis for Fraud Detection in EPFO
-14: Predictive Modeling of Member Behavior in EPFO
-15: Automated Processing of EPFO Grievances Using NLP
-16: Optimization of EPFO's Data Processing Algorithms
-17: Statistical Analysis of EPFO Member Demographics
-18: Semi-Supervised Learning for EPFO Data Classification
+13: Social Network Analysis for Fraud Detection in EPFO  
+14: Predictive Modeling of Member Behavior in EPFO  
+15: Automated Processing of EPFO Grievances Using NLP  
+16: Optimization of EPFO's Data Processing Algorithms  
+17: Statistical Analysis of EPFO Member Demographics  
+18: Semi-Supervised Learning for EPFO Data Classification  
 19: Graphical Model-Based Risk Assessment in EPFO
