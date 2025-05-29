@@ -15,6 +15,9 @@
 12. [Withdrawal Analysis](./prototypes/withdrawal_analysis.html)
 13. [Policy Impact assessment](./prototypes/policy_impact.html)
 
+14. [Analysis - Graph](./prototypes/analysis_graph.html)
+15. [Analysis - Temporal](./prototypes/analysis_temporal.html)
+
 
 # Possible Projects
 
@@ -32,42 +35,13 @@
 ### 2. Analysis of Withdrawal Patterns and Early Exits
 ### 3. Impact Assessment of Policy Changes
 
----
-
-## III. Projects Focused on Data Security and Privacy
-
-### Privacy-Preserving Data Analysis
-- **Problem**: Develop techniques to analyze EPFO data while preserving member privacy.
-- **Data**: Any of the datasets mentioned above, anonymized or aggregated.
-- **AI/ML Techniques**:
-  - Differential privacy
-  - Federated learning
-  - Homomorphic encryption
-  - Secure multi-party computation
-- **Impact**:
-  - Enable valuable insights while preserving privacy
-  - Demonstrate responsible data handling
-- **Professor Interest**: Researching privacy-preserving ML techniques, publishing in top-tier conferences.
-- **EPFO Interest**: Enhanced security, compliance with privacy regulations, public trust.
-
----
 
 
 
-# Suggested Projects Under Professor  for EPFO
+#Other
 
 ## 1. Temporal Analysis of EPFO Transactions
-- **Objective**: Analyze temporal patterns in EPFO transactions to identify trends, seasonal behaviors, and anomalies.
-- **Data**: Time-stamped records of contributions, withdrawals, and claims.
-- **Techniques**: Temporal point processes and time series analysis to model and predict transaction behaviors.
-- **Impact**: Enhance understanding of member behaviors over time, enabling proactive policy adjustments and resource allocation.
-
 ## 2. Graph-Based Analysis of EPFO Member Networks
-- **Objective**: Construct and analyze graphs representing relationships among EPFO members, employers, and financial institutions to detect patterns and anomalies.
-- **Data**: Membership records, employer affiliations, and transaction histories.
-- **Techniques**: Graph neural networks and graph mining algorithms to uncover community structures, influential entities, and potential fraud networks.
-- **Impact**: Improve fraud detection, understand organizational structures, and optimize communication strategies.
-
 ## 3. Information Retrieval System for EPFO Records
 - **Objective**: Develop an efficient information retrieval system to facilitate quick access to EPFO documents and records.
 - **Data**: EPFO's digital archives, including policy documents, member records, and transaction logs.
