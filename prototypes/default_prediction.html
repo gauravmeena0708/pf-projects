@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPFO Contribution Default Prediction & Optimization</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .summary-card {
+            background-color: #F9FAFB; /* gray-50 */
+            border: 1px solid #E5E7EB; /* gray-200 */
+            border-left-width: 4px;
+        }
+        .summary-card-default-rate { border-left-color: #EF4444; /* red-500 */ }
+        .summary-card-default-amount { border-left-color: #F97316; /* orange-500 */ }
+        .summary-card-high-risk { border-left-color: #F59E0B; /* amber-500 */ }
+
+        .risk-high { background-color: #FEE2E2; color: #B91C1C; }
+        .risk-medium { background-color: #FEF3C7; color: #B45309; }
+        .risk-low { background-color: #D1FAE5; color: #047857; }
+        
+        .action-visit { background-color: #DC2626; color: white; }
+        .action-notice { background-color: #F59E0B; color: white; }
+        .action-monitor { background-color: #10B981; color: white; }
+
+        .modal {
+            transition: opacity 0.25s ease;
+        }
+        .modal-active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-inactive {
+            opacity: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-4 md:p-8">
+    <div class="container mx-auto max-w-7xl bg-white shadow-xl rounded-lg">
+        <header class="bg-slate-800 text-white p-6 rounded-t-lg">
+            <div class="flex flex-col md:flex-row justify-between md:items-center">
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold">Contribution Default Prediction & Optimization</h1>
+                    <p id="predictionPeriodHeader" class="text-sm text-slate-300">Analysis Period: June 2025 | Generated: 29-May-2025</p>
+                </div>
+                <div class="mt-4 md:mt-0 text-left md:text-right">
+                     <span class="text-sm text-slate-300 block">Model Version</span>
+                     <span id="modelVersion" class="text-lg font-semibold">CDP_v1.5</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="p-6 md:p-8 space-y-6">
+            <section>
+                <h2 class="text-xl font-semibold text-slate-700 mb-3 border-b pb-2">Overall Default Risk Summary (Next 30 Days)</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="summary-card summary-card-default-rate p-4 rounded-md">
+                        <div class="flex items-center text-red-600 mb-2">
+                            <i class="fas fa-percentage fa-lg mr-2"></i>
+                            <h3 class="font-semibold">Predicted Default Rate</h3>
+                        </div>
+                        <p id="predictedDefaultRate" class="text-3xl font-bold text-slate-800">3.5%</p>
+                        <p id="defaultRateTrend" class="text-sm text-red-600"><i class="fas fa-arrow-up"></i> 0.2% increase from last month</p>
+                    </div>
+                    <div class="summary-card summary-card-default-amount p-4 rounded-md">
+                        <div class="flex items-center text-orange-600 mb-2">
+                            <i class="fas fa-rupee-sign fa-lg mr-2"></i>
+                            <h3 class="font-semibold">Predicted Default Amount</h3>
+                        </div>
+                        <p id="predictedDefaultAmount" class="text-3xl font-bold text-slate-800">₹ 15.2 Cr</p>
+                        <p id="defaultAmountChange" class="text-sm text-slate-500">Projected based on historical data</p>
+                    </div>
+                    <div class="summary-card summary-card-high-risk p-4 rounded-md">
+                        <div class="flex items-center text-amber-600 mb-2">
+                            <i class="fas fa-exclamation-triangle fa-lg mr-2"></i>
+                            <h3 class="font-semibold">High-Risk Establishments</h3>
+                        </div>
+                        <p id="highRiskEstablishmentsCount" class="text-3xl font-bold text-slate-800">1,280</p>
+                        <p id="highRiskFocus" class="text-sm text-slate-500">Require immediate attention</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="pt-4">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-slate-700">Priority Watchlist: High-Risk Establishments</h2>
+                    <div class="flex items-center space-x-2">
+                        <input type="text" id="searchEstablishment" placeholder="Search by Name/Code..." class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <button class="text-sm bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-3 rounded-md"><i class="fas fa-filter mr-1"></i> Filter</button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto bg-white border rounded-lg">
+                    <table class="min-w-full divide-y divide-gray-200 text-sm">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left font-medium text-gray-500">Est. Name</th>
+                                <th class="px-4 py-3 text-left font-medium text-gray-500">EPFO Code</th>
+                                <th class="px-4 py-3 text-left font-medium text-gray-500">Risk Score (0-100)</th>
+                                <th class="px-4 py-3 text-left font-medium text-gray-500">Predicted Default (₹)</th>
+                                <th class="px-4 py-3 text-left font-medium text-gray-500">Key Risk Factors</th>
+                                <th class="px-4 py-3 text-left font-medium text-gray-500">Recommended Action</th>
+                                <th class="px-4 py-3 text-left font-medium text-gray-500">Details</th>
+                            </tr>
+                        </thead>
+                        <tbody id="highRiskTableBody" class="bg-white divide-y divide-gray-200">
+                            </tbody>
+                    </table>
+                </div>
+                <div class="mt-4 flex justify-end">
+                    <span class="text-sm text-gray-700 mr-2">Page 1 of 10</span>
+                    <button class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 py-1 px-3 rounded-l-md">Prev</button>
+                    <button class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 py-1 px-3 rounded-r-md">Next</button>
+                </div>
+            </section>
+
+            <section class="pt-4">
+                <h2 class="text-xl font-semibold text-slate-700 mb-3 border-b pb-2">Enforcement Resource Allocation (Optimized)</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="p-4 border rounded-lg bg-white">
+                        <h3 class="text-lg font-semibold text-slate-600 mb-3 flex items-center"><i class="fas fa-map-marked-alt mr-2 text-green-500"></i>Regional Hotspots & Team Allocation</h3>
+                        <div class="bg-gray-200 h-48 rounded flex items-center justify-center text-gray-500 mb-2">
+                            <p>Map Placeholder (Showing high-risk zones & team deployment)</p>
+                        </div>
+                        <ul id="regionalAllocationList" class="text-sm space-y-1">
+                            <li><span class="font-medium">North Zone (Delhi, Punjab):</span> 5 Teams | Focus: 350 High-Risk Est.</li>
+                            <li><span class="font-medium">West Zone (Mumbai, Pune):</span> 7 Teams | Focus: 480 High-Risk Est.</li>
+                            <li><span class="font-medium">South Zone (Bangalore):</span> 4 Teams | Focus: 250 High-Risk Est.</li>
+                        </ul>
+                    </div>
+                    <div class="p-4 border rounded-lg bg-white">
+                        <h3 class="text-lg font-semibold text-slate-600 mb-3 flex items-center"><i class="fas fa-chart-pie mr-2 text-purple-500"></i>Projected Impact of Optimized Enforcement</h3>
+                        <div class="bg-gray-50 p-3 rounded-md mb-2">
+                            <canvas id="impactChart" height="100"></canvas>
+                        </div>
+                         <ul class="text-sm space-y-1">
+                            <li id="projectedRecovery">Projected Recovery Increase: <span class="font-semibold text-green-600">+18%</span></li>
+                            <li id="projectedReduction">Projected Default Reduction: <span class="font-semibold text-green-600">-5% next quarter</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section class="pt-6 border-t border-gray-300">
+                <h2 class="text-xl font-semibold text-gray-700 mb-3">Actions & Reporting</h2>
+                <div class="flex flex-wrap gap-3">
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-file-download mr-2"></i>Download Full Report</button>
+                    <button class="bg-teal-500 hover:bg-teal-600 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-users-cog mr-2"></i>Assign Tasks to Teams</button>
+                    <button class="bg-gray-700 hover:bg-gray-800 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-history mr-2"></i>View Historical Trends</button>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <div id="establishmentModal" class="modal modal-inactive fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center p-4 z-50">
+        <div class="relative bg-white w-full max-w-3xl mx-auto rounded-lg shadow-xl p-6 md:p-8">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modalEstName" class="text-xl font-semibold text-slate-700">Establishment Details</h3>
+                <button id="closeModalButton" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times fa-lg"></i>
+                </button>
+            </div>
+            <div class="space-y-4 text-sm">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><span class="font-medium text-gray-600">EPFO Code:</span> <span id="modalEstCode"></span></div>
+                    <div><span class="font-medium text-gray-600">Industry:</span> <span id="modalEstIndustry"></span></div>
+                    <div><span class="font-medium text-gray-600">No. of Employees:</span> <span id="modalEstEmployees"></span></div>
+                    <div><span class="font-medium text-gray-600">Location:</span> <span id="modalEstLocation"></span></div>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-slate-600 mb-2">Contribution History (Last 12 Months)</h4>
+                    <div class="bg-gray-50 p-3 rounded-md">
+                        <canvas id="contributionHistoryChart" height="150"></canvas>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-slate-600 mb-2">Detailed Risk Factors:</h4>
+                    <ul id="modalRiskFactors" class="list-disc pl-5 space-y-1 text-red-600"></ul>
+                </div>
+                 <div>
+                    <h4 class="font-semibold text-slate-600 mb-2">Enforcement History:</h4>
+                    <ul id="modalEnforcementHistory" class="list-disc pl-5 space-y-1 text-gray-600"></ul>
+                </div>
+            </div>
+             <div class="mt-6 flex justify-end space-x-3">
+                <button class="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded-lg text-sm">Send Notice</button>
+                <button class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg text-sm">Schedule Visit</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- Static Data for Demonstration ---
+        const defaultPredictionData = {
+            predictionPeriod: "June 2025",
+            generatedDate: "29-May-2025",
+            modelVersion: "CDP_v1.5",
+            overallSummary: {
+                defaultRate: "3.5%",
+                rateTrend: "0.2% increase from last month",
+                rateTrendDirection: "up",
+                defaultAmount: "₹ 15.2 Cr",
+                amountChange: "Projected based on historical data",
+                highRiskCount: "1,280",
+            },
+            highRiskEstablishments: [
+                { id: "est1", name: "FutureTech Solutions Ltd.", code: "DL/GGN/0012345", riskScore: 92, predictedDefault: 1500000, factors: ["Declining contribution trend", "Industry Downturn", "Past defaults"], action: "Immediate Visit", industry: "IT Services", employees: 150, location: "Gurugram" },
+                { id: "est2", name: "Alpha Builders Co.", code: "MH/PUN/0067890", riskScore: 85, predictedDefault: 850000, factors: ["Irregular payments", "High employee churn"], action: "Send Notice", industry: "Construction", employees: 75, location: "Pune"},
+                { id: "est3", name: "Zenith Manufacturing", code: "TN/CHN/0034567", riskScore: 78, predictedDefault: 500000, factors: ["Economic slowdown in sector"], action: "Send Notice", industry: "Manufacturing", employees: 250, location: "Chennai"},
+                { id: "est4", name: "QuickServe Logistics", code: "KA/BLR/0090123", riskScore: 70, predictedDefault: 350000, factors: ["Cash flow issues reported"], action: "Monitor Closely", industry: "Logistics", employees: 120, location: "Bengaluru"},
+                 { id: "est5", name: "Heritage Textiles", code: "GJ/AHD/0055500", riskScore: 95, predictedDefault: 2200000, factors: ["Multiple past defaults", "Negative news coverage", "Key personnel exit"], action: "Immediate Visit", industry: "Textiles", employees: 300, location: "Ahmedabad"}
+            ],
+            resourceAllocation: {
+                regionalHotspots: [
+                    { zone: "North Zone (Delhi, Punjab)", teams: 5, focusEst: 350 },
+                    { zone: "West Zone (Mumbai, Pune)", teams: 7, focusEst: 480 },
+                    { zone: "South Zone (Bangalore)", teams: 4, focusEst: 250 },
+                ],
+                projectedRecoveryIncrease: "+18%",
+                projectedDefaultReduction: "-5% next quarter",
+                impactChartData: { // For Chart.js
+                    labels: ['Current Strategy', 'Optimized Strategy'],
+                    data: [65, 83] // Example: % Recovery Rate
+                }
+            }
+        };
+
+        // Populate Header & Summary
+        document.getElementById('predictionPeriodHeader').textContent = `Analysis Period: ${defaultPredictionData.predictionPeriod} | Generated: ${defaultPredictionData.generatedDate}`;
+        document.getElementById('modelVersion').textContent = defaultPredictionData.modelVersion;
+        document.getElementById('predictedDefaultRate').textContent = defaultPredictionData.overallSummary.defaultRate;
+        const rateTrendEl = document.getElementById('defaultRateTrend');
+        rateTrendEl.innerHTML = `<i class="fas fa-arrow-${defaultPredictionData.overallSummary.rateTrendDirection}"></i> ${defaultPredictionData.overallSummary.rateTrend}`;
+        rateTrendEl.className = `text-sm ${defaultPredictionData.overallSummary.rateTrendDirection === 'up' ? 'text-red-600' : 'text-green-600'}`;
+        document.getElementById('predictedDefaultAmount').textContent = defaultPredictionData.overallSummary.defaultAmount;
+        document.getElementById('defaultAmountChange').textContent = defaultPredictionData.overallSummary.amountChange;
+        document.getElementById('highRiskEstablishmentsCount').textContent = defaultPredictionData.overallSummary.highRiskCount;
+
+        // Populate High-Risk Table
+        const tableBody = document.getElementById('highRiskTableBody');
+        tableBody.innerHTML = ''; // Clear existing
+        defaultPredictionData.highRiskEstablishments.forEach(est => {
+            const row = tableBody.insertRow();
+            let riskClass = 'risk-low';
+            if (est.riskScore >= 85) riskClass = 'risk-high';
+            else if (est.riskScore >= 70) riskClass = 'risk-medium';
+
+            let actionClass = 'action-monitor';
+            if (est.action === "Immediate Visit") actionClass = 'action-visit';
+            else if (est.action === "Send Notice") actionClass = 'action-notice';
+            
+            row.innerHTML = `
+                <td class="px-4 py-2 whitespace-nowrap">${est.name}</td>
+                <td class="px-4 py-2 whitespace-nowrap">${est.code}</td>
+                <td class="px-4 py-2 whitespace-nowrap"><span class="px-2 py-1 rounded-full text-xs font-semibold ${riskClass}">${est.riskScore}</span></td>
+                <td class="px-4 py-2 whitespace-nowrap text-right">₹${est.predictedDefault.toLocaleString('en-IN')}</td>
+                <td class="px-4 py-2 text-xs">${est.factors.join(', ')}</td>
+                <td class="px-4 py-2 whitespace-nowrap"><span class="px-2 py-1 rounded-full text-xs font-semibold ${actionClass}">${est.action}</span></td>
+                <td class="px-4 py-2 whitespace-nowrap"><button class="text-indigo-600 hover:text-indigo-800 view-details-btn" data-id="${est.id}">View</button></td>
+            `;
+        });
+
+        // Populate Resource Allocation
+        const regionalList = document.getElementById('regionalAllocationList');
+        regionalList.innerHTML = '';
+        defaultPredictionData.resourceAllocation.regionalHotspots.forEach(zone => {
+            const li = document.createElement('li');
+            li.innerHTML = `<span class="font-medium">${zone.zone}:</span> ${zone.teams} Teams | Focus: ${zone.focusEst} High-Risk Est.`;
+            regionalList.appendChild(li);
+        });
+        document.getElementById('projectedRecovery').innerHTML = `Projected Recovery Increase: <span class="font-semibold text-green-600">${defaultPredictionData.resourceAllocation.projectedRecoveryIncrease}</span>`;
+        document.getElementById('projectedReduction').innerHTML = `Projected Default Reduction: <span class="font-semibold text-green-600">${defaultPredictionData.resourceAllocation.projectedDefaultReduction}</span>`;
+        
+        // Chart.js - Impact Chart (Doughnut Example)
+        const impactCtx = document.getElementById('impactChart').getContext('2d');
+        const impactChart = new Chart(impactCtx, {
+            type: 'doughnut',
+            data: {
+                labels: defaultPredictionData.resourceAllocation.impactChartData.labels,
+                datasets: [{
+                    label: 'Recovery Rate (%)',
+                    data: defaultPredictionData.resourceAllocation.impactChartData.data,
+                    backgroundColor: [
+                        'rgba(255, 159, 64, 0.7)', // orange
+                        'rgba(75, 192, 192, 0.7)'  // teal
+                    ],
+                    borderColor: [
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(75, 192, 192, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top' },
+                    title: { display: true, text: 'Projected Recovery Rate Improvement' }
+                }
+            }
+        });
+
+        // Modal Functionality
+        const modal = document.getElementById('establishmentModal');
+        const closeModalButton = document.getElementById('closeModalButton');
+        const modalEstName = document.getElementById('modalEstName');
+        const modalEstCode = document.getElementById('modalEstCode');
+        const modalEstIndustry = document.getElementById('modalEstIndustry');
+        const modalEstEmployees = document.getElementById('modalEstEmployees');
+        const modalEstLocation = document.getElementById('modalEstLocation');
+        const modalRiskFactors = document.getElementById('modalRiskFactors');
+        const modalEnforcementHistory = document.getElementById('modalEnforcementHistory');
+        let contributionChartInstance = null;
+
+
+        document.querySelectorAll('.view-details-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const estId = this.dataset.id;
+                const estData = defaultPredictionData.highRiskEstablishments.find(e => e.id === estId);
+                if (estData) {
+                    modalEstName.textContent = estData.name;
+                    modalEstCode.textContent = estData.code;
+                    modalEstIndustry.textContent = estData.industry;
+                    modalEstEmployees.textContent = estData.employees;
+                    modalEstLocation.textContent = estData.location;
+                    
+                    modalRiskFactors.innerHTML = '';
+                    estData.factors.forEach(factor => {
+                        const li = document.createElement('li');
+                        li.textContent = factor;
+                        modalRiskFactors.appendChild(li);
+                    });
+
+                    modalEnforcementHistory.innerHTML = '<li>No previous actions on record (Demo)</li><li>Notice sent on 15-Jan-2025 (Demo)</li>'; // Placeholder
+
+                    // Contribution History Chart in Modal
+                    const chartCtx = document.getElementById('contributionHistoryChart').getContext('2d');
+                    if(contributionChartInstance) {
+                        contributionChartInstance.destroy(); // Destroy previous chart if exists
+                    }
+                    contributionChartInstance = new Chart(chartCtx, {
+                        type: 'line',
+                        data: {
+                            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], // Dummy labels
+                            datasets: [{
+                                label: `Contribution Trend for ${estData.code}`,
+                                data: Array.from({length: 12}, () => Math.floor(Math.random() * 50000) + (estData.riskScore > 80 ? 10000 : 30000)), // Dummy data
+                                borderColor: estData.riskScore > 80 ? 'rgb(239, 68, 68)' : 'rgb(34, 197, 94)',
+                                tension: 0.1,
+                                fill: false
+                            }]
+                        },
+                        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: {callback: value => `₹${value/1000}k`} } } }
+                    });
+
+                    modal.classList.remove('modal-inactive');
+                    modal.classList.add('modal-active');
+                }
+            });
+        });
+
+        closeModalButton.addEventListener('click', () => {
+            modal.classList.remove('modal-active');
+            modal.classList.add('modal-inactive');
+        });
+        // Close modal on outside click
+        modal.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                modal.classList.remove('modal-active');
+                modal.classList.add('modal-inactive');
+            }
+        });
+
+
+    </script>
+</body>
+</html>
