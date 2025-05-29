@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Officer Posting Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        /* Ensure table layout is fixed to prevent column width issues with long content */
+        .table-fixed th, .table-fixed td {
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            hyphens: auto;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans p-4 md:p-8">
+
+    <div class="container mx-auto bg-white shadow-xl rounded-lg p-6 md:p-8">
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-700">Officer Posting Analysis</h1>
+        </header>
+
+        <section class="mb-8 p-6 bg-gray-50 rounded-lg shadow">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-6">Search & Filter</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <label for="officerSelect" class="block text-sm font-medium text-gray-700 mb-1">Select Officer (filtered by below):</label>
+                    <select id="officerSelect" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                        <option value="">-- Select an Officer --</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="officeSearch" class="block text-sm font-medium text-gray-700 mb-1">Filter by Latest Office:</label>
+                    <input type="text" id="officeSearch" placeholder="Enter current office/city" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                </div>
+                <div>
+                    <label for="previousPostingSearch" class="block text-sm font-medium text-gray-700 mb-1">Filter by Any Historical Posting:</label>
+                    <input type="text" id="previousPostingSearch" placeholder="Enter any office/city" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                </div>
+            </div>
+        </section>
+
+        <main class="flex flex-col lg:flex-row gap-8">
+            <section id="officerDetailsSection" class="lg:w-1/3 bg-white p-6 rounded-lg shadow-md hidden">
+                 <h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Officer Details</h2>
+                 <div id="officerInfo" class="space-y-3 text-sm text-gray-600">
+                    <div class="flex items-center space-x-4 mb-4">
+                        <svg class="w-20 h-20 text-indigo-300 bg-indigo-100 rounded-full p-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
+                        <div>
+                            <h3 class="text-xl font-bold text-indigo-700" id="officerNameDetail"></h3>
+                            <p class="text-sm text-gray-500">EID: <span id="officerEidDetail" class="font-medium"></span></p>
+                        </div>
+                    </div>
+                    <div class="space-y-2 text-sm">
+                        <p><strong class="text-gray-600 w-1/3 inline-block">DOB:</strong> <span id="officerDobDetail" class="text-gray-800"></span></p>
+                        <p><strong class="text-gray-600 w-1/3 inline-block">Latest Designation:</strong> <span id="officerDesignationDetail" class="text-gray-800"></span></p>
+                        <p><strong class="text-gray-600 w-1/3 inline-block">Latest Known Office:</strong> <span id="officerLatestOfficeDetail" class="text-gray-800"></span></p>
+                    </div>
+                 </div>
+            </section>
+
+            <section id="postingHistorySection" class="lg:w-2/3 bg-white p-6 rounded-lg shadow-md hidden">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Posting History</h2>
+                <div class="overflow-x-auto">
+                    <table id="postingHistoryTable" class="min-w-full divide-y divide-gray-200 table-fixed">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">From</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">To</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">Designation</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/3">Office/Location</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">Posting Type</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">Period (Years)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="postingHistoryTbody" class="bg-white divide-y divide-gray-200 text-sm text-gray-700">
+                            </tbody>
+                    </table>
+                </div>
+                 <p id="noHistoryMessage" class="text-gray-500 mt-4 hidden">No posting history found for this officer.</p>
+            </section>
+        </main>
+        
+        <section id="officerListSection" class="mt-8 bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Officer List</h2>
+            <p id="initialMessage" class="text-gray-600 mb-4">Select an officer from the dropdown or use the search filters to see details. Officers matching current filters:</p>
+            <div class="overflow-x-auto">
+                <table id="officersTable" class="min-w-full divide-y divide-gray-200 table-fixed">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">Name</th>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">EID</th>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">Latest Designation</th>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/3">Latest Office</th>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">DOB</th>
+                        </tr>
+                    </thead>
+                    <tbody id="officersTableBody" class="bg-white divide-y divide-gray-200 text-sm text-gray-700">
+                        </tbody>
+                </table>
+            </div>
+            <p id="noOfficersMessage" class="text-gray-500 mt-4 hidden">No officers match the current filters.</p>
+        </section>
+
+    </div>
+
+    <script>
+        let allOfficerData = [];
+        let uniqueOfficers = []; // Will store objects with { eid, name, dob, latestDesignation, latestOffice, latestCol4, historicalStationsRaw, historicalStationsParsed }
+
+        // Function to parse DD/MM/YYYY to a sortable string YYYYMMDD
+        function parseDate(dateStr) {
+            if (!dateStr || typeof dateStr !== 'string') return null;
+            const parts = dateStr.split('/');
+            if (parts.length === 3) {
+                return `${parts[2]}${parts[1].padStart(2, '0')}${parts[0].padStart(2, '0')}`;
+            }
+            return null;
+        }
+        
+        // Function to format date for display as DD/MM/YYYY
+        function formatDateForDisplay(dateStr) {
+            if (!dateStr || typeof dateStr !== 'string') return 'N/A';
+            const parts = dateStr.split('/');
+            if (parts.length === 3) {
+                return `${parts[0].padStart(2, '0')}/${parts[1].padStart(2, '0')}/${parts[2]}`;
+            }
+            return dateStr; // Fallback if not in expected DD/MM/YYYY format
+        }
+
+        // Heuristic function to extract the primary station/office from col4
+        function getStation(col4Value) {
+            if (!col4Value || typeof col4Value !== 'string') return 'N/A';
+            const parts = col4Value.trim().split(/\s+/);
+            if (parts.length === 0) return 'N/A';
+            
+            // Handle "AD-HOC PROMOTION AT SAME OFFICE X Y Z" -> X, Y, Z
+            if (col4Value.toUpperCase().startsWith("AD-HOC PROMOTION AT SAME OFFICE")) {
+                return col4Value.substring("AD-HOC PROMOTION AT SAME OFFICE".length).trim();
+            }
+
+            // Prioritize "HEAD OFFICE"
+            const headOfficeIndex = parts.map(p => p.toUpperCase()).indexOf("HEAD");
+            if (headOfficeIndex !== -1 && parts[headOfficeIndex + 1] && parts[headOfficeIndex + 1].toUpperCase() === "OFFICE") {
+                if (parts[headOfficeIndex + 2]) return `HEAD OFFICE, ${parts[headOfficeIndex + 2]}`;
+                return "HEAD OFFICE";
+            }
+            
+            // General cases:
+            if (parts.length >= 3 && parts[parts.length - 1].toUpperCase() === parts[parts.length - 2].toUpperCase()) {
+                 // "X Y Y" -> return "X, Y" if X is not a common prefix like ACC, ZTI etc. otherwise Y
+                if (parts[0].toUpperCase().match(/ACC|ZTI|SRO|RPFC|APFC/)) return parts[parts.length - 1];
+                return `${parts[0]}, ${parts[parts.length - 1]}`;
+            }
+            if (parts.length >= 2) {
+                // "X Y" -> Y, unless X is a known office prefix
+                if (parts[0].toUpperCase().match(/ACC|ZTI|SRO|RPFC|APFC/) && parts.length === 2) return parts[1];
+                // "X Y Z" -> "Y, Z" (e.g., "NAGPUR HO DELHI" -> "HO, DELHI")
+                if (parts.length >=2 && !parts[parts.length - 2].toUpperCase().match(/ACC|ZTI|SRO|RPFC|APFC/)) {
+                     return `${parts[parts.length - 2]}, ${parts[parts.length - 1]}`;
+                }
+                return parts[parts.length - 1]; // Fallback to last part
+            }
+            return parts[0]; // Fallback for single word
+        }
+
+
+        async function loadData() {
+            try {
+                const response = await fetch('data.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                allOfficerData = await response.json();
+                processOfficerData();
+                populateOfficerDropdown(uniqueOfficers); // Populate with all unique officers initially
+                filterAndDisplayOfficers(); // Display all officers in the table initially
+            } catch (error) {
+                console.error("Error loading or parsing data.json:", error);
+                document.getElementById('initialMessage').textContent = 'Error loading officer data. Please check console.';
+            }
+        }
+
+        function processOfficerData() {
+            const officerMap = new Map();
+            // First pass: group all records by EID
+            allOfficerData.forEach(record => {
+                if (!officerMap.has(record.eid)) {
+                    officerMap.set(record.eid, {
+                        eid: record.eid,
+                        name_office: record.name_office, 
+                        dob: record.dob,
+                        records: []
+                    });
+                }
+                officerMap.get(record.eid).records.push(record);
+            });
+
+            uniqueOfficers = Array.from(officerMap.values()).map(officer => {
+                // Sort officer's records by date1 descending to find the latest record easily
+                officer.records.sort((a, b) => {
+                    const dateA = parseDate(a.date1);
+                    const dateB = parseDate(b.date1);
+                    if (dateA && dateB) return dateB.localeCompare(dateA);
+                    if (dateA) return -1; // Place records with valid date1 first
+                    if (dateB) return 1;
+                    return 0;
+                });
+                const latestRecord = officer.records[0] || {}; // Get the most recent record
+
+                // Collect all historical stations for this officer
+                const historicalStationsRaw = new Set();
+                const historicalStationsParsed = new Set();
+                officer.records.forEach(rec => {
+                    if (rec.col4) {
+                        historicalStationsRaw.add(rec.col4.toLowerCase());
+                        historicalStationsParsed.add(getStation(rec.col4).toLowerCase());
+                    }
+                });
+
+                return {
+                    eid: officer.eid,
+                    name: officer.name_office.replace(/ Office$/, ''), // Cleaned name
+                    name_office: officer.name_office, 
+                    dob: officer.dob,
+                    latestDesignation: latestRecord.col2 || latestRecord.desig || 'N/A',
+                    latestOffice: getStation(latestRecord.col4 || 'N/A'),
+                    latestCol4: latestRecord.col4 || 'N/A', // Raw col4 for latest record
+                    historicalStationsRaw: Array.from(historicalStationsRaw),
+                    historicalStationsParsed: Array.from(historicalStationsParsed)
+                };
+            });
+            // Sort uniqueOfficers by name for the main dropdown and initial list
+            uniqueOfficers.sort((a,b) => a.name.localeCompare(b.name));
+        }
+
+        function populateOfficerDropdown(officersToPopulate) {
+            const officerSelect = document.getElementById('officerSelect');
+            const currentSelection = officerSelect.value; // Preserve current selection if possible
+            officerSelect.innerHTML = '<option value="">-- Select an Officer --</option>'; // Reset
+            
+            officersToPopulate.forEach(officer => {
+                const option = document.createElement('option');
+                option.value = officer.eid;
+                option.textContent = `${officer.name} (EID: ${officer.eid})`;
+                officerSelect.appendChild(option);
+            });
+            if (officersToPopulate.some(o => o.eid === currentSelection)) {
+                 officerSelect.value = currentSelection;
+            }
+        }
+        
+        function filterAndDisplayOfficers() {
+            const officeQuery = document.getElementById('officeSearch').value.toLowerCase().trim();
+            const previousPostingQuery = document.getElementById('previousPostingSearch').value.toLowerCase().trim();
+            
+            let filteredOfficers = uniqueOfficers;
+
+            if (officeQuery) {
+                filteredOfficers = filteredOfficers.filter(officer => 
+                    officer.latestCol4.toLowerCase().includes(officeQuery) || 
+                    officer.latestOffice.toLowerCase().includes(officeQuery)
+                );
+            }
+
+            if (previousPostingQuery) {
+                filteredOfficers = filteredOfficers.filter(officer => {
+                    return officer.historicalStationsRaw.some(station => station.includes(previousPostingQuery)) ||
+                           officer.historicalStationsParsed.some(station => station.includes(previousPostingQuery));
+                });
+            }
+            
+            populateOfficerDropdown(filteredOfficers); // Update dropdown with filtered officers
+
+            const officersTableBody = document.getElementById('officersTableBody');
+            officersTableBody.innerHTML = ""; 
+            const noOfficersMessage = document.getElementById('noOfficersMessage');
+
+            if (filteredOfficers.length === 0) {
+                noOfficersMessage.classList.remove('hidden');
+            } else {
+                noOfficersMessage.classList.add('hidden');
+                filteredOfficers.forEach(officer => {
+                    const row = officersTableBody.insertRow();
+                    row.classList.add('hover:bg-gray-50', 'cursor-pointer');
+                    row.onclick = () => {
+                        document.getElementById('officerSelect').value = officer.eid; // Set dropdown
+                        displayOfficerDetails(officer.eid); // Display details
+                    };
+                    row.insertCell().textContent = officer.name;
+                    row.insertCell().textContent = officer.eid;
+                    row.insertCell().textContent = officer.latestDesignation;
+                    row.insertCell().textContent = officer.latestOffice;
+                    row.insertCell().textContent = formatDateForDisplay(officer.dob);
+                });
+            }
+        }
+
+
+        function displayOfficerDetails(eid) {
+            if (!eid) { // No officer selected or selection cleared
+                document.getElementById('officerDetailsSection').classList.add('hidden');
+                document.getElementById('postingHistorySection').classList.add('hidden');
+                document.getElementById('officerListSection').classList.remove('hidden'); // Show officer list
+                filterAndDisplayOfficers(); // Refresh officer list based on any active filters
+                return;
+            }
+
+            document.getElementById('officerListSection').classList.add('hidden');
+            document.getElementById('officerDetailsSection').classList.remove('hidden');
+            document.getElementById('postingHistorySection').classList.remove('hidden');
+
+            const officerData = uniqueOfficers.find(o => o.eid === eid);
+            const officerRecords = allOfficerData.filter(record => record.eid === eid);
+
+            if (!officerData || officerRecords.length === 0) {
+                 // Should not happen if EID comes from dropdown/table of uniqueOfficers
+                document.getElementById('officerDetailsSection').classList.add('hidden');
+                document.getElementById('postingHistorySection').classList.add('hidden');
+                document.getElementById('officerListSection').classList.remove('hidden');
+                return;
+            }
+            
+            // Populate Officer Details Card
+            document.getElementById('officerNameDetail').textContent = officerData.name;
+            document.getElementById('officerEidDetail').textContent = officerData.eid;
+            document.getElementById('officerDobDetail').textContent = formatDateForDisplay(officerData.dob);
+            document.getElementById('officerDesignationDetail').textContent = officerData.latestDesignation;
+            document.getElementById('officerLatestOfficeDetail').textContent = officerData.latestOffice;
+
+
+            // Sort records by date1 for chronological history (ascending)
+            officerRecords.sort((a, b) => {
+                const dateA = parseDate(a.date1);
+                const dateB = parseDate(b.date1);
+                if (dateA && dateB) return dateA.localeCompare(dateB);
+                if (dateA) return -1;
+                if (dateB) return 1;
+                return 0;
+            });
+
+            const historyTableBody = document.getElementById('postingHistoryTbody');
+            historyTableBody.innerHTML = ""; 
+            const noHistoryMessage = document.getElementById('noHistoryMessage');
+
+            if (officerRecords.length === 0) {
+                noHistoryMessage.classList.remove('hidden');
+            } else {
+                noHistoryMessage.classList.add('hidden');
+                officerRecords.forEach(record => {
+                    const row = historyTableBody.insertRow();
+                    row.insertCell().textContent = formatDateForDisplay(record.date1);
+                    row.insertCell().textContent = record.date2 ? formatDateForDisplay(record.date2) : 'Present';
+                    row.insertCell().textContent = record.col2 || record.desig || 'N/A';
+                    // For posting history, getStation should ideally reflect the location OF THAT RECORD
+                    // The current getStation tends to get the "TO" location or primary location.
+                    // This might need a more nuanced `getStationForHistoricalRecord(record)` if precise "FROM" is needed for transfers.
+                    // For now, using getStation as is.
+                    row.insertCell().textContent = getStation(record.col4); 
+                    row.insertCell().textContent = record.new_col4 || 'N/A';
+                    row.insertCell().textContent = record.period1 || 'N/A';
+                });
+            }
+        }
+
+        document.getElementById('officerSelect').addEventListener('change', function() {
+            displayOfficerDetails(this.value);
+        });
+
+        document.getElementById('officeSearch').addEventListener('input', filterAndDisplayOfficers);
+        document.getElementById('previousPostingSearch').addEventListener('input', filterAndDisplayOfficers);
+        
+        window.onload = loadData;
+    </script>
+</body>
+</html>
