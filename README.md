@@ -12,6 +12,9 @@
 10. [Default Predcition](./prototypes/default_prediction.html)
 
 11. [Retirement Planner](./prototypes/retirement_planner.html)
+12. [Withdrawal Analysis](./prototypes/withdrawal_analysis.html)
+13. [Policy Impact assessment](./prototypes/policy_impact.html)
+
 
 # Possible Projects
 
@@ -26,42 +29,8 @@
 ## II. Projects Focused on Member Services and Policy Insights
 
 ### 1. Personalized Retirement Planning Tool
-- **Problem**: Develop an AI-powered tool to provide personalized retirement planning advice based on individual circumstances and contribution history.
-- **Data**: Member data (age, salary, contribution history, family details), investment options, economic projections.
-- **AI/ML Techniques**:
-  - Reinforcement learning for optimal investment allocation
-  - Predictive modeling to estimate future corpus
-  - Monte Carlo simulations for risk assessment
-- **Impact**:
-  - Empower members to make informed retirement decisions
-  - Promote financial literacy
-- **Professor Interest**: Applying reinforcement learning to financial planning, developing recommendation systems, publishing research on AI-driven financial advisory tools.
-- **EPFO Interest**: Enhanced member engagement, improved financial well-being, potential for increased voluntary contributions.
-
 ### 2. Analysis of Withdrawal Patterns and Early Exits
-- **Problem**: Understand reasons for premature withdrawals and identify factors contributing to early exits from the EPF scheme.
-- **Data**: Withdrawal data, member demographics, socio-economic data, reasons for withdrawal (if available).
-- **AI/ML Techniques**:
-  - Survival analysis for member retention modeling
-  - Clustering to identify different withdrawal patterns
-  - Statistical analysis to correlate withdrawals with various factors
-- **Impact**:
-  - Inform policy changes to encourage long-term savings
-  - Improve member retention
-- **Professor Interest**: Applying survival analysis and clustering to social security data, publishing research on retirement savings behavior.
-- **EPFO Interest**: Data-driven policy recommendations, improved retention, long-term financial stability.
-
 ### 3. Impact Assessment of Policy Changes
-- **Problem**: Develop a framework to evaluate the impact of past and future policy changes on member behavior and the overall EPF scheme.
-- **Data**: Historical data on contributions, withdrawals, membership, policy changes, economic indicators.
-- **AI/ML Techniques**:
-  - Causal inference methods (e.g., difference-in-differences, regression discontinuity)
-  - Time series analysis for long-term trends
-- **Impact**:
-  - Provide evidence-based insights for policy formulation and evaluation
-  - Improve the effectiveness of the EPF scheme
-- **Professor Interest**: Applying causal inference techniques to policy questions, developing impact assessment methods, publishing research on evaluating social security programs.
-- **EPFO Interest**: Data-driven policymaking, better understanding of policy impacts, enhanced adaptability.
 
 ---
 
@@ -83,13 +52,7 @@
 
 ---
 
-## Key Considerations for Project Selection and Execution
-- **Professor's Expertise and Interests**: Align projects with research areas of interest.
-- **Data Availability and Sensitivity**: Ensure data access under appropriate conditions (anonymization, secure access protocols).
-- **EPFO's Priorities**: Focus on EPFO's strategic goals and priorities.
-- **Ethical Considerations**: Address privacy, bias, and member impact.
-- **Collaboration and Communication**: Establish clear communication and a collaborative framework.
-- **Memorandum of Understanding (MoU)**: Formalize collaboration terms, data sharing, and publication guidelines.
+
 
 # Suggested Projects Under Professor  for EPFO
 
