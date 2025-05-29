@@ -2,6 +2,7 @@
 
 1. [Pension and EDLI Calculator](./calculator/cal.html)
 2. [Performance Visualizations](./performance-visualization/claimwise-rejection.html)
+3. [AGT analysis](./agt_analysis/)
 
 # Possible Projects
 
