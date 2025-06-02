@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Core AI Techniques & Their Applications in EPFO/Social Security</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light blue-gray background */
+        }
+        .header-bg {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); /* EPFO-like blue gradient */
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem; /* md:rounded-xl */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .card-title {
+            color: #1e3a8a; /* Dark blue for titles */
+        }
+        .list-item-icon {
+            color: #3b82f6; /* Lighter blue for icons */
+            flex-shrink: 0;
+        }
+        h1, h2 {
+            font-weight: 700;
+        }
+        .badge {
+            background-color: #e0f2fe; /* Light blue badge background */
+            color: #0c4a6e; /* Darker blue text for badge */
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            align-self: flex-start; /* Align badge to the start of the card content */
+        }
+        .card-content {
+            flex-grow: 1;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <header class="header-bg text-white py-8 sm:py-12 shadow-lg">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2">Core AI Techniques in Social Security</h1>
+            <p class="text-lg sm:text-xl text-blue-100">Applications within EPFO & Similar Organisations</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+
+            <div class="card p-6">
+                <span class="badge mb-3">Statistical Modeling</span>
+                <div class="card-content">
+                    <div class="flex items-center mb-4">
+                        <svg class="w-10 h-10 list-item-icon mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
+                        <h2 class="text-xl font-semibold card-title">1. Linear Regression</h2>
+                    </div>
+                    <p class="text-gray-600 mb-4 text-sm">Predicting continuous values based on relationships between variables. Useful for forecasting and estimation.</p>
+                    <ul class="space-y-2 text-gray-700 text-sm">
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Forecasting Contribution Trends:</strong> Predicting future PF contribution amounts based on economic indicators, employment rates, and historical data.
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Estimating Claim Processing Time:</strong> Predicting how long a specific claim might take to process based on claim type, document completeness, and current workload.
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Pension Liability Projection:</strong> Estimating future pension payouts based on member demographics, life expectancy, and salary growth projections.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card p-6">
+                <span class="badge mb-3">Supervised Learning</span>
+                <div class="card-content">
+                    <div class="flex items-center mb-4">
+                         <svg class="w-10 h-10 list-item-icon mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
+                        <h2 class="text-xl font-semibold card-title">2. Classification</h2>
+                    </div>
+                    <p class="text-gray-600 mb-4 text-sm">Categorizing data into predefined classes. Essential for decision-making and organization.</p>
+                    <ul class="space-y-2 text-gray-700 text-sm">
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Automated Document Sorting:</strong> Classifying submitted documents (e.g., Aadhaar, PAN, bank statement, Form 19) for efficient processing.
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Claim Type Identification:</strong> Automatically categorizing claims as PF withdrawal, pension, advance, death claim, etc., for routing to specialized teams.
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Risk Profiling of Claims:</strong> Classifying claims as low-risk (for fast-tracking) or high-risk (requiring detailed scrutiny).
+                        </li>
+                         <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Member Segmentation:</strong> Grouping members based on demographics or contribution behavior for targeted communication or scheme awareness.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card p-6">
+                <span class="badge mb-3">Unsupervised/Supervised</span>
+                <div class="card-content">
+                    <div class="flex items-center mb-4">
+                        <svg class="w-10 h-10 list-item-icon mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                        <h2 class="text-xl font-semibold card-title">3. Anomaly Detection</h2>
+                    </div>
+                    <p class="text-gray-600 mb-4 text-sm">Identifying data points or patterns that deviate significantly from the norm, crucial for fraud prevention.</p>
+                    <ul class="space-y-2 text-gray-700 text-sm">
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Fraudulent Claim Detection:</strong> Spotting unusual claim patterns (e.g., multiple claims from same IP, inconsistent details, claims immediately after joining).
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Irregular Employer Contributions:</strong> Identifying employers with significantly delayed, missed, or unusually low/high contribution patterns.
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Suspicious Account Activity:</strong> Detecting unusual login attempts, changes in bank details, or access from unrecognized devices on member portals.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card p-6">
+                <span class="badge mb-3">Language Understanding</span>
+                <div class="card-content">
+                    <div class="flex items-center mb-4">
+                        <svg class="w-10 h-10 list-item-icon mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                        <h2 class="text-xl font-semibold card-title">4. Natural Language Processing (NLP)</h2>
+                    </div>
+                    <p class="text-gray-600 mb-4 text-sm">Enabling computers to understand, interpret, and generate human language.</p>
+                    <ul class="space-y-2 text-gray-700 text-sm">
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>AI Chatbots & Virtual Assistants:</strong> Handling member queries (balance, status, rules) 24/7 via text or voice in multiple languages.
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Sentiment Analysis:</strong> Analyzing member feedback from emails, social media, and surveys to gauge satisfaction and identify pain points.
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Information Extraction from Grievances:</strong> Automatically identifying key issues, entities, and urgency from member grievances or complaints.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card p-6">
+                <span class="badge mb-3">Decision Making</span>
+                <div class="card-content">
+                    <div class="flex items-center mb-4">
+                         <svg class="w-10 h-10 list-item-icon mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10em"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5-2.98-.568M15 15l-2-3"></path></svg>
+                        <h2 class="text-xl font-semibold card-title">5. Reinforcement Learning (RL)</h2>
+                    </div>
+                    <p class="text-gray-600 mb-4 text-sm">Training agents to make optimal decisions through trial and error, learning from rewards or penalties.</p>
+                    <ul class="space-y-2 text-gray-700 text-sm">
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Optimizing Resource Allocation:</strong> Dynamically assigning claims to officers based on complexity and officer availability to minimize processing delays.
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Personalized Financial Nudges:</strong> Learning member behavior to provide timely and effective nudges for savings or investment choices.
+                        </li>
+                         <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Adaptive Fraud Detection Systems:</strong> Systems that learn and adapt to new fraudulent techniques over time.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card p-6">
+                <span class="badge mb-3">Document Digitization</span>
+                <div class="card-content">
+                     <div class="flex items-center mb-4">
+                        <svg class="w-10 h-10 list-item-icon mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        <h2 class="text-xl font-semibold card-title">6. Optical Character Recognition (OCR)</h2>
+                    </div>
+                    <p class="text-gray-600 mb-4 text-sm">Converting different types of documents, such as scanned paper documents, PDF files or images captured by a digital camera into editable and searchable data.</p>
+                    <ul class="space-y-2 text-gray-700 text-sm">
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Automated Data Entry:</strong> Extracting data from scanned KYC documents (Aadhaar, PAN, bank passbooks, cancelled cheques), claim forms (Form 19, 10C, 31), and employer submissions.
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Digitization of Legacy Records:</strong> Converting millions of physical member files and historical documents into searchable digital archives.
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Making Circulars Searchable:</strong> Processing scanned images of official circulars, notifications, and gazettes to make their text content searchable.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card p-6">
+                <span class="badge mb-3">Image & Video Analysis</span>
+                <div class="card-content">
+                     <div class="flex items-center mb-4">
+                        <svg class="w-10 h-10 list-item-icon mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <h2 class="text-xl font-semibold card-title">7. Computer Vision (General)</h2>
+                    </div>
+                    <p class="text-gray-600 mb-4 text-sm">Enabling computers to "see" and interpret visual information beyond just OCR.</p>
+                    <ul class="space-y-2 text-gray-700 text-sm">
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Document Authenticity Check:</strong> Analyzing security features, watermarks, or layout of submitted documents to detect forgeries. (Beyond simple OCR).
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Signature Verification:</strong> Advanced analysis of signature dynamics and comparison against reference signatures.
+                        </li>
+                         <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Image Quality Assessment:</strong> Ensuring submitted scanned documents meet quality standards for processing.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+             <div class="card p-6">
+                <span class="badge mb-3">Biometric AI</span>
+                <div class="card-content">
+                     <div class="flex items-center mb-4">
+                        <svg class="w-10 h-10 list-item-icon mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10V9a3 3 0 013-3v0a3 3 0 013 3v1m-4 6v2m0-2H7m4 0h2"></path></svg>
+                        <h2 class="text-xl font-semibold card-title">8. Face Detection/Recognition</h2>
+                    </div>
+                    <p class="text-gray-600 mb-4 text-sm">Identifying or verifying individuals from digital images or video frames.</p>
+                    <ul class="space-y-2 text-gray-700 text-sm">
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Video KYC (vKYC):</strong> Verifying member identity during remote onboarding by matching live video feed with photo ID.
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Liveness Detection:</strong> Ensuring the person in vKYC is real and not a static image or pre-recorded video to prevent spoofing.
+                        </li>
+                         <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Secure Portal Access:</strong> Optional facial recognition as a biometric authentication method for member portals (with strong consent mechanisms).
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+             <div class="card p-6">
+                <span class="badge mb-3">Sound Analysis</span>
+                <div class="card-content">
+                     <div class="flex items-center mb-4">
+                        <svg class="w-10 h-10 list-item-icon mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+                        <h2 class="text-xl font-semibold card-title">9. Audio Processing</h2>
+                    </div>
+                    <p class="text-gray-600 mb-4 text-sm">Analyzing and interpreting sound, including speech, for various applications.</p>
+                    <ul class="space-y-2 text-gray-700 text-sm">
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Speech-to-Text for IVR/Call Centers:</strong> Transcribing member queries from calls for analysis, record-keeping, or routing to NLP systems.
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Voice Biometrics:</strong> Authenticating members over the phone based on their unique voice patterns for secure interactions.
+                        </li>
+                         <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Sentiment Analysis from Calls:</strong> Analyzing tone and speech patterns in calls to understand member emotion and satisfaction levels.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card p-6">
+                <span class="badge mb-3">Generative AI / NLP</span>
+                <div class="card-content">
+                     <div class="flex items-center mb-4">
+                        <svg class="w-10 h-10 list-item-icon mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 10H3m7 0V3m0 7l6 6"></path></svg>
+                        <h2 class="text-xl font-semibold card-title">10. Retrieval Augmented Generation (RAG)</h2>
+                    </div>
+                    <p class="text-gray-600 mb-4 text-sm">Enhancing Large Language Models by grounding them with information retrieved from an authoritative knowledge base, reducing hallucinations and improving accuracy.</p>
+                    <ul class="space-y-2 text-gray-700 text-sm">
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Context-Aware Chatbots:</strong> Answering complex member queries accurately by retrieving relevant sections from EPFO circulars, FAQs, and scheme rules before generating a response.
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Internal Knowledge Search for Employees:</strong> Enabling staff to quickly find precise information and procedures from a vast library of internal documents and guidelines.
+                        </li>
+                         <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Automated Summary of Regulations:</strong> Generating concise summaries of complex legal or procedural documents for easier understanding.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card p-6">
+                <span class="badge mb-3">Network Analysis / Advanced ML</span>
+                <div class="card-content">
+                     <div class="flex items-center mb-4">
+                        <svg class="w-10 h-10 list-item-icon mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-5M3 4v5H8m13 0V4h-5M4 20v-5h5m10-11l-6 6-6-6"></path></svg> <h2 class="text-xl font-semibold card-title">11. Graph Models (GNNs)</h2>
+                    </div>
+                    <p class="text-gray-600 mb-4 text-sm">Representing and analyzing data in terms of entities (nodes) and their relationships (edges) to uncover complex patterns.</p>
+                    <ul class="space-y-2 text-gray-700 text-sm">
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Advanced Fraud Detection:</strong> Identifying collusive fraud rings by mapping relationships between members, employers, bank accounts, addresses, and claims.
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Employer Compliance Network Analysis:</strong> Detecting shell companies or interconnected defaulting employers by analyzing ownership and transaction networks.
+                        </li>
+                         <li class="flex items-start">
+                            <svg class="w-5 h-5 list-item-icon mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <strong>Link Prediction for Investigations:</strong> Suggesting potential hidden links between entities that investigators should explore.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="mt-12 sm:mt-16 p-6 sm:p-8 bg-white rounded-lg shadow-lg text-center">
+            <h2 class="text-2xl sm:text-3xl font-semibold card-title mb-4">Leveraging Core AI for Modern Social Security</h2>
+            <p class="text-gray-700 text-base sm:text-lg leading-relaxed max-w-3xl mx-auto">
+                By understanding and applying these fundamental AI techniques, organizations like EPFO can build intelligent systems that enhance efficiency, improve member services, ensure robust security, and support data-informed policy making. Each technique offers a unique set of capabilities to address specific challenges and unlock new opportunities in the realm of social security.
+            </p>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-white text-center py-6 mt-8 sm:mt-12">
+        <p class="text-sm">&copy; <span id="currentYear"></span> AI Techniques for Social Security. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Set current year in footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>
