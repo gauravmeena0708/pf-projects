@@ -22,6 +22,7 @@
 17. [Knowledge Base](./prototypes/knowledge_base.html)
 
 18. [Semi-supervised Classification](./prototypes/semi_supervised.html)
+19. [More usecases](./prototypes/more_usecases.html)
 
 
 # Possible Projects
