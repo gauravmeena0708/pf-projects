@@ -3,66 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PF Projects</title>
+    <title>PF Projects Repository | EPFO Analytics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-JHNCW79FZT"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
-      gtag('config', 'G-JHNCW79FZT', {
-          'cookie_domain': 'none'
-      });
+      gtag('config', 'G-JHNCW79FZT', { 'cookie_domain': 'none' });
     </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .epfo-navy { background-color: #1e3a8a; }
+        .border-navy { border-color: #1e3a8a; }
+        .text-navy { color: #1e3a8a; }
+        .sidebar-link:hover { background-color: #f1f5f9; color: #1e3a8a; }
+    </style>
 </head>
-<body>
-    <h1>pf-projects</h1>
+<body class="text-slate-800 antialiased">
 
-    <ol>
-        <li><a href="./calculator/cal.html">Pension and EDLI Calculator</a></li>
-        <li><a href="./performance-visualization/claimwise-rejection.html">Performance Visualizations</a></li>
-        <li><a href="./agt_analysis/index3.html">AGT analysis</a></li>
-        <li><a href="./form11-eligibility/index.html">Pension Contribution Eligibility Checker</a></li>
-        <li><a href="./prototypes/transfer_risk.html">Transfer Claim Risk Score</a></li>
-        <li><a href="./prototypes/establishment_risk.html">Esatblishment Risk Score</a></li>
-        <li><a href="./prototypes/claim_risk.html">Claim Risk Score</a></li>
-        <li><a href="./prototypes/grievance_prediction.html">Grievance Prediction</a></li>
-        <li><a href="./prototypes/automated_kyc.html">Automated KYC</a></li>
-        <li><a href="./prototypes/default_prediction.html">Default Predcition</a></li>
-        <li><a href="./prototypes/retirement_planner.html">Retirement Planner</a></li>
-        <li><a href="./prototypes/withdrawal_analysis.html">Withdrawal Analysis</a></li>
-        <li><a href="./prototypes/policy_impact.html">Policy Impact assessment</a></li>
-        <li><a href="./prototypes/analysis_graph.html">Analysis - Graph</a></li>
-        <li><a href="./prototypes/analysis_temporal.html">Analysis - Temporal</a></li>
-        <li><a href="./prototypes/information_retrieval.html">Information Retrieval</a></li>
-        <li><a href="./prototypes/information_retrieval2.html">Information Retrieval</a></li>
-        <li><a href="./prototypes/knowledge_base.html">Knowledge Base</a></li>
-        <li><a href="./prototypes/semi_supervised.html">Semi-supervised Classification</a></li>
-        <li><a href="./prototypes/more_usecases.html">More usecases</a></li>
-    </ol>
+    <!-- Top Navigation Bar -->
+    <nav class="epfo-navy text-white py-4 px-6 shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <i class="fas fa-shield-halved text-2xl text-blue-300"></i>
+                <span class="font-bold text-xl tracking-tight uppercase">PF Projects Repository</span>
+            </div>
+            <div class="hidden md:flex space-x-8 text-sm font-medium uppercase tracking-widest">
+                <a href="#" class="hover:text-blue-200 transition">Dashboard</a>
+                <a href="#calculators" class="hover:text-blue-200 transition">Calculators</a>
+                <a href="#analytics" class="hover:text-blue-200 transition">Analytics</a>
+                <a href="#research" class="hover:text-blue-200 transition">Research</a>
+            </div>
+        </div>
+    </nav>
 
-    <h2>Possible Projects</h2>
 
-    <h3>Projects Focused on Improving EPFO's Internal Operations</h3>
-    <ol>
-        <li>Fraud Detection and Anomaly Detection in Claims Processing</li>
-        <li>Predictive Modeling for Grievance Redressal</li>
-        <li>Automation of KYC and Data Validation</li>
-        <li>Optimizing Contribution Collection and Reconciliation</li>
-        <li>Personalized Retirement Planning Tool</li>
-        <li>Impact Assessment of Policy Changes</li>
-        <li>Temporal Analysis of EPFO Transactions</li>
-        <li>Graph-Based Analysis of EPFO Member Networks</li>
-        <li>Information Retrieval System for EPFO Records</li>
-        <li>Knowledge Base Construction for Policy Impact Assessment</li>
-        <li>Social Network Analysis for Fraud Detection in EPFO</li>
-        <li>Predictive Modeling of Member Behavior in EPFO</li>
-        <li>Automated Processing of EPFO Grievances Using NLP</li>
-        <li>Optimization of EPFO's Data Processing Algorithms</li>
-        <li>Statistical Analysis of EPFO Member Demographics</li>
-        <li>Semi-Supervised Learning for EPFO Data Classification</li>
-        <li>Graphical Model-Based Risk Assessment in EPFO</li>
-    </ol>
+
+    <main class="max-w-7xl mx-auto px-6 py-10">
+        
+        <!-- Priority Systems (Featured) -->
+        <section class="mb-12">
+            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-6 border-b border-slate-200 pb-2">Core Search Systems</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <a href="https://gauravmeena0708.github.io/pf-circular/" target="_blank" class="bg-white border border-slate-200 p-6 hover:shadow-lg transition-all group">
+                    <div class="flex justify-between items-start mb-4">
+                        <i class="fas fa-file-contract text-navy text-2xl"></i>
+                        <i class="fas fa-external-link-alt text-slate-300 group-hover:text-navy transition text-xs"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Circular Search</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">Indexed repository for official notifications and regulatory circulars.</p>
+                </a>
+                <a href="https://gauravmeena0708.github.io/pf-contacts/" target="_blank" class="bg-white border border-slate-200 p-6 hover:shadow-lg transition-all group">
+                    <div class="flex justify-between items-start mb-4">
+                        <i class="fas fa-map-location-dot text-navy text-2xl"></i>
+                        <i class="fas fa-external-link-alt text-slate-300 group-hover:text-navy transition text-xs"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Contacts Search</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">Directory services for regional, field, and administrative offices.</p>
+                </a>
+                <a href="https://gauravmeena0708.github.io/pf-contacts/planner.html" target="_blank" class="bg-white border border-slate-200 p-6 hover:shadow-lg transition-all group">
+                    <div class="flex justify-between items-start mb-4">
+                        <i class="fas fa-route text-navy text-2xl"></i>
+                        <i class="fas fa-external-link-alt text-slate-300 group-hover:text-navy transition text-xs"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Office Location Planner</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">Spatial planning and location mapping for administrative infrastructure.</p>
+                </a>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            
+            <!-- Left Column: Calculators -->
+            <div class="lg:col-span-1 space-y-10">
+                <section id="calculators">
+                    <h2 class="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-6 border-b border-slate-200 pb-2">Operational Tools</h2>
+                    <div class="space-y-3">
+                        <a href="./calculator/cal.html" class="flex items-center p-4 bg-white border border-slate-200 hover:border-navy transition group">
+                            <span class="w-8 h-8 flex items-center justify-center text-slate-400 group-hover:text-navy mr-3"><i class="fas fa-calculator"></i></span>
+                            <span class="text-sm font-semibold">Pension & EDLI Calculator</span>
+                        </a>
+                        <a href="./form11-eligibility/index.html" class="flex items-center p-4 bg-white border border-slate-200 hover:border-navy transition group">
+                            <span class="w-8 h-8 flex items-center justify-center text-slate-400 group-hover:text-navy mr-3"><i class="fas fa-user-check"></i></span>
+                            <span class="text-sm font-semibold">Form-11 Eligibility Checker</span>
+                        </a>
+                        <a href="./prototypes/retirement_planner.html" class="flex items-center p-4 bg-white border border-slate-200 hover:border-navy transition group">
+                            <span class="w-8 h-8 flex items-center justify-center text-slate-400 group-hover:text-navy mr-3"><i class="fas fa-hourglass-end"></i></span>
+                            <span class="text-sm font-semibold">Retirement Planner</span>
+                        </a>
+                    </div>
+                </section>
+
+                <section id="visualizations">
+                    <h2 class="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-6 border-b border-slate-200 pb-2">Visualization</h2>
+                    <div class="space-y-3">
+                        <a href="./performance-visualization/claimwise-rejection.html" class="flex items-center p-4 bg-white border border-slate-200 hover:border-navy transition group">
+                            <span class="w-8 h-8 flex items-center justify-center text-slate-400 group-hover:text-navy mr-3"><i class="fas fa-chart-bar"></i></span>
+                            <span class="text-sm font-semibold">Claim Rejection Analysis</span>
+                        </a>
+                        <a href="./agt_analysis/index3.html" class="flex items-center p-4 bg-white border border-slate-200 hover:border-navy transition group">
+                            <span class="w-8 h-8 flex items-center justify-center text-slate-400 group-hover:text-navy mr-3"><i class="fas fa-network-wired"></i></span>
+                            <span class="text-sm font-semibold">AGT Data Analysis</span>
+                        </a>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Column: Analytics & Research -->
+            <div class="lg:col-span-2 space-y-10">
+                <section id="analytics">
+                    <h2 class="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-6 border-b border-slate-200 pb-2">Predictive Analytics & Risk Frameworks</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <a href="./prototypes/transfer_risk.html" class="p-5 bg-white border-l-4 border-l-slate-300 border border-slate-200 hover:border-l-navy hover:shadow-md transition">
+                            <h4 class="font-bold text-sm mb-1">Transfer Claim Risk Score</h4>
+                            <p class="text-xs text-slate-500">ML-driven analysis of transfer claim veracity.</p>
+                        </a>
+                        <a href="./prototypes/establishment_risk.html" class="p-5 bg-white border-l-4 border-l-slate-300 border border-slate-200 hover:border-l-navy hover:shadow-md transition">
+                            <h4 class="font-bold text-sm mb-1">Establishment Risk Profiling</h4>
+                            <p class="text-xs text-slate-500">Compliance and default prediction for establishments.</p>
+                        </a>
+                        <a href="./prototypes/claim_risk.html" class="p-5 bg-white border-l-4 border-l-slate-300 border border-slate-200 hover:border-l-navy hover:shadow-md transition">
+                            <h4 class="font-bold text-sm mb-1">General Claim Risk Score</h4>
+                            <p class="text-xs text-slate-500">Operational risk scoring for individual claims.</p>
+                        </a>
+                        <a href="./prototypes/grievance_prediction.html" class="p-5 bg-white border-l-4 border-l-slate-300 border border-slate-200 hover:border-l-navy hover:shadow-md transition">
+                            <h4 class="font-bold text-sm mb-1">Grievance Predictive Model</h4>
+                            <p class="text-xs text-slate-500">Forecasting pendency and grievance escalation.</p>
+                        </a>
+                        <a href="./prototypes/default_prediction.html" class="p-5 bg-white border-l-4 border-l-slate-300 border border-slate-200 hover:border-l-navy hover:shadow-md transition">
+                            <h4 class="font-bold text-sm mb-1">Default Prediction System</h4>
+                            <p class="text-xs text-slate-500">Early warning system for contribution defaults.</p>
+                        </a>
+                        <a href="./prototypes/automated_kyc.html" class="p-5 bg-white border-l-4 border-l-slate-300 border border-slate-200 hover:border-l-navy hover:shadow-md transition">
+                            <h4 class="font-bold text-sm mb-1">Automated KYC Validation</h4>
+                            <p class="text-xs text-slate-500">Computer Vision based identity verification.</p>
+                        </a>
+                    </div>
+                </section>
+
+                <section id="research">
+                    <h2 class="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-6 border-b border-slate-200 pb-2">Research & Development</h2>
+                    <div class="bg-slate-100 p-6 border border-slate-200">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                            <a href="./prototypes/information_retrieval.html" class="text-sm font-medium text-navy hover:underline">Information Retrieval (V1)</a>
+                            <a href="./prototypes/knowledge_base.html" class="text-sm font-medium text-navy hover:underline">Knowledge Base Architecture</a>
+                            <a href="./prototypes/policy_impact.html" class="text-sm font-medium text-navy hover:underline">Policy Impact Simulation</a>
+                            <a href="./prototypes/withdrawal_analysis.html" class="text-sm font-medium text-navy hover:underline">Withdrawal Behavior Analysis</a>
+                            <a href="./prototypes/semi_supervised.html" class="text-sm font-medium text-navy hover:underline">Semi-Supervised Classification</a>
+                            <a href="./prototypes/more_usecases.html" class="text-sm font-bold text-rose-700 hover:underline flex items-center">
+                                AI Technique Directory <i class="fas fa-arrow-right ml-2 text-xs"></i>
+                            </a>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- Roadmap -->
+        <section class="mt-20 py-10 border-t border-slate-200">
+            <h2 class="text-lg font-bold mb-8 text-slate-900">Strategic Roadmap</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div class="space-y-4">
+                    <h3 class="text-xs font-bold text-navy uppercase tracking-widest">Phase I: Operations</h3>
+                    <p class="text-xs text-slate-500 leading-relaxed italic">Focus on Fraud Detection, Anomaly Identification, and Contribution Reconciliation.</p>
+                </div>
+                <div class="space-y-4 text-slate-400">
+                    <h3 class="text-xs font-bold uppercase tracking-widest">Phase II: Analytics</h3>
+                    <p class="text-xs leading-relaxed italic">Focus on Member Behavior Modeling, NLP for Grievances, and Graph-based SNA.</p>
+                </div>
+                <div class="space-y-4 text-slate-400">
+                    <h3 class="text-xs font-bold uppercase tracking-widest">Phase III: Strategic</h3>
+                    <p class="text-xs leading-relaxed italic">Focus on Policy Impact Assessment and Demographic Statistical Analysis.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-900 text-slate-500 py-10 px-6 mt-10">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-xs">
+            <p>&copy; 2026 EPFO Analytics Project Hub. All rights reserved.</p>
+            <div class="mt-4 md:mt-0 space-x-6 uppercase tracking-tighter">
+                <span>Internal Use Only</span>
+                <span>Data Security Protocol Active</span>
+            </div>
+        </div>
+    </footer>
 
 </body>
 </html>
