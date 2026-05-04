@@ -1,0 +1,23 @@
+3. Claim Processing Quest
+
+Target stakeholders: EPFO staff, SSA/ASO/APFC/RPFC trainees, members
+Game format: Case-solving game
+
+The player acts as an EPFO claim processor. Different claims arrive: Form 19, Form 10C, Form 31, transfer claims, pension claims, death claims, EDLI claims.
+
+The player must verify details, detect missing documents, check KYC, service history, nominee details, bank validation, and decide whether to approve, reject, or seek clarification.
+
+Learning outcomes:
+
+Staff learn claim scrutiny logic. Members learn why claims get rejected and how to avoid errors.
+
+Example cases:
+
+“Member applies for final PF withdrawal but exit date is missing.”
+“Pension claim filed but service is below required threshold.”
+“Death claim filed by nominee but nominee mismatch exists.”
+“Bank account name differs from UAN name.”
+
+Gamification:
+
+Accuracy score, claim settlement time score, citizen satisfaction score, penalty for wrong rejection or wrong approval.
