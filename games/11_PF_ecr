@@ -1,0 +1,24 @@
+11. Employer ECR Challenge
+
+Target stakeholders: Employers, payroll vendors, HR teams
+Game format: Spreadsheet/file validation game
+
+The player receives a simulated monthly payroll file and must prepare a correct ECR.
+
+They must catch errors such as:
+
+Wrong UAN
+Missing Aadhaar/KYC
+Incorrect basic wage
+Wrong contribution calculation
+Excluded employee wrongly included
+Eligible employee wrongly excluded
+Date of joining/date of exit mismatch
+
+Learning outcomes:
+
+Practical employer training for reducing ECR errors.
+
+Gamification:
+
+Monthly compliance streak, error-free filing badge, payroll accuracy score.
