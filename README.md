@@ -24,6 +24,8 @@
 18. [Semi-supervised Classification](./prototypes/semi_supervised.html)
 19. [More usecases](./prototypes/more_usecases.html)
 
+# Other Projects
+* [Inventory Management Software (Laravel)](https://github.com/gauravmeena0708/inventory-management-software-laravel)
 
 # Possible Projects
 
