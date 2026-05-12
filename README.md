@@ -23,6 +23,7 @@
 
 18. [Semi-supervised Classification](./prototypes/semi_supervised.html)
 19. [More usecases](./prototypes/more_usecases.html)
+20. [Chat with EPFO](https://huggingface.co/spaces/gauravmeena0708/epfo-circulars)
 
 # Other Projects
 * [Inventory Management Software (Laravel)](https://github.com/gauravmeena0708/inventory-management-software-laravel)
