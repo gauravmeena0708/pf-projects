@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EPFO Social Network Analysis for Fraud Detection</title>
+    <title>EPFO Social Network Analysis for Integrity Review</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -78,13 +78,13 @@
             color: #B45309; /* Amber-700 */
             border-color: #F59E0B; /* Amber-500 */
         }
-        .graph-node.fraud-ring-member { 
+        .graph-node.review-cluster-member { 
             background-color: #FCA5A5; /* Red-300 */
             color: #991B1B; /* Red-700 */
             border-color: #EF4444; /* Red-500 */
             animation: pulse-fraud 1.5s infinite;
         }
-         .graph-node.central-fraud-actor {
+         .graph-node.central-review-entity {
             background-color: #DC2626; /* Red-600 */
             color: white;
             border-color: #991B1B; /* Red-700 */
@@ -142,15 +142,18 @@
         }
         .modal-button:hover { background-color: #B45309; }
     </style>
+    <link rel="stylesheet" href="../predictive-lab.css">
+    <script src="../prototype-demo.js" defer></script>
 </head>
 <body class="text-slate-800">
+    <div class="epfo-lab-context"><strong><i class="fas fa-flask mr-1"></i> EPFO Innovation Lab</strong><span>Research prototype · Synthetic/illustrative data · Validate signals before operational use</span><a href="../index.html">Back to portfolio</a></div>
     <div class="min-h-screen">
         <nav class="bg-white shadow-md">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-16">
                     <div class="flex items-center">
                         <i class="fas fa-user-secret text-2xl text-red-600 mr-2"></i>
-                        <span class="font-bold text-xl text-red-700">EPFO Social Network<span class="text-red-500">Fraud Detector</span></span>
+                        <span class="font-bold text-xl text-red-700">EPFO Social Network <span class="text-red-500">Integrity Review</span></span>
                     </div>
                     <div class="flex items-center">
                         <span class="text-sm text-gray-600 mr-3">Integrity & Security Unit</span>
@@ -164,16 +167,16 @@
 
         <div class="header-section text-white py-10 px-4 sm:px-6 lg:px-8">
             <div class="max-w-4xl mx-auto text-center">
-                <h1 class="text-3xl sm:text-4xl font-bold mb-2">Social Network Analysis for Fraud Detection</h1>
-                <p class="text-lg text-red-100">Identifying suspicious patterns and anomalies in member networks to combat fraud.</p>
+                <h1 class="text-3xl sm:text-4xl font-bold mb-2">Social Network Analysis for Integrity Review</h1>
+                <p class="text-lg text-red-100">Surfacing unusual relationships and transaction patterns for investigator review.</p>
             </div>
         </div>
 
         <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                 <div class="card stat-card stat-card-red p-4">
-                    <h3 class="text-sm font-medium text-gray-500">High-Risk Clusters</h3>
-                    <p id="highRiskClusters" class="text-2xl font-semibold text-red-600">78</p>
+                    <h3 class="text-sm font-medium text-gray-500">Review Clusters</h3>
+                    <p id="highRiskClusters" class="text-2xl font-semibold text-red-600">1</p>
                 </div>
                 <div class="card stat-card stat-card-orange p-4">
                     <h3 class="text-sm font-medium text-gray-500">Anomalous Transactions</h3>
@@ -193,7 +196,7 @@
                 <div class="lg:col-span-2 space-y-6">
                     <div class="card p-6">
                         <h2 class="text-xl font-semibold text-slate-700 mb-1 flex items-center">
-                            <i class="fas fa-project-diagram mr-2 text-red-500"></i>EPFO Social Network - Fraud View
+                            <i class="fas fa-project-diagram mr-2 text-red-500"></i>EPFO Social Network - Review Lead
                         </h2>
                         <p class="text-sm text-gray-500 mb-4">Conceptual visualization of member interactions, highlighting suspicious connections and clusters.</p>
                         <div id="fraudGraphVisualization" class="graph-container">
@@ -277,27 +280,27 @@
     </div>
 
     <script>
-        // --- Dummy Data and Functions for Demonstration ---
+        // Deterministic synthetic integrity-network fixture.
         const fraudAnalysisData = {
             stats: {
-                highRiskClusters: "78",
-                anomalousTransactions: "1,204",
-                suspiciousAccounts: "256",
-                lossAverted: "₹ 5.2 Cr"
+                highRiskClusters: "1",
+                anomalousTransactions: "3",
+                suspiciousAccounts: "1 shared token",
+                lossAverted: "Not estimated"
             },
-            conceptualGraph: { // Nodes positioned for a more "fraud ring" like structure
+            conceptualGraph: { // Nodes positioned to demonstrate a review cluster.
                 nodes: [
                     // Normal cluster
                     { id: "NM1", label: "Mem A", type: "member", x: 50, y: 100 },
                     { id: "NE1", label: "Emp X", type: "employer", x: 150, y: 100 },
                     { id: "NA1", label: "Acc P", type: "account", x: 100, y: 180 },
-                    // Fraudulent cluster
-                    { id: "FM1", label: "Mem B", type: "fraud-ring-member", x: 300, y: 150 },
-                    { id: "FM2", label: "Mem C", type: "fraud-ring-member", x: 400, y: 100 },
-                    { id: "FM3", label: "Mem D", type: "fraud-ring-member", x: 400, y: 200 },
+                    // Review cluster: relationships require explanation, not adjudication.
+                    { id: "FM1", label: "Mem B", type: "review-cluster-member", x: 300, y: 150 },
+                    { id: "FM2", label: "Mem C", type: "review-cluster-member", x: 400, y: 100 },
+                    { id: "FM3", label: "Mem D", type: "review-cluster-member", x: 400, y: 200 },
                     { id: "FE1", label: "Emp Y (Shell)", type: "employer suspicious-activity", x: 500, y: 150 },
                     { id: "FA1", label: "Acc Q (Shared)", type: "account suspicious-activity", x: 350, y: 250 },
-                    { id: "FC1", label: "Actor Z", type: "central-fraud-actor", x: 350, y: 50 } // Central actor
+                    { id: "FC1", label: "Shared Token Z", type: "central-review-entity", x: 350, y: 50 }
                 ],
                 edges: [
                     { source: "NM1", target: "NE1" }, { source: "NM1", target: "NA1" },
@@ -406,5 +409,6 @@
             });
         }
     </script>
+    <div class="epfo-lab-footer">EPFO Innovation Lab · Research demonstration only · No automated member or establishment decision is made.</div>
 </body>
 </html>

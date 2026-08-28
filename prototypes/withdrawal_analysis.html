@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EPFO AI-Powered Withdrawal Analysis</title>
+    <title>EPFO Withdrawal Pattern Analysis</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -97,8 +97,11 @@
         }
 
     </style>
+    <link rel="stylesheet" href="../predictive-lab.css">
+    <script src="../prototype-demo.js" defer></script>
 </head>
 <body class="text-slate-800">
+    <div class="epfo-lab-context"><strong><i class="fas fa-flask mr-1"></i> EPFO Innovation Lab</strong><span>Research prototype · Aggregated withdrawal patterns · Use for policy insight, not member targeting</span><a href="../index.html">Back to portfolio</a></div>
     <div class="min-h-screen">
         <nav class="bg-white shadow-md">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -119,7 +122,7 @@
 
         <div class="header-section text-white py-10 px-4 sm:px-6 lg:px-8">
             <div class="max-w-4xl mx-auto text-center">
-                <h1 class="text-3xl sm:text-4xl font-bold mb-2">Understanding Premature EPF Withdrawals</h1>
+                <h1 class="text-3xl sm:text-4xl font-bold mb-2">Understanding Premature EPF Withdrawal Patterns</h1>
                 <p class="text-lg text-blue-100">Leveraging AI to identify factors contributing to early exits and inform policy.</p>
             </div>
         </div>
@@ -156,9 +159,9 @@
 
                     <div class="card p-6">
                         <h2 class="text-xl font-semibold text-slate-700 mb-1 flex items-center">
-                            <i class="fas fa-shield-alt mr-2 text-green-500"></i>Member Retention Probability (Survival Analysis)
+                            <i class="fas fa-shield-alt mr-2 text-green-500"></i>Aggregate Fixture Retention Curve
                         </h2>
-                        <p class="text-sm text-gray-500 mb-4">Probability of members remaining in the scheme over time, segmented by income group.</p>
+                        <p class="text-sm text-gray-500 mb-4">Deterministic educational curves over synthetic aggregate cohorts; not individual predictions.</p>
                         <div style="height: 350px;"><canvas id="survivalAnalysisChart"></canvas></div>
                          <div class="info-box p-3 mt-4 rounded-md text-sm">
                             <p><i class="fas fa-info-circle mr-1"></i><strong>Survival Analysis:</strong> This model estimates the time until an event (e.g., withdrawal) occurs. It helps understand how long different member segments tend to stay invested.</p>
@@ -171,7 +174,7 @@
                         <h2 class="text-lg font-semibold text-slate-700 mb-3 flex items-center">
                             <i class="fas fa-users-cog mr-2 text-purple-500"></i>Withdrawal Behavior Clusters
                         </h2>
-                        <p class="text-sm text-gray-500 mb-3">AI-identified member segments based on withdrawal patterns and demographics.</p>
+                        <p class="text-sm text-gray-500 mb-3">Illustrative aggregate cohorts defined in the fixture; not model-discovered segments.</p>
                         <div id="memberClusters" class="space-y-3 text-sm">
                             </div>
                         <div class="info-box p-3 mt-4 rounded-md text-sm">
@@ -260,13 +263,13 @@
     </div>
 
     <script>
-        // --- Dummy Data for Demonstration ---
+        // Deterministic aggregate synthetic event-history fixture.
         const withdrawalAnalysisData = {
             stats: {
                 avgWithdrawalRate: "12.5%",
                 commonReason: "Housing",
                 avgAgeWithdrawal: "38 Years",
-                membersAnalyzed: "1.2 M"
+                membersAnalyzed: "240 fixture rows"
             },
             withdrawalReasons: {
                 labels: ['Housing', 'Medical', 'Education', 'Marriage', 'Job Loss', 'Other'],
@@ -274,9 +277,9 @@
             },
             survivalAnalysis: {
                 labels: Array.from({length: 20}, (_, i) => `Year ${i+1}`), // Time in years
-                lowIncomeData: Array.from({length: 20}, (_, i) => 100 * Math.exp(-0.08 * (i+1)) * (1 - Math.random()*0.1) ), // Higher decay
-                midIncomeData: Array.from({length: 20}, (_, i) => 100 * Math.exp(-0.05 * (i+1)) * (1 - Math.random()*0.05) ),
-                highIncomeData: Array.from({length: 20}, (_, i) => 100 * Math.exp(-0.03 * (i+1)) * (1 - Math.random()*0.03) ) // Lower decay
+                lowIncomeData: Array.from({length: 20}, (_, i) => 100 * Math.exp(-0.08 * (i+1)) * (1 - ((i * 3) % 7) / 100)),
+                midIncomeData: Array.from({length: 20}, (_, i) => 100 * Math.exp(-0.05 * (i+1)) * (1 - ((i * 2) % 5) / 100)),
+                highIncomeData: Array.from({length: 20}, (_, i) => 100 * Math.exp(-0.03 * (i+1)) * (1 - (i % 3) / 100))
             },
             memberClusters: [
                 { name: 'Early Career Exits (Age 25-35)', description: 'Withdraw primarily for housing down-payments or higher education. Moderate income.', characteristics: 'Young, aspirational, short-term liquidity needs.' },
@@ -429,5 +432,6 @@
             });
         }
     </script>
+    <div class="epfo-lab-footer">EPFO Innovation Lab · Research demonstration only · Interpret aggregate patterns with scheme, legal and demographic context.</div>
 </body>
 </html>

@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="../predictive-lab.css">
+    <script src="../prototype-demo.js" defer></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -193,9 +194,9 @@
             <div class="pt-6 border-t border-gray-300">
                 <h3 class="text-lg font-semibold text-gray-700 mb-3">Recommended Actions</h3>
                 <div class="flex flex-wrap gap-3">
-                    <button class="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-search mr-2"></i>Initiate Physical Inspection</button>
-                    <button class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-file-alt mr-2"></i>Request Additional Documents</button>
-                    <button class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-flag mr-2"></i>Flag for Close Monitoring</button>
+                    <button data-demo-action="propose-inspection-for-approval" class="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-search mr-2"></i>Propose Inspection</button>
+                    <button data-demo-action="request-establishment-documents" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-file-alt mr-2"></i>Request Additional Documents</button>
+                    <button data-demo-action="add-to-follow-up-watchlist" class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-flag mr-2"></i>Add to Follow-up Watchlist</button>
                 </div>
             </div>
         </div>

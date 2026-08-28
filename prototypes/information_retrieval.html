@@ -76,8 +76,11 @@
         }
         .modal-button:hover { background-color: #1D4ED8; }
     </style>
+    <link rel="stylesheet" href="../predictive-lab.css">
+    <script src="../prototype-demo.js" defer></script>
 </head>
 <body class="text-slate-800">
+    <div class="epfo-lab-context"><strong><i class="fas fa-flask mr-1"></i> EPFO Innovation Lab</strong><span>Research prototype · Sample circulars and metadata · Verify against the source record</span><a href="../index.html">Back to portfolio</a></div>
     <div class="min-h-screen">
         <nav class="bg-white shadow-md">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -99,7 +102,7 @@
         <div class="header-section text-white py-10 px-4 sm:px-6 lg:px-8">
             <div class="max-w-4xl mx-auto text-center">
                 <h1 class="text-3xl sm:text-4xl font-bold mb-2">Efficient Information Retrieval for EPFO</h1>
-                <p class="text-lg text-blue-100">Quickly access documents, records, and policy information with AI-powered search.</p>
+                <p class="text-lg text-blue-100">Search a documented synthetic corpus using transparent keyword and metadata matching.</p>
             </div>
         </div>
 
@@ -107,19 +110,19 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                 <div class="card stat-card stat-card-blue p-4">
                     <h3 class="text-sm font-medium text-gray-500">Documents Indexed</h3>
-                    <p id="docsIndexed" class="text-2xl font-semibold text-blue-600">10.2 M</p>
+                    <p id="docsIndexed" class="text-2xl font-semibold text-blue-600">4 fixtures</p>
                 </div>
                 <div class="card stat-card stat-card-sky p-4">
-                    <h3 class="text-sm font-medium text-gray-500">Avg. Search Time</h3>
-                    <p id="avgSearchTime" class="text-2xl font-semibold text-sky-600">0.35 s</p>
+                    <h3 class="text-sm font-medium text-gray-500">Search Method</h3>
+                    <p id="avgSearchTime" class="text-2xl font-semibold text-sky-600">Token match</p>
                 </div>
                 <div class="card stat-card stat-card-cyan p-4">
-                    <h3 class="text-sm font-medium text-gray-500">NLP Accuracy (Intent)</h3>
-                    <p id="nlpAccuracy" class="text-2xl font-semibold text-cyan-600">94%</p>
+                    <h3 class="text-sm font-medium text-gray-500">Fixture Version</h3>
+                    <p id="nlpAccuracy" class="text-2xl font-semibold text-cyan-600">2026-Q1</p>
                 </div>
                 <div class="card stat-card stat-card-indigo p-4">
-                    <h3 class="text-sm font-medium text-gray-500">Queries Processed Today</h3>
-                    <p id="queriesToday" class="text-2xl font-semibold text-indigo-600">25,780</p>
+                    <h3 class="text-sm font-medium text-gray-500">Access Boundary</h3>
+                    <p id="queriesToday" class="text-2xl font-semibold text-indigo-600">Public demo</p>
                 </div>
             </div>
 
@@ -157,7 +160,7 @@
                      <button class="text-xs text-blue-600 hover:underline self-end" onclick="toggleAdvancedSearch()">Advanced Filters <i class="fas fa-chevron-down text-xs ml-1"></i></button>
                 </div>
                 <div id="advancedSearchOptions" class="mt-4 p-4 bg-gray-50 rounded-md hidden">
-                    <p class="text-sm text-gray-600">Advanced search options (e.g., specific department, region, metadata tags) would appear here.</p>
+                    <p class="text-sm text-gray-600">This fixture supports document type and date filters. Department and access-controlled member records are outside this public demo.</p>
                 </div>
             </div>
 
@@ -243,19 +246,19 @@
     </div>
 
     <script>
-        // --- Dummy Data and Functions for Demonstration ---
+        // Bundled deterministic search corpus.
         const retrievalSystemData = {
             stats: {
-                docsIndexed: "10.2 M",
-                avgSearchTime: "0.35 s",
-                nlpAccuracy: "94%",
-                queriesToday: "25,780"
+                docsIndexed: "4 fixtures",
+                avgSearchTime: "Token match",
+                nlpAccuracy: "2026-Q1",
+                queriesToday: "Public demo"
             },
             sampleResults: [
-                { id: "doc001", title: "Circular on Interest Rate Revision 2023-24", type: "Policy Circular", date: "2023-03-15", snippet: "The Central Board of Trustees, EPF, has approved the crediting of interest at 8.15% for the year 2023-24...", relevance: 0.92, path: "/docs/circulars/2023/interest_rate_2023_24.pdf" },
-                { id: "doc002", title: "Member UAN: 100XXXXXX123 - Claim Form 31 (Housing)", type: "Member Record", date: "2024-01-20", snippet: "Withdrawal request for housing loan principal repayment. Amount: INR 5,00,000. Status: Approved.", relevance: 0.88, path: "/records/members/100XXXXXX123/claims/form31_housing.pdf" },
-                { id: "doc003", title: "FAQ on Premature Closure of PF Account", type: "FAQ", date: "2022-11-01", snippet: "Under what conditions can a member close their PF account prematurely? This document outlines the eligibility criteria...", relevance: 0.85, path: "/faqs/premature_closure.html" },
-                { id: "doc004", title: "Gazette Notification: Amendment to EPF Scheme, 1952", type: "Gazette Notification", date: "2023-09-05", snippet: "Notification regarding changes in paragraph 68-BD concerning advances for purchase of dwelling house or flat.", relevance: 0.79, path: "/gazettes/2023/epf_amendment_68bd.pdf" }
+                { id: "doc001", title: "Synthetic Circular: Interest Credit Workflow", type: "Policy Circular", date: "2026-01-15", snippet: "Demonstration circular describing an interest-credit workflow and verification responsibilities.", content: "SYN/CIR/2026/001 — Interest Credit Workflow. Effective 01 February 2026. This synthetic fixture is for search testing only." },
+                { id: "doc002", title: "Synthetic Procedure: Form 31 Housing Advance", type: "Claim Form", date: "2026-02-20", snippet: "Demonstration procedure covering document checks for a housing-advance request.", content: "SYN/PROC/2026/014 — Form 31 Housing Advance. Verify fixture eligibility fields and supporting-document status." },
+                { id: "doc003", title: "Synthetic FAQ: Final Settlement", type: "FAQ", date: "2025-12-01", snippet: "Demonstration questions and answers for final-settlement service requests.", content: "Synthetic FAQ fixture. Topics: final settlement, service history, bank validation, and claim status." },
+                { id: "doc004", title: "Synthetic Notification: Scheme Paragraph Update", type: "Gazette Notification", date: "2025-09-05", snippet: "Demonstration notification used to test version and effective-date search.", content: "SYN/NOTIF/2025/008 — Scheme paragraph update. Superseded by SYN/NOTIF/2026/002 in this fixture." }
             ]
         };
 
@@ -285,21 +288,26 @@
                 return;
             }
 
-            // Simulate API call & display results
-            const loadingEl = document.createElement('p');
-            loadingEl.className = 'text-center text-gray-500';
-            loadingEl.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Searching...';
-            searchResultsArea.appendChild(loadingEl);
+            const queryTokens = searchInput.toLowerCase().split(/\W+/).filter(token => token.length > 1);
+            const typeFilter = document.getElementById('docTypeFilter').value;
+            const dateFilter = document.getElementById('dateRangeFilter').value;
+            const cutoff = dateFilter === 'Past Month' ? '2026-03-01' : (dateFilter === 'Past Year' ? '2025-04-01' : '0000-01-01');
+            const results = retrievalSystemData.sampleResults
+                .map(result => {
+                    const haystack = `${result.title} ${result.type} ${result.snippet} ${result.content}`.toLowerCase();
+                    const matches = queryTokens.filter(token => haystack.includes(token)).length;
+                    return { ...result, matches, relevance: queryTokens.length ? matches / queryTokens.length : 0 };
+                })
+                .filter(result => result.matches > 0 && (typeFilter === 'All' || result.type === typeFilter) && result.date >= cutoff)
+                .sort((a, b) => b.relevance - a.relevance || b.date.localeCompare(a.date));
 
-            setTimeout(() => {
-                searchResultsArea.innerHTML = ''; // Clear loading
-                if (retrievalSystemData.sampleResults.length > 0) {
+                if (results.length > 0) {
                     const resultsInfo = document.createElement('p');
                     resultsInfo.className = 'text-sm text-gray-600 mb-2';
-                    resultsInfo.textContent = `Found ${retrievalSystemData.sampleResults.length} results for "${searchInput}" (simulated):`;
+                    resultsInfo.textContent = `Found ${results.length} fixture result${results.length === 1 ? '' : 's'} for "${searchInput}":`;
                     searchResultsArea.appendChild(resultsInfo);
 
-                    retrievalSystemData.sampleResults.forEach(result => {
+                    results.forEach(result => {
                         const resultEl = document.createElement('div');
                         resultEl.className = 'search-result-item p-4 rounded-md hover:shadow-lg';
                         resultEl.innerHTML = `
@@ -308,7 +316,7 @@
                                 <span class="tag">${result.type}</span> | Date: ${result.date} | Relevance: ${(result.relevance * 100).toFixed(0)}%
                             </p>
                             <p class="text-sm text-gray-700 mb-2">${result.snippet}</p>
-                            <a href="${result.path}" target="_blank" class="text-xs text-green-600 hover:underline">View Document <i class="fas fa-external-link-alt ml-1"></i></a>
+                            <details class="text-xs text-green-700"><summary class="cursor-pointer font-semibold">View synthetic fixture record</summary><pre class="mt-2 whitespace-pre-wrap bg-slate-50 p-3 rounded text-slate-700">${result.content}</pre></details>
                         `;
                         searchResultsArea.appendChild(resultEl);
                     });
@@ -316,7 +324,7 @@
                      searchResultsArea.appendChild(searchPlaceholder);
                      searchPlaceholder.textContent = `No results found for "${searchInput}". Try different keywords.`;
                 }
-            }, 1000); // Simulate network delay
+                if (window.EPFODemo) window.EPFODemo.recordEvent('search-fixture-corpus', `query=${searchInput}; results=${results.length}`);
         }
 
         // Modal functions
@@ -339,5 +347,6 @@
             });
         }
     </script>
+    <div class="epfo-lab-footer">EPFO Innovation Lab · Research demonstration only · Always confirm the latest official circular or instruction.</div>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Technical Directory | Social Security Analytics</title>
+    <title>AI Technical Directory | EPFO Analytics</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -13,8 +13,11 @@
         .text-navy { color: #1e3a8a; }
         .border-navy { border-color: #1e3a8a; }
     </style>
+    <link rel="stylesheet" href="../predictive-lab.css">
+    <script src="../prototype-demo.js" defer></script>
 </head>
 <body class="text-slate-800 antialiased">
+    <div class="epfo-lab-context"><strong><i class="fas fa-flask mr-1"></i> EPFO Innovation Lab</strong><span>Technique directory · Conceptual examples for EPFO use cases</span><a href="../index.html">Back to portfolio</a></div>
 
     <!-- Top Navigation Bar -->
     <nav class="epfo-navy text-white py-4 px-6 shadow-md sticky top-0 z-50">
@@ -45,6 +48,11 @@
 
 
     <main class="max-w-7xl mx-auto px-6 py-10">
+        <section class="mb-8 bg-white border border-slate-200 p-5" aria-label="Filter technique catalogue">
+            <label for="techniqueFilter" class="block text-xs font-black uppercase tracking-widest text-slate-500 mb-2">Filter by technique, use case, or governance term</label>
+            <input id="techniqueFilter" type="search" placeholder="Try: grievance, privacy, claim, graph..." class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <p id="techniqueFilterStatus" class="text-xs text-slate-500 mt-2" aria-live="polite">Showing all catalogue entries.</p>
+        </section>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
             <!-- 1. Linear Regression -->
@@ -206,8 +214,27 @@
     </main>
 
     <footer class="py-12 text-center text-slate-400 text-[10px] uppercase tracking-widest border-t border-slate-200 mt-12">
-        <p>&copy; 2026 Social Security AI Technical Directory. Internal Use Restricted.</p>
+        <p>&copy; 2026 EPFO Innovation Lab Technique Catalogue. Public demonstration with synthetic examples.</p>
     </footer>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const input = document.getElementById('techniqueFilter');
+            const status = document.getElementById('techniqueFilterStatus');
+            const cards = Array.from(document.querySelectorAll('main > .grid > div'));
+            input.addEventListener('input', () => {
+                const query = input.value.trim().toLowerCase();
+                let visible = 0;
+                cards.forEach(card => {
+                    const matches = !query || card.textContent.toLowerCase().includes(query);
+                    card.hidden = !matches;
+                    if (matches) visible += 1;
+                });
+                status.textContent = query ? `Showing ${visible} matching entr${visible === 1 ? 'y' : 'ies'}.` : 'Showing all catalogue entries.';
+                if (window.EPFODemo) window.EPFODemo.recordEvent('filter-technique-catalogue', `query=${query}; results=${visible}`);
+            });
+        });
+    </script>
+    <div class="epfo-lab-footer">EPFO Innovation Lab · Conceptual research directory · Any production use requires governance, validation and privacy review.</div>
 </body>
 </html>

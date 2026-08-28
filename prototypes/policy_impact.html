@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EPFO AI-Powered Policy Impact Evaluator</title>
+    <title>EPFO Policy Scenario Evaluation Demo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -68,8 +68,11 @@
         }
         .modal-button:hover { background-color: #047857; }
     </style>
+    <link rel="stylesheet" href="../predictive-lab.css">
+    <script src="../prototype-demo.js" defer></script>
 </head>
 <body class="text-slate-800">
+    <div class="epfo-lab-context"><strong><i class="fas fa-flask mr-1"></i> EPFO Innovation Lab</strong><span>Policy evaluation prototype · Illustrative scenarios · Not a policy recommendation</span><a href="../index.html">Back to portfolio</a></div>
     <div class="min-h-screen">
         <nav class="bg-white shadow-md">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -99,19 +102,19 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                 <div class="card stat-card stat-card-teal p-4">
                     <h3 class="text-sm font-medium text-gray-500">Policies Analyzed</h3>
-                    <p id="policiesAnalyzed" class="text-2xl font-semibold text-teal-600">5</p>
+                    <p id="policiesAnalyzed" class="text-2xl font-semibold text-teal-600">1 scenario</p>
                 </div>
                 <div class="card stat-card stat-card-emerald p-4">
                     <h3 class="text-sm font-medium text-gray-500">Avg. Impact on Contribution</h3>
-                    <p id="avgContributionImpact" class="text-2xl font-semibold text-emerald-600">+2.5%</p>
+                    <p id="avgContributionImpact" class="text-2xl font-semibold text-emerald-600">+0.6 pp</p>
                 </div>
                 <div class="card stat-card stat-card-cyan p-4">
                     <h3 class="text-sm font-medium text-gray-500">Data Points Used</h3>
-                    <p id="dataPointsUsed" class="text-2xl font-semibold text-cyan-600">10M+</p>
+                    <p id="dataPointsUsed" class="text-2xl font-semibold text-cyan-600">24 points</p>
                 </div>
                 <div class="card stat-card stat-card-lime p-4">
                     <h3 class="text-sm font-medium text-gray-500">Forecast Horizon</h3>
-                    <p id="forecastHorizon" class="text-2xl font-semibold text-lime-600">5 Years</p>
+                    <p id="forecastHorizon" class="text-2xl font-semibold text-lime-600">6 quarters</p>
                 </div>
             </div>
 
@@ -142,7 +145,7 @@
                         <h2 class="text-lg font-semibold text-slate-700 mb-3 flex items-center">
                             <i class="fas fa-chart-line mr-2 text-sky-500"></i>Long-Term Trend: Total EPF Corpus
                         </h2>
-                        <p class="text-sm text-gray-500 mb-3">Historical trend and AI-powered forecast of the total scheme corpus.</p>
+                        <p class="text-sm text-gray-500 mb-3">Deterministic synthetic trend and baseline projection for method demonstration.</p>
                         <div style="height: 300px;"><canvas id="timeSeriesChart"></canvas></div>
                         <div class="info-box p-3 mt-4 rounded-md text-sm">
                            <p><i class="fas fa-info-circle mr-1"></i><strong>Time Series Analysis:</strong> Analyzes historical data to identify patterns, trends, and seasonality. Used here to forecast future values of key scheme indicators.</p>
@@ -163,8 +166,8 @@
                 <div class="card p-6 epfo-box">
                     <h2 class="text-xl font-semibold text-amber-700 mb-3 flex items-center"><i class="fas fa-landmark mr-2"></i>EPFO: Evidence-Based Policymaking</h2>
                     <ul class="list-disc list-inside space-y-2 text-sm text-amber-600">
-                        <li>Quantify the actual impact of past policies on member behavior and scheme health.</li>
-                        <li>Forecast potential effects of proposed policy changes before implementation.</li>
+                        <li>Describe observed changes in a documented synthetic scenario.</li>
+                        <li>Compare transparent baseline scenarios before formal policy evaluation.</li>
                         <li>Improve targeting and effectiveness of new policies.</li>
                         <li>Enhance scheme adaptability to changing economic and social conditions.</li>
                         <li>Strengthen justification for policy decisions with robust data evidence.</li>
@@ -196,7 +199,7 @@
                     <li><strong>Policy Design:</strong> Simulate potential impacts of different policy options using predictive models.</li>
                     <li><strong>Implementation:</strong> Roll out chosen policies.</li>
                     <li><strong>Monitoring:</strong> Track key indicators in real-time post-implementation.</li>
-                    <li><strong>Impact Evaluation (AI-Powered):</strong> Use causal inference and time series analysis to rigorously assess actual impact against objectives.</li>
+                    <li><strong>Impact Evaluation:</strong> Use documented statistical methods to assess outcomes against stated objectives and assumptions.</li>
                     <li><strong>Feedback & Refinement:</strong> Use evaluation insights to refine existing policies or inform future ones.</li>
                 </ol>
                 <p class="mt-3 font-semibold">This iterative, data-driven approach leads to more effective and responsive policies.</p>
@@ -225,19 +228,19 @@
     </div>
 
     <script>
-        // --- Dummy Data for Demonstration ---
+        // Deterministic synthetic policy scenario fixture.
         const policyEvaluationData = {
             stats: {
-                policiesAnalyzed: "5",
-                avgContributionImpact: "+2.5%",
-                dataPointsUsed: "10M+",
-                forecastHorizon: "5 Years"
+                policiesAnalyzed: "1 scenario",
+                avgContributionImpact: "+0.6 pp (fixture)",
+                dataPointsUsed: "24 aggregate points",
+                forecastHorizon: "6 quarters"
             },
             policyLog: [
-                { date: '2023-01-15', name: 'Interest Rate Revision', description: 'Annual interest rate adjusted to 8.1%.' },
-                { date: '2022-07-01', name: 'New Withdrawal Rule for Housing', description: 'Eligibility criteria for housing withdrawal updated.' },
-                { date: '2022-04-01', name: 'Contribution Campaign Launch', description: 'Nationwide campaign to promote VPF contributions.' },
-                { date: '2021-10-01', name: 'Digital KYC Mandate', description: 'e-KYC made mandatory for new registrations.' }
+                { date: '2026-01-15', name: 'Synthetic Policy Event A', description: 'Fixture intervention used to demonstrate a before/after comparison.' },
+                { date: '2025-10-01', name: 'Synthetic Procedure Version B', description: 'Fixture process version used as a comparison marker.' },
+                { date: '2025-07-01', name: 'Synthetic Communication Campaign', description: 'Illustrative awareness event in the aggregate dataset.' },
+                { date: '2025-04-01', name: 'Synthetic Baseline Start', description: 'Beginning of the documented pre-intervention period.' }
             ],
             causalImpact: { // For Difference-in-Differences
                 labels: ['Q1 2022', 'Q2 2022', 'Q3 2022 (Policy X Implemented)', 'Q4 2022', 'Q1 2023', 'Q2 2023'],
@@ -428,5 +431,6 @@
             });
         }
     </script>
+    <div class="epfo-lab-footer">EPFO Innovation Lab · Research demonstration only · Policy changes require formal consultation and approval.</div>
 </body>
 </html>

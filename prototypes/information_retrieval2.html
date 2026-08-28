@@ -83,8 +83,11 @@
         }
         .modal-button:hover { background-color: #15803D; }
     </style>
+    <link rel="stylesheet" href="../predictive-lab.css">
+    <script src="../prototype-demo.js" defer></script>
 </head>
 <body class="text-slate-800">
+    <div class="epfo-lab-context"><strong><i class="fas fa-flask mr-1"></i> EPFO Innovation Lab</strong><span>Research prototype · Sample documents and extracted fields · Verify against the source record</span><a href="../index.html">Back to portfolio</a></div>
     <div class="min-h-screen">
         <nav class="bg-white shadow-md">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -113,19 +116,19 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                 <div class="card stat-card stat-card-green p-4">
                     <h3 class="text-sm font-medium text-gray-500">Documents Processed</h3>
-                    <p id="docsProcessed" class="text-2xl font-semibold text-green-600">5.8 M</p>
+                    <p id="docsProcessed" class="text-2xl font-semibold text-green-600">3 fixtures</p>
                 </div>
                 <div class="card stat-card stat-card-blue p-4">
                     <h3 class="text-sm font-medium text-gray-500">Entities Extracted (Avg/Doc)</h3>
-                    <p id="avgEntitiesExtracted" class="text-2xl font-semibold text-blue-600">25</p>
+                    <p id="avgEntitiesExtracted" class="text-2xl font-semibold text-blue-600">4 fields</p>
                 </div>
                 <div class="card stat-card stat-card-teal p-4">
-                    <h3 class="text-sm font-medium text-gray-500">Extraction Accuracy (Policy ID)</h3>
-                    <p id="extractionAccuracy" class="text-2xl font-semibold text-teal-600">97.2%</p>
+                    <h3 class="text-sm font-medium text-gray-500">Extraction Method</h3>
+                    <p id="extractionAccuracy" class="text-2xl font-semibold text-teal-600">Rule patterns</p>
                 </div>
                 <div class="card stat-card stat-card-emerald p-4">
-                    <h3 class="text-sm font-medium text-gray-500">Time Saved (Est. Annually)</h3>
-                    <p id="timeSaved" class="text-2xl font-semibold text-emerald-600">10K+ Hrs</p>
+                    <h3 class="text-sm font-medium text-gray-500">Fixture Version</h3>
+                    <p id="timeSaved" class="text-2xl font-semibold text-emerald-600">2026-Q1</p>
                 </div>
             </div>
 
@@ -136,12 +139,13 @@
                             <i class="fas fa-file-upload mr-2 text-green-500"></i>Process Document for Information Extraction
                         </h2>
                         <div>
-                            <label for="documentText" class="block text-sm font-medium text-gray-700">Paste Document Text (Simulated):</label>
+                            <label for="documentText" class="block text-sm font-medium text-gray-700">Paste synthetic/public document text:</label>
                             <textarea id="documentText" rows="6" class="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="Paste text from a policy document, member communication, or procedural manual here..."></textarea>
                         </div>
-                        <button onclick="extractInformation()" class="mt-3 w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-md">
-                            Extract Information
-                        </button>
+                        <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <button onclick="loadExtractionFixture()" class="w-full bg-slate-600 hover:bg-slate-700 text-white font-medium py-2 px-4 rounded-md">Load Fixture</button>
+                            <button onclick="extractInformation()" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-md">Extract Information</button>
+                        </div>
                         
                         <div id="extractionResult" class="mt-4 p-4 bg-green-50 rounded-md hidden">
                             <h3 class="text-md font-semibold text-green-800 mb-2">Extracted Information:</h3>
@@ -149,7 +153,7 @@
                                 </div>
                             <h4 class="text-sm font-semibold text-green-700">Summary:</h4>
                             <p id="documentSummary" class="text-xs text-green-600">--</p>
-                            <p class="text-xs text-gray-500 mt-2">Note: This is a simulated information extraction result.</p>
+                            <p class="text-xs text-gray-500 mt-2">Deterministic rule extraction. Every value should be verified against the source text.</p>
                         </div>
                     </div>
 
@@ -250,13 +254,13 @@
     </div>
 
     <script>
-        // --- Dummy Data and Functions for Demonstration ---
+        // Deterministic synthetic extraction fixture.
         const docExtractionData = {
             stats: {
-                docsProcessed: "5.8 M",
-                avgEntitiesExtracted: "25",
-                extractionAccuracy: "97.2%",
-                timeSaved: "10K+ Hrs"
+                docsProcessed: "3 fixtures",
+                avgEntitiesExtracted: "4 fields",
+                extractionAccuracy: "Rule patterns",
+                timeSaved: "2026-Q1"
             },
             sampleProcessedDocs: [
                 { id: "DOC001", title: "Policy Circular XYZ/2024/01", date: "2024-05-15", summary: "Revision of withdrawal limits for housing advance...", entities: ["Policy ID: XYZ/2024/01", "Effective Date: 01-06-2024", "Subject: Housing Advance"] },
@@ -330,6 +334,11 @@
             }
         });
 
+        function loadExtractionFixture() {
+            document.getElementById('documentText').value = 'Circular No. SYN/OPS/2026/014 dated 15/03/2026. Subject: Demonstration procedure for transfer claim review. Effective Date: 01/04/2026. This circular supersedes SYN/OPS/2025/009. Paragraph 6 describes the officer verification step.';
+            if (window.EPFODemo) window.EPFODemo.recordEvent('load-extraction-fixture');
+        }
+
         function extractInformation() {
             const docText = document.getElementById('documentText').value;
             if (!docText.trim()) {
@@ -341,34 +350,27 @@
                 return;
             }
 
-            // Simulate NLP Processing for Information Extraction
             const extractedEntitiesContainer = document.getElementById('extractedEntitiesContainer');
             const documentSummaryEl = document.getElementById('documentSummary');
             const resultDiv = document.getElementById('extractionResult');
             
             extractedEntitiesContainer.innerHTML = ''; // Clear previous
             
-            // Simulate finding entities based on keywords in the pasted text
-            const foundEntities = [];
-            docExtractionData.sampleEntitiesFromText.forEach(entityPattern => {
-                if (docText.toLowerCase().includes(entityPattern.type.toLowerCase().split(" ")[0]) || docText.includes(entityPattern.value)) {
-                     // Simplified matching for demo
-                    if (entityPattern.type === "UAN" && docText.match(/\d{12}/)) {
-                         foundEntities.push({type: entityPattern.type, value: docText.match(/\d{12}/)[0]});
-                    } else if (entityPattern.type === "Amount" && docText.match(/Rs\.?\s*[\d,]+/i)) {
-                         foundEntities.push({type: entityPattern.type, value: docText.match(/Rs\.?\s*[\d,]+/i)[0]});
-                    } else if (docText.toLowerCase().includes(entityPattern.value.toLowerCase().substring(0,5))) { // Match part of value
-                        foundEntities.push(entityPattern);
-                    }
-                }
+            const patterns = [
+                ['Reference', /(?:Circular\s+No\.?|Reference|Ref\.?)\s*[:#-]?\s*([A-Z0-9/-]+)/i],
+                ['Document Date', /\bdated\s+(\d{1,2}[/-]\d{1,2}[/-]\d{4})/i],
+                ['Effective Date', /Effective\s+Date\s*[:#-]?\s*(\d{1,2}[/-]\d{1,2}[/-]\d{4})/i],
+                ['Subject', /Subject\s*[:#-]?\s*([^\n.]+)/i],
+                ['Supersedes', /supersedes\s+([A-Z0-9/-]+)/i],
+                ['Paragraph', /Paragraph\s+([A-Z0-9.-]+)/i],
+                ['Masked UAN', /\b(\d{4})\d{4}(\d{4})\b/]
+            ];
+            const foundEntities = patterns.flatMap(([type, pattern]) => {
+                const match = docText.match(pattern);
+                if (!match) return [];
+                const value = type === 'Masked UAN' ? `${match[1]}XXXX${match[2]}` : match[1].trim();
+                return [{ type, value }];
             });
-            // Add some generic ones if specific keywords are found
-            if(docText.toLowerCase().includes("policy") || docText.toLowerCase().includes("circular")){
-                if(!foundEntities.some(e => e.type === "Policy ID")) foundEntities.push({type: "Document Type", value: "Policy/Circular"});
-            }
-             if(docText.toLowerCase().includes("member") || docText.toLowerCase().includes("uan")){
-                if(!foundEntities.some(e => e.type === "UAN")) foundEntities.push({type: "Mention", value: "Member/UAN"});
-            }
 
 
             if (foundEntities.length > 0) {
@@ -382,12 +384,13 @@
                 extractedEntitiesContainer.innerHTML = '<p class="text-xs text-gray-500">No specific entities recognized based on predefined patterns.</p>';
             }
 
-            // Simulate summarization
+            // Extractive fixture summary: first 25 words, never invented text.
             const words = docText.split(/\s+/);
             const summary = words.slice(0, Math.min(words.length, 25)).join(' ') + (words.length > 25 ? '...' : '');
             documentSummaryEl.textContent = summary || "Could not generate summary for short text.";
             
             resultDiv.classList.remove('hidden');
+            if (window.EPFODemo) window.EPFODemo.recordEvent('extract-document-fields', `fields=${foundEntities.length}`);
         }
 
         // Modal functions
@@ -410,5 +413,6 @@
             });
         }
     </script>
+    <div class="epfo-lab-footer">EPFO Innovation Lab · Research demonstration only · Always confirm extracted fields against the original document.</div>
 </body>
 </html>

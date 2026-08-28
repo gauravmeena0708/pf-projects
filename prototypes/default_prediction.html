@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="../predictive-lab.css">
+    <script src="../prototype-demo.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
     <style>
         body {
@@ -351,10 +352,14 @@
                     contributionChartInstance = new Chart(chartCtx, {
                         type: 'line',
                         data: {
-                            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], // Dummy labels
+                            labels: ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'],
                             datasets: [{
                                 label: `Contribution Trend for ${estData.code}`,
-                                data: Array.from({length: 12}, () => Math.floor(Math.random() * 50000) + (estData.riskScore > 80 ? 10000 : 30000)), // Dummy data
+                                data: Array.from({length: 12}, (_, i) => {
+                                    const base = estData.riskScore > 80 ? 18000 : 32000;
+                                    const codeSeed = estData.id.charCodeAt(estData.id.length - 1);
+                                    return base + ((i * 7919 + codeSeed * 997) % 18000);
+                                }),
                                 borderColor: estData.riskScore > 80 ? 'rgb(239, 68, 68)' : 'rgb(34, 197, 94)',
                                 tension: 0.1,
                                 fill: false

@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="../predictive-lab.css">
+    <script src="../prototype-demo.js" defer></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -68,7 +69,7 @@
                     <div class="p-4 border rounded-lg bg-white shadow">
                         <h3 class="font-semibold text-slate-600 mb-2 flex items-center"><i class="fas fa-id-card mr-2 text-blue-500"></i>Aadhaar Card</h3>
                         <div class="document-preview mb-2">
-                            <img src="https://placehold.co/200x150/EBF4FF/3B82F6?text=Aadhaar+Scan" alt="Aadhaar Preview" class="max-h-full max-w-full rounded">
+                            <div class="text-center text-blue-700"><i class="fas fa-id-card text-3xl mb-2"></i><p class="text-xs font-bold">SYNTHETIC AADHAAR FIXTURE</p><p class="text-[10px]">Masked document preview</p></div>
                         </div>
                         <button class="text-xs text-blue-600 hover:underline">View Full Document</button>
                         <div id="aadhaarStatus" class="mt-2 text-sm validation-item status-verified">
@@ -78,7 +79,7 @@
                     <div class="p-4 border rounded-lg bg-white shadow">
                         <h3 class="font-semibold text-slate-600 mb-2 flex items-center"><i class="fas fa-address-card mr-2 text-orange-500"></i>PAN Card</h3>
                         <div class="document-preview mb-2">
-                             <img src="https://placehold.co/200x150/FFFBEB/F59E0B?text=PAN+Scan" alt="PAN Preview" class="max-h-full max-w-full rounded">
+                             <div class="text-center text-amber-700"><i class="fas fa-address-card text-3xl mb-2"></i><p class="text-xs font-bold">SYNTHETIC PAN FIXTURE</p><p class="text-[10px]">Masked document preview</p></div>
                         </div>
                         <button class="text-xs text-blue-600 hover:underline">View Full Document</button>
                         <div id="panStatus" class="mt-2 text-sm validation-item status-mismatch">
@@ -88,7 +89,7 @@
                     <div class="p-4 border rounded-lg bg-white shadow">
                         <h3 class="font-semibold text-slate-600 mb-2 flex items-center"><i class="fas fa-university mr-2 text-green-500"></i>Bank Proof</h3>
                         <div class="document-preview mb-2">
-                             <img src="https://placehold.co/200x150/F0FDF4/10B981?text=Bank+Proof+Scan" alt="Bank Proof Preview" class="max-h-full max-w-full rounded">
+                             <div class="text-center text-emerald-700"><i class="fas fa-building-columns text-3xl mb-2"></i><p class="text-xs font-bold">SYNTHETIC BANK FIXTURE</p><p class="text-[10px]">Masked document preview</p></div>
                         </div>
                         <button class="text-xs text-blue-600 hover:underline">View Full Document</button>
                         <div id="bankStatus" class="mt-2 text-sm validation-item status-verified">
@@ -200,10 +201,10 @@
                     <p id="systemRecommendation" class="text-blue-700 font-medium"><i class="fas fa-robot mr-2"></i>Screening outcome: Route to officer review for PAN name variation and address anomaly; no automated approval or rejection.</p>
                 </div>
                 <div class="flex flex-wrap gap-3">
-                    <button class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-check-double mr-2"></i>Mark Verified After Review</button>
-                    <button class="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-user-edit mr-2"></i>Send for Manual Review</button>
-                    <button class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-times-circle mr-2"></i>Reject KYC Update</button>
-                    <button class="bg-sky-500 hover:bg-sky-600 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-comment-dots mr-2"></i>Request Clarification</button>
+                    <button data-demo-action="mark-kyc-verified-after-review" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-check-double mr-2"></i>Mark Verified After Review</button>
+                    <button data-demo-action="send-kyc-for-officer-review" class="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-user-edit mr-2"></i>Send for Officer Review</button>
+                    <button data-demo-action="return-kyc-for-correction" class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-times-circle mr-2"></i>Return for Correction</button>
+                    <button data-demo-action="request-kyc-clarification" class="bg-sky-500 hover:bg-sky-600 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-comment-dots mr-2"></i>Request Clarification</button>
                 </div>
             </section>
         </div>

@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="../predictive-lab.css">
+    <script src="../prototype-demo.js" defer></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -144,7 +145,7 @@
                     <h1 class="text-3xl md:text-4xl font-bold text-indigo-700">EPFO Transfer Claim Analysis</h1>
                     <p class="text-stone-500 text-sm mt-1">Claim ID: <span class="font-semibold text-stone-700" id="claimIdDisplay"></span></p>
                 </div>
-                <img src="https://placehold.co/120x50/2563eb/white?text=EPFO+Logo&font=Inter" alt="EPFO Logo" class="h-10 md:h-12 rounded" onerror="this.style.display='none'">
+                <span class="px-3 py-2 rounded bg-indigo-100 text-indigo-700 text-xs font-bold uppercase tracking-widest">Synthetic Case Fixture</span>
             </div>
         </header>
         <div class="epfo-lab-context"><strong><i class="fas fa-flask mr-1"></i> Predictive Lab</strong><span>Prototype using synthetic data · Decision support only · Officer review required</span><a href="../index.html">Back to EPFO Innovation Lab</a></div>
@@ -268,12 +269,12 @@
                 <div class="sidebar-card">
                     <h3 class="text-base font-semibold text-stone-800 mb-3 pb-2 border-b border-stone-200">Actions</h3>
                     <div class="action-buttons-grid">
-                        <button class="action-button bg-green-600 hover:bg-green-700 text-white"><i class="fas fa-check-circle mr-1.5"></i>Approve</button>
-                        <button class="action-button bg-yellow-500 hover:bg-yellow-600 text-white"><i class="fas fa-user-shield mr-1.5"></i>Send for Review</button>
-                        <button class="action-button bg-red-600 hover:bg-red-700 text-white"><i class="fas fa-times-circle mr-1.5"></i>Reject</button>
-                        <button class="action-button bg-blue-600 hover:bg-blue-700 text-white"><i class="fas fa-info-circle mr-1.5"></i>Request More Info</button>
-                        <button class="action-button bg-purple-600 hover:bg-purple-700 text-white"><i class="fas fa-search-location mr-1.5"></i>Field Inquiry</button>
-                        <button class="action-button bg-gray-700 hover:bg-gray-800 text-white"><i class="fas fa-shield-halved mr-1.5"></i>Refer Vigilance</button>
+                        <button data-demo-action="mark-review-complete" class="action-button bg-green-600 hover:bg-green-700 text-white"><i class="fas fa-check-circle mr-1.5"></i>Mark Review Complete</button>
+                        <button data-demo-action="send-for-officer-review" class="action-button bg-yellow-500 hover:bg-yellow-600 text-white"><i class="fas fa-user-shield mr-1.5"></i>Send for Officer Review</button>
+                        <button data-demo-action="return-for-correction" class="action-button bg-red-600 hover:bg-red-700 text-white"><i class="fas fa-times-circle mr-1.5"></i>Return for Correction</button>
+                        <button data-demo-action="request-more-information" class="action-button bg-blue-600 hover:bg-blue-700 text-white"><i class="fas fa-info-circle mr-1.5"></i>Request More Info</button>
+                        <button data-demo-action="propose-field-inquiry" class="action-button bg-purple-600 hover:bg-purple-700 text-white"><i class="fas fa-search-location mr-1.5"></i>Propose Field Inquiry</button>
+                        <button data-demo-action="refer-for-specialist-review" class="action-button bg-gray-700 hover:bg-gray-800 text-white"><i class="fas fa-shield-halved mr-1.5"></i>Specialist Review</button>
                     </div>
                 </div>
             </div>

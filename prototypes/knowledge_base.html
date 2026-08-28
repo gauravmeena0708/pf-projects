@@ -75,8 +75,11 @@
         }
         .modal-button:hover { background-color: #059669; }
     </style>
+    <link rel="stylesheet" href="../predictive-lab.css">
+    <script src="../prototype-demo.js" defer></script>
 </head>
 <body class="text-slate-800">
+    <div class="epfo-lab-context"><strong><i class="fas fa-flask mr-1"></i> EPFO Innovation Lab</strong><span>Policy research prototype · Illustrative evidence map · Not a policy directive</span><a href="../index.html">Back to portfolio</a></div>
     <div class="min-h-screen">
         <nav class="bg-white shadow-md">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -106,19 +109,19 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                 <div class="card stat-card stat-card-teal p-4">
                     <h3 class="text-sm font-medium text-gray-500">Data Sources Integrated</h3>
-                    <p id="dataSources" class="text-2xl font-semibold text-teal-600">15+</p>
+                    <p id="dataSources" class="text-2xl font-semibold text-teal-600">4 fixtures</p>
                 </div>
                 <div class="card stat-card stat-card-green p-4">
                     <h3 class="text-sm font-medium text-gray-500">Relationships Discovered</h3>
-                    <p id="relationshipsDiscovered" class="text-2xl font-semibold text-green-600">500K+</p>
+                    <p id="relationshipsDiscovered" class="text-2xl font-semibold text-green-600">4</p>
                 </div>
                 <div class="card stat-card stat-card-emerald p-4">
                     <h3 class="text-sm font-medium text-gray-500">Policies Evaluated</h3>
-                    <p id="policiesEvaluatedKB" class="text-2xl font-semibold text-emerald-600">25</p>
+                    <p id="policiesEvaluatedKB" class="text-2xl font-semibold text-emerald-600">1 scenario</p>
                 </div>
                 <div class="card stat-card stat-card-lime p-4">
                     <h3 class="text-sm font-medium text-gray-500">Knowledge Graph Nodes</h3>
-                    <p id="kgNodes" class="text-2xl font-semibold text-lime-600">20 M</p>
+                    <p id="kgNodes" class="text-2xl font-semibold text-lime-600">12</p>
                 </div>
             </div>
 
@@ -158,11 +161,11 @@
                 <div class="space-y-6">
                     <div class="card p-6">
                         <h2 class="text-lg font-semibold text-slate-700 mb-3 flex items-center">
-                            <i class="fas fa-balance-scale-right mr-2 text-emerald-500"></i>Causal Inference from Knowledge Base
+                            <i class="fas fa-balance-scale-right mr-2 text-emerald-500"></i>Illustrative Association Comparison
                         </h2>
                         <p class="text-sm text-gray-500 mb-3">Assessing the impact of specific policies using the integrated knowledge.</p>
                         <div style="height: 300px;"><canvas id="causalInferenceKBChart"></canvas></div>
-                        <p id="causalInsightText" class="text-xs text-gray-600 mt-2 text-center">Policy Y (e.g., increased VPF awareness) led to a 3.5% rise in VPF adoption among members aged 30-40 within 6 months.</p>
+                        <p id="causalInsightText" class="text-xs text-gray-600 mt-2 text-center">The synthetic affected cohort rises after the fixture event; this comparison does not establish causation.</p>
                         <div class="info-box p-3 mt-3 rounded-md text-sm">
                            <p><i class="fas fa-info-circle mr-1"></i><strong>Causal Inference:</strong> Statistical methods used to determine cause-and-effect relationships. Applied here to evaluate how policy changes (cause) affect member behaviors or scheme outcomes (effect).</p>
                         </div>
@@ -232,19 +235,19 @@
     </div>
 
     <script>
-        // --- Dummy Data and Functions for Demonstration ---
+        // Deterministic synthetic policy evidence map.
         const kbPolicyImpactData = {
             stats: {
-                dataSources: "15+",
-                relationshipsDiscovered: "500K+",
-                policiesEvaluatedKB: "25",
-                kgNodes: "20 M"
+                dataSources: "4 fixtures",
+                relationshipsDiscovered: "4",
+                policiesEvaluatedKB: "1 scenario",
+                kgNodes: "12"
             },
             relationships: [
-                { text: "Strong correlation found between 'Higher Education Withdrawal Policy' and increased withdrawals among members aged 22-28 in urban areas.", type: "Policy-Demographic Link" },
-                { text: "Members contributing via VPF for >5 years show 15% higher retirement corpus, controlling for income.", type: "Behavior-Outcome Link" },
-                { text: "Introduction of 'Online Claim Submission' policy reduced average claim processing time by 3 days nationally.", type: "Policy-Operational Link" },
-                { text: "Economic downturns (GDP < 5%) show a 10% increase in premature withdrawals for 'Other Reasons'.", type: "Economic-Behavior Link" }
+                { text: "Synthetic circular SYN/POL/2026/01 is linked to the transfer-review fixture effective 01-Apr-2026.", type: "Policy-Process Link" },
+                { text: "Fixture metric M-01 is observed before and after the synthetic effective date.", type: "Policy-Metric Link" },
+                { text: "Synthetic procedure SYN/PROC/2026/04 supersedes version SYN/PROC/2025/08.", type: "Version Link" },
+                { text: "The displayed cohort comparison is an association and requires causal validation.", type: "Evidence Caveat" }
             ],
             causalInferenceChart: { // For Diff-in-Diff style visualization
                 labels: ['Q1 Pre-Policy', 'Q2 Pre-Policy', 'Q3 Post-Policy Y', 'Q4 Post-Policy Y', 'Q1 Follow-up', 'Q2 Follow-up'],
@@ -335,5 +338,6 @@
             });
         }
     </script>
+    <div class="epfo-lab-footer">EPFO Innovation Lab · Research demonstration only · Findings require policy, legal and actuarial review.</div>
 </body>
 </html>

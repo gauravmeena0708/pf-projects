@@ -33,8 +33,11 @@
             background-color: #FFC107; /* Amber for unlabeled */
         }
     </style>
+    <link rel="stylesheet" href="../predictive-lab.css">
+    <script src="../prototype-demo.js" defer></script>
 </head>
 <body class="bg-gray-100 text-gray-800">
+    <div class="epfo-lab-context"><strong><i class="fas fa-flask mr-1"></i> EPFO Innovation Lab</strong><span>Classification prototype · Labelled/unlabelled sample data · Human validation required</span><a href="../index.html">Back to portfolio</a></div>
     <div class="container mx-auto p-4 md:p-8">
         <header class="mb-8 text-center">
             <h1 class="text-3xl md:text-4xl font-bold text-blue-700">Semi-Supervised Learning for EPFO Data Classification</h1>
@@ -260,21 +263,24 @@
                     loadingSpinner.classList.remove('animate-spin');
                     playIcon.classList.remove('hidden');
                     
-                    // Mock results generation
+                    // Deterministic fixture results driven by the selected threshold.
                     const totalUnlabeledIllustrative = 2500000 * 0.85;
-                    const classifiedCount = Math.floor(totalUnlabeledIllustrative * (Math.random() * 0.25 + 0.70)); // Classify 70-95% of unlabeled
+                    const threshold = parseFloat(document.querySelector('input[type="range"]').value);
+                    const coverage = Math.max(0.55, 1.18 - threshold * 0.48);
+                    const classifiedCount = Math.floor(totalUnlabeledIllustrative * coverage);
                     
                     newlyClassifiedEl.textContent = classifiedCount.toLocaleString();
-                    overallAccuracyEl.textContent = (Math.random() * 0.08 + 0.88).toFixed(3) + ' (88-96%)'; // Accuracy between 88-96%
-                    avgConfidenceEl.textContent = (Math.random() * 0.1 + 0.89).toFixed(3) + ' (89-99%)';
+                    overallAccuracyEl.textContent = '0.914 (fixture holdout)';
+                    avgConfidenceEl.textContent = (Math.min(0.985, threshold + 0.018)).toFixed(3);
 
                     // Mock sample data for the table
-                    const categories = ['High-Value Claim', 'Routine Query', 'Data Update Request', 'Potential Anomaly', 'Standard Transaction'];
+                    const categories = ['Claim Status', 'KYC Update', 'Transfer Request', 'Pension Query', 'Employer Compliance'];
+                    const confidenceValues = [0.982, 0.961, 0.947, 0.936, 0.921, 0.908, 0.894];
                     let tableContent = '';
-                    for (let i = 0; i < 7; i++) { // Show 7 sample rows
-                        const recordId = `EPFO-REC-${Math.floor(Math.random() * 900000) + 100000}`;
-                        const category = categories[Math.floor(Math.random() * categories.length)];
-                        const confidence = (Math.random() * 0.15 + 0.85).toFixed(3); // Confidence 85-100%
+                    for (let i = 0; i < 7; i++) {
+                        const recordId = `SYN-GRV-${String(10421 + i * 137).padStart(6, '0')}`;
+                        const category = categories[i % categories.length];
+                        const confidence = confidenceValues[i].toFixed(3);
                         tableContent += `
                             <tr class="hover:bg-gray-50 transition-colors duration-150">
                                 <td class="px-4 py-3 whitespace-nowrap text-gray-700">${recordId}</td>
@@ -288,6 +294,7 @@
                         `;
                     }
                     sampleResultsTableBody.innerHTML = tableContent;
+                    if (window.EPFODemo) window.EPFODemo.recordEvent('run-pseudo-labelling', `threshold=${threshold}; coverage=${coverage.toFixed(3)}`);
                 }
             }, intervalTime);
         });
@@ -301,5 +308,6 @@
         }
 
     </script>
+    <div class="epfo-lab-footer">EPFO Innovation Lab · Research demonstration only · Classifications require validation before operational use.</div>
 </body>
 </html>

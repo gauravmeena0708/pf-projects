@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="../predictive-lab.css">
+    <script src="../prototype-demo.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
     <style>
         body {
@@ -221,9 +222,9 @@
                     </div>
                 </div>
                 <div class="flex flex-wrap gap-3">
-                    <button class="bg-sky-600 hover:bg-sky-700 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-file-export mr-2"></i>Generate Detailed Report</button>
-                    <button class="bg-orange-500 hover:bg-orange-600 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-broadcast-tower mr-2"></i>Alert Regional Offices</button>
-                    <button class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-tasks mr-2"></i>Create Action Items</button>
+                    <button data-demo-action="prepare-grievance-report" class="bg-sky-600 hover:bg-sky-700 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-file-export mr-2"></i>Prepare Demo Report</button>
+                    <button data-demo-action="prepare-regional-office-brief" class="bg-orange-500 hover:bg-orange-600 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-broadcast-tower mr-2"></i>Prepare RO Brief</button>
+                    <button data-demo-action="draft-grievance-action-items" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-tasks mr-2"></i>Draft Action Items</button>
                 </div>
             </section>
         </div>
