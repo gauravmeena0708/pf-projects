@@ -25,6 +25,10 @@
 19. [More usecases](./prototypes/more_usecases.html)
 20. [Chat with EPFO](https://huggingface.co/spaces/gauravmeena0708/epfo-circulars)
 
+21. [RuleGit - Government Rules Version Control](https://gauravmeena0708.github.io/law_management/)
+
+    Git-style version history, diffs, provenance and historical lookup for EPFO instructions.
+
 # Other Projects
 * [Inventory Management Software (Laravel)](https://github.com/gauravmeena0708/inventory-management-software-laravel)
 
