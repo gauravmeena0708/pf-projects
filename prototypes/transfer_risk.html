@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="../predictive-lab.css">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -146,6 +147,7 @@
                 <img src="https://placehold.co/120x50/2563eb/white?text=EPFO+Logo&font=Inter" alt="EPFO Logo" class="h-10 md:h-12 rounded" onerror="this.style.display='none'">
             </div>
         </header>
+        <div class="epfo-lab-context"><strong><i class="fas fa-flask mr-1"></i> Predictive Lab</strong><span>Prototype using synthetic data · Decision support only · Officer review required</span><a href="../index.html">Back to EPFO Innovation Lab</a></div>
 
         <div class="flex flex-col lg:flex-row gap-6 md:gap-8">
             <div class="flex-grow lg:w-3/4">
@@ -234,7 +236,7 @@
                     </div>
 
                     <div id="flags" class="tab-pane hidden p-2">
-                        <h2 class="section-title">Key Anomalies & Flags Identified</h2>
+                        <h2 class="section-title">Transfer Review Signals & Flags</h2>
                         <ul id="anomaliesList" class="list-disc pl-6 space-y-2.5 text-stone-700 text-sm">
                         </ul>
                     </div>
@@ -542,5 +544,6 @@
             }
         });
     </script>
+<div class="epfo-lab-footer">EPFO Innovation Lab · Demonstration interface only · Sample records are synthetic and must not be used for operational decisions.</div>
 </body>
 </html>

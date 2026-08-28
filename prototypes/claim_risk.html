@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="../predictive-lab.css">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -115,15 +116,16 @@
                 </div>
                 <div id="overallStatusDisplay" class="mt-4 md:mt-0 text-left md:text-right">
                     <span class="text-sm text-slate-300 block">Overall Status</span>
-                    <span id="overallClaimStatus" class="text-2xl font-bold text-red-400">CRITICAL ANOMALIES DETECTED</span>
+                    <span id="overallClaimStatus" class="text-2xl font-bold text-red-400">REVIEW REQUIRED</span>
                     <span id="riskScore" class="text-lg block">(Risk Score: 88/100)</span>
                 </div>
             </div>
         </header>
+        <div class="epfo-lab-context"><strong><i class="fas fa-flask mr-1"></i> Predictive Lab</strong><span>Prototype using synthetic data · Flags assist scrutiny and do not auto-reject claims</span><a href="../index.html">Back to EPFO Innovation Lab</a></div>
 
         <div class="p-6 md:p-8 space-y-6">
             <div class="space-y-4">
-                <h2 class="text-xl font-semibold text-slate-700 mb-3 border-b pb-2">Detected Anomalies & AI Insights</h2>
+                <h2 class="text-xl font-semibold text-slate-700 mb-3 border-b pb-2">Detected Claim Signals & Review Reasons</h2>
                 
                 <div id="anomalyItem1" class="p-4 rounded-md anomaly-card-critical flex items-start">
                     <i class="fas fa-exclamation-circle fa-lg text-red-500 mr-3 mt-1"></i>
@@ -428,5 +430,6 @@
         }
 
     </script>
+<div class="epfo-lab-footer">EPFO Innovation Lab · Demonstration interface only · Sample records are synthetic and must not be used for operational decisions.</div>
 </body>
 </html>

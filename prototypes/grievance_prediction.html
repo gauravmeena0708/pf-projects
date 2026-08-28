@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="../predictive-lab.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
     <style>
         body {
@@ -93,6 +94,7 @@
                 </div>
             </div>
         </header>
+        <div class="epfo-lab-context"><strong><i class="fas fa-flask mr-1"></i> Predictive Lab</strong><span>Prototype using synthetic EPFiGMS-style data · Forecasts support RO workload planning</span><a href="../index.html">Back to EPFO Innovation Lab</a></div>
 
         <div class="p-6 md:p-8 space-y-6">
             <section>
@@ -132,10 +134,10 @@
                 <h2 class="text-xl font-semibold text-slate-700 mb-4 border-b pb-2">Detailed Predictions & Insights</h2>
                 
                 <div class="mb-6 p-4 border rounded-lg bg-white">
-                    <h3 class="text-lg font-semibold text-slate-600 mb-3 flex items-center"><i class="fas fa-calendar-alt mr-2 text-blue-500"></i>Grievance Volume Forecast (Chart Placeholder)</h3>
+                    <h3 class="text-lg font-semibold text-slate-600 mb-3 flex items-center"><i class="fas fa-calendar-alt mr-2 text-blue-500"></i>EPFiGMS Grievance Volume Forecast</h3>
                     <div class="bg-gray-50 p-4 rounded-md text-center">
                         <canvas id="grievanceVolumeChart" height="120"></canvas>
-                        <p class="text-xs text-gray-500 mt-2">Note: This is a placeholder. A dynamic chart would show daily/weekly forecasts.</p>
+                        <p class="text-xs text-gray-500 mt-2">Illustrative forecast for Regional Office workload planning; values are synthetic.</p>
                     </div>
                 </div>
 
@@ -431,5 +433,6 @@
         });
 
     </script>
+<div class="epfo-lab-footer">EPFO Innovation Lab · Demonstration interface only · Sample records are synthetic and must not be used for operational decisions.</div>
 </body>
 </html>

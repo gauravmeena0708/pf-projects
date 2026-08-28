@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="../predictive-lab.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
     <style>
         body {
@@ -56,6 +57,7 @@
                 </div>
             </div>
         </header>
+        <div class="epfo-lab-context"><strong><i class="fas fa-flask mr-1"></i> Predictive Lab</strong><span>Prototype using synthetic ECR/contribution data · Follow-up prioritisation, not enforcement automation</span><a href="../index.html">Back to EPFO Innovation Lab</a></div>
 
         <div class="p-6 md:p-8 space-y-6">
             <section>
@@ -80,17 +82,17 @@
                     <div class="summary-card summary-card-high-risk p-4 rounded-md">
                         <div class="flex items-center text-amber-600 mb-2">
                             <i class="fas fa-exclamation-triangle fa-lg mr-2"></i>
-                            <h3 class="font-semibold">High-Risk Establishments</h3>
+                            <h3 class="font-semibold">Establishments Needing Follow-up</h3>
                         </div>
                         <p id="highRiskEstablishmentsCount" class="text-3xl font-bold text-slate-800">1,280</p>
-                        <p id="highRiskFocus" class="text-sm text-slate-500">Require immediate attention</p>
+                        <p id="highRiskFocus" class="text-sm text-slate-500">Prioritised for officer review</p>
                     </div>
                 </div>
             </section>
 
             <section class="pt-4">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-semibold text-slate-700">Priority Watchlist: High-Risk Establishments</h2>
+                <h2 class="text-xl font-semibold text-slate-700">Priority Watchlist: Establishments Needing Follow-up</h2>
                     <div class="flex items-center space-x-2">
                         <input type="text" id="searchEstablishment" placeholder="Search by Name/Code..." class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         <button class="text-sm bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-3 rounded-md"><i class="fas fa-filter mr-1"></i> Filter</button>
@@ -121,7 +123,7 @@
             </section>
 
             <section class="pt-4">
-                <h2 class="text-xl font-semibold text-slate-700 mb-3 border-b pb-2">Enforcement Resource Allocation (Optimized)</h2>
+                <h2 class="text-xl font-semibold text-slate-700 mb-3 border-b pb-2">Compliance Follow-up Planning</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="p-4 border rounded-lg bg-white">
                         <h3 class="text-lg font-semibold text-slate-600 mb-3 flex items-center"><i class="fas fa-map-marked-alt mr-2 text-green-500"></i>Regional Hotspots & Team Allocation</h3>
@@ -381,5 +383,6 @@
 
 
     </script>
+<div class="epfo-lab-footer">EPFO Innovation Lab · Demonstration interface only · Sample records are synthetic and must not be used for operational decisions.</div>
 </body>
 </html>

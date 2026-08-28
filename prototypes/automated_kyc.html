@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="../predictive-lab.css">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -58,6 +59,7 @@
                 </div>
             </div>
         </header>
+        <div class="epfo-lab-context"><strong><i class="fas fa-flask mr-1"></i> Predictive Lab</strong><span>Prototype using synthetic documents · Exceptions require member-service officer review</span><a href="../index.html">Back to EPFO Innovation Lab</a></div>
 
         <div class="p-6 md:p-8 space-y-6">
             <section>
@@ -97,7 +99,7 @@
             </section>
 
             <section class="pt-4">
-                <h2 class="text-xl font-semibold text-slate-700 mb-4 border-b pb-2">Data Extraction & Validation Details</h2>
+                <h2 class="text-xl font-semibold text-slate-700 mb-4 border-b pb-2">KYC Data Extraction & Validation Details</h2>
                 
                 <div class="bg-white p-4 border rounded-lg shadow">
                     <table class="w-full comparison-table text-sm">
@@ -193,12 +195,12 @@
             </section>
 
             <section class="pt-6 border-t border-gray-300">
-                <h2 class="text-xl font-semibold text-gray-700 mb-3">System Recommendation & Actions</h2>
+                <h2 class="text-xl font-semibold text-gray-700 mb-3">Validation Outcome & Officer Actions</h2>
                 <div class="bg-blue-50 p-4 rounded-md mb-4">
-                    <p id="systemRecommendation" class="text-blue-700 font-medium"><i class="fas fa-robot mr-2"></i>System Recommendation: Approve with flag for PAN name. Manual review suggested for address anomaly if member has active service in Mumbai.</p>
+                    <p id="systemRecommendation" class="text-blue-700 font-medium"><i class="fas fa-robot mr-2"></i>Screening outcome: Route to officer review for PAN name variation and address anomaly; no automated approval or rejection.</p>
                 </div>
                 <div class="flex flex-wrap gap-3">
-                    <button class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-check-double mr-2"></i>Approve KYC</button>
+                    <button class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-check-double mr-2"></i>Mark Verified After Review</button>
                     <button class="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-user-edit mr-2"></i>Send for Manual Review</button>
                     <button class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-times-circle mr-2"></i>Reject KYC Update</button>
                     <button class="bg-sky-500 hover:bg-sky-600 text-white font-medium py-2 px-4 rounded-lg flex items-center"><i class="fas fa-comment-dots mr-2"></i>Request Clarification</button>
@@ -279,7 +281,7 @@
                 { text: "No unusual activity detected in KYC update frequency.", class: "text-green-600", icon: "fas fa-check" },
                 { text: "Document image quality (OCR): Good (Avg. Confidence > 90%).", class: "text-green-600", icon: "fas fa-check" }
             ],
-            systemRecommendation: "Approve with flag for PAN name. Manual review suggested for address anomaly if member has active service in Mumbai."
+            systemRecommendation: "Route to officer review for PAN name variation and address anomaly; no automated approval or rejection."
         };
 
         // Populate Header
@@ -344,5 +346,6 @@
         document.getElementById('systemRecommendation').innerHTML = `<i class="fas fa-robot mr-2"></i>System Recommendation: ${kycVerificationData.systemRecommendation}`;
 
     </script>
+<div class="epfo-lab-footer">EPFO Innovation Lab · Demonstration interface only · Sample records are synthetic and must not be used for operational decisions.</div>
 </body>
 </html>
