@@ -1,7 +1,7 @@
 /**
  * AGT Analytics 360° - Cadre Planning & Mobility Engine
- * Multi-page & Interactive SPA Engine for Officer 360°, Office 360°, Zone 360°, As-on-date, and Mobility Network
- * Integrates data.json with pf-contacts API (https://gauravmeena0708.github.io/pf-contacts/api/v1/manifest.json)
+ * Multi-page & Interactive Engine for Officer 360°, Office 360°, Zone 360°, As-on-date, and Mobility Network
+ * Integrates data.json with pf-contacts API & Leaflet Geographic Map + Heatmap Visualizations
  */
 
 (function () {
@@ -19,14 +19,110 @@
     pfContacts: {
       manifest: null,
       offices: [],
-      hierarchy: null
+      hierarchy: null,
+      coordsMap: new Map()
     },
-    pageMode: 'auto', // 'index', 'officer', 'office', 'zone', 'as-on-date', 'mobility'
+    activeMap: null,
     currentOfficerEid: null,
     currentOfficeId: null,
     currentZoneId: null,
     asOnDateValue: '2023-01-01',
     isLoaded: false
+  };
+
+  // Comprehensive fallback coordinates dictionary for major Indian stations
+  const CITY_COORDS = {
+    'Delhi': [28.6139, 77.2090],
+    'Amritsar': [31.6340, 74.8723],
+    'Jaipur': [26.9124, 75.7873],
+    'Bengaluru': [12.9716, 77.5946],
+    'Bangalore': [12.9716, 77.5946],
+    'Chennai': [13.0827, 80.2707],
+    'Mumbai': [19.0760, 72.8777],
+    'Kolkata': [22.5726, 88.3639],
+    'Hyderabad': [17.3850, 78.4867],
+    'Ahmedabad': [23.0225, 72.5714],
+    'Pune': [18.5204, 73.8567],
+    'Chandigarh': [30.7333, 76.7794],
+    'Patna': [25.5941, 85.1376],
+    'Kanpur': [26.4499, 80.3319],
+    'Lucknow': [26.8467, 80.9462],
+    'Bhopal': [23.2599, 77.4126],
+    'Indore': [22.7196, 75.8577],
+    'Ludhiana': [30.9010, 75.8573],
+    'Jalandhar': [31.3260, 75.5762],
+    'Faridabad': [28.4089, 77.3178],
+    'Gurugram': [28.4595, 77.0266],
+    'Gurgaon': [28.4595, 77.0266],
+    'Noida': [28.5355, 77.3910],
+    'Coimbatore': [11.0168, 76.9558],
+    'Madurai': [9.9252, 78.1198],
+    'Salem': [11.6643, 78.1460],
+    'Tiruchirappalli': [10.7905, 78.7047],
+    'Tirunelveli': [8.7139, 77.7567],
+    'Tiruppur': [11.1085, 77.3411],
+    'Vellore': [12.9165, 79.1325],
+    'Puducherry': [11.9416, 79.8083],
+    'Kochi': [9.9312, 76.2673],
+    'Thiruvananthapuram': [8.5241, 76.9366],
+    'Trivandrum': [8.5241, 76.9366],
+    'Kozhikode': [11.2588, 75.7804],
+    'Kannur': [11.8745, 75.3704],
+    'Kollam': [8.8932, 76.6141],
+    'Kottayam': [9.5916, 76.5222],
+    'Bhubaneswar': [20.2961, 85.8245],
+    'Rourkela': [22.2604, 84.8536],
+    'Berhampur': [19.3150, 84.7941],
+    'Ranchi': [23.3441, 85.3096],
+    'Jamshedpur': [22.8046, 86.2029],
+    'Muzaffarpur': [26.1209, 85.3647],
+    'Bhagalpur': [25.2425, 86.9842],
+    'Guwahati': [26.1445, 91.7362],
+    'Shillong': [25.5788, 91.8933],
+    'Agartala': [23.8315, 91.2868],
+    'Dehradun': [30.3165, 78.0322],
+    'Haldwani': [29.2183, 79.5130],
+    'Shimla': [31.1048, 77.1734],
+    'Jammu': [32.7266, 74.8570],
+    'Srinagar': [34.0837, 74.7973],
+    'Surat': [21.1702, 72.8311],
+    'Vadodara': [22.3072, 73.1812],
+    'Rajkot': [22.3039, 70.8022],
+    'Vapi': [20.3893, 72.9106],
+    'Nagpur': [21.1458, 79.0882],
+    'Nashik': [19.9975, 73.7898],
+    'Thane': [19.2183, 72.9781],
+    'Navi Mumbai': [19.0330, 73.0297],
+    'Aurangabad': [19.8762, 75.3433],
+    'Kolhapur': [16.7050, 74.2433],
+    'Solapur': [17.6599, 75.9064],
+    'Mangaluru': [12.9141, 74.8560],
+    'Mangalore': [12.9141, 74.8560],
+    'Mysore': [12.2958, 76.6394],
+    'Hubli': [15.3647, 75.1240],
+    'Shivamogga': [13.9299, 75.5681],
+    'Kalaburagi': [17.3297, 76.8343],
+    'Ballari': [15.1394, 76.9214],
+    'Udupi': [13.3409, 74.7421],
+    'Goa': [15.4909, 73.8278],
+    'Ujjain': [23.1765, 75.7885],
+    'Jodhpur': [26.2389, 73.0243],
+    'Udaipur': [24.5854, 73.7125],
+    'Kota': [25.2138, 75.8648],
+    'Gwalior': [26.2183, 78.1828],
+    'Jabalpur': [23.1815, 79.9864],
+    'Raipur': [21.2514, 81.6296],
+    'Agra': [27.1767, 78.0081],
+    'Varanasi': [25.3176, 82.9739],
+    'Meerut': [28.9845, 77.7064],
+    'Prayagraj': [25.4358, 81.8463],
+    'Bareilly': [28.3670, 79.4304],
+    'Gorakhpur': [26.7606, 83.3732],
+    'Visakhapatnam': [17.6868, 83.2185],
+    'Vijayawada': [16.5062, 80.6480],
+    'Guntur': [16.3067, 80.4365],
+    'Kadapa': [14.4673, 78.8242],
+    'Rajamahendravaram': [17.0005, 81.8040]
   };
 
   // Comprehensive dictionary of canonical office mappings
@@ -269,7 +365,6 @@
     }
 
     let s = col4Str.trim();
-    // Strip prefix events
     const prefixes = [
       'AD-HOC PROMOTION AT SAME OFFICE',
       'PROMOTION AT SAME OFFICE',
@@ -290,7 +385,6 @@
       }
     }
 
-    // Strip designation prefixes
     const desigPfxs = ['ACC (HQ)', 'ACC(HQ)', 'ACC-II', 'ACC-I', 'ACC', 'RPFC-II', 'RPFC-I', 'RPFC', 'APFC'];
     for (const dp of desigPfxs) {
       if (s.toUpperCase().startsWith(dp + ' ')) {
@@ -301,7 +395,6 @@
 
     const su = s.toUpperCase();
 
-    // Find all matching place tokens with word boundary regex
     const matches = [];
     for (const k of SORTED_KEYS) {
       const regex = new RegExp('(?:^|[\\s,()~-])' + k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?:$|[\\s,()~-])', 'g');
@@ -311,7 +404,6 @@
       }
     }
 
-    // Filter out overlapping sub-matches
     matches.sort((a, b) => a.start - b.start);
     const filtered = [];
     for (const m of matches) {
@@ -321,7 +413,6 @@
     }
     filtered.sort((a, b) => a.start - b.start);
 
-    // Fallback if no known dictionary token matched
     if (filtered.length === 0) {
       let clean = s.replace(/^(D\.O\s*[-–]|S\.S\.O\s*[-–]|RO\s+|ZO\s+|DO\s+)/i, '').replace(/[()]/g, '').trim();
       let isDo = s.toUpperCase().includes('D.O') || s.toUpperCase().includes('DISTRICT');
@@ -399,6 +490,24 @@
     return 'Transferred';
   }
 
+  // Get geographic coordinates for an office or station
+  function getCoords(officeId, stationName) {
+    if (officeId && App.pfContacts.coordsMap.has(officeId)) {
+      return App.pfContacts.coordsMap.get(officeId);
+    }
+    if (stationName && CITY_COORDS[stationName]) {
+      return CITY_COORDS[stationName];
+    }
+    if (stationName) {
+      for (const [stn, coords] of Object.entries(CITY_COORDS)) {
+        if (stationName.toLowerCase().includes(stn.toLowerCase())) {
+          return coords;
+        }
+      }
+    }
+    return [22.5, 78.5]; // Default center
+  }
+
   async function fetchPfContacts() {
     try {
       const manifestUrl = 'https://gauravmeena0708.github.io/pf-contacts/api/v1/manifest.json';
@@ -410,6 +519,12 @@
         if (oResp.ok) {
           const oData = await oResp.json();
           App.pfContacts.offices = oData.offices || [];
+          // Build coordinates map
+          App.pfContacts.offices.forEach(o => {
+            if (o.coordinates && o.coordinates.latitude && o.coordinates.longitude) {
+              App.pfContacts.coordsMap.set(o.id, [o.coordinates.latitude, o.coordinates.longitude]);
+            }
+          });
         }
         const hResp = await fetch(base + 'hierarchy.json');
         if (hResp.ok) {
@@ -427,7 +542,7 @@
       if (!resp.ok) throw new Error(`HTTP error ${resp.status}`);
       App.rawData = await resp.json();
 
-      fetchPfContacts();
+      await fetchPfContacts();
       processData();
       App.isLoaded = true;
 
@@ -473,7 +588,7 @@
       });
 
       let prevDesig = 'APFC';
-      const rawEnriched = officer.records.map((r, idx) => {
+      const rawEnriched = officer.records.map((r) => {
         const d1 = parseDate(r.date1);
         const d2 = parseDate(r.date2);
         const desig = normalizeDesignation(r.col2, r.new_col4, prevDesig);
@@ -521,7 +636,6 @@
         } else {
           const prev = consolidated[consolidated.length - 1];
           if (prev.officeId === item.officeId && prev.designation === item.designation) {
-            // Same continuous tenure at this office
             prev.mergedCount++;
             prev.subRecords.push(item.rawRecord);
             prev.periodYears = Math.max(prev.periodYears, item.periodYears, parseFloat((prev.periodYears + item.periodYears).toFixed(2)));
@@ -828,7 +942,6 @@
     const hash = window.location.hash || '';
     const params = new URLSearchParams(window.location.search);
 
-    // Check specific HTML page filenames
     if (pathname.includes('office-profile')) {
       const officeId = params.get('id') || params.get('office') || (hash.startsWith('#office/') ? hash.substring(8) : null) || 'ro-jaipur';
       showOfficeProfile(officeId);
@@ -857,7 +970,6 @@
       return;
     }
 
-    // Default: index.html (supports hash routes or URL query params)
     if (params.get('officer') || params.get('eid')) {
       showOfficerProfile(params.get('officer') || params.get('eid'));
     } else if (params.get('office') || params.get('id')) {
@@ -880,7 +992,6 @@
     }
   }
 
-  // View Switchers
   function showOfficerProfile(eid) {
     if (!App.officersByEid.has(eid)) {
       const found = App.officersList.find(o => o.eid === eid || o.name.toLowerCase().includes((eid || '').toLowerCase()));
@@ -929,7 +1040,6 @@
     });
   }
 
-  // Helper to construct cross-page links
   function getOfficerLink(eid) {
     return `officer-profile.html?eid=${encodeURIComponent(eid)}`;
   }
@@ -1014,6 +1124,36 @@
         </div>
       </section>
 
+      <!-- Geographic Posting Journey & Heatmap -->
+      <section class="card geo-map-card">
+        <div class="title" style="margin-bottom:12px">
+          <div>
+            <h2>Geographic Posting Journey & Heatmap</h2>
+            <span>Visualizing career mobility across Indian stations with thermal tenure density</span>
+          </div>
+          <div class="map-header-controls">
+            <button class="map-toggle-btn active" id="btnMapBoth" onclick="window.App.toggleOfficerMapMode('both')">✨ Combined View</button>
+            <button class="map-toggle-btn" id="btnMapHeat" onclick="window.App.toggleOfficerMapMode('heat')">🔥 Thermal Heatmap</button>
+            <button class="map-toggle-btn" id="btnMapRoute" onclick="window.App.toggleOfficerMapMode('route')">🛣️ Route Trajectory</button>
+          </div>
+        </div>
+        <div id="officerGeoMap" class="geo-map-container"></div>
+        <div class="map-legend">
+          <div class="map-legend-item">
+            <span class="heatmap-spectrum"></span>
+            <span><b>Tenure Intensity (Green ➔ Red):</b> 🟢 &lt;3y Single / &lt;4y Multiple (Green) ➔ 🟡/🟠 3-4y Single / 4-8y Multiple (Orange) ➔ 🔴 <b>&gt;4y Single / &gt;8y Multiple (Red Alert)</b></span>
+          </div>
+          <div class="map-legend-item" style="margin-left:auto">
+            <span class="legend-dot" style="background:#15803d;box-shadow:0 0 0 2px #86efac"></span>
+            <b>Current Station (${o.currentStation})</b>
+          </div>
+          <div class="map-legend-item">
+            <span class="legend-dot" style="background:#475569;border-radius:2px;width:16px;height:3px"></span>
+            <span>Career Route</span>
+          </div>
+        </div>
+      </section>
+
       <!-- Grid 2: Career Timeline & Zone Exposure -->
       <div class="grid2">
         <section class="card">
@@ -1026,7 +1166,7 @@
               <div class="event ${p.isLatest ? 'current' : ''}">
                 <small>${p.fromDate} — ${p.toDate} (${p.periodYears}y)</small>
                 <b>${p.designation} · <a href="${getOfficeLink(p.officeId)}" class="entity-link">${p.officeName}</a></b>
-                <p>${p.station} · ${p.zone} · <span class="pill ${p.event.includes('Promotion') ? 'green' : 'blue'}">${p.event}</span></p>
+                <p>${p.station} · ${p.zone} · <span class="pill ${p.event.includes('Promotion') ? 'green' : 'blue'}">${p.event}</span> ${p.mergedCount > 1 ? `<span class="badge" style="font-size:9px;padding:2px 6px">${p.mergedCount} HRM rows</span>` : ''}</p>
               </div>
             `).join('')}
           </div>
@@ -1204,6 +1344,204 @@
         <b>Design Principle:</b> Officer 360° is descriptive and informational. Any AGT-policy threshold (e.g. 3-year station tenure cooling-off) is displayed as an analytical marker, never as an automated transfer decision.
       </div>
     `;
+
+    // Initialize Map after rendering DOM
+    setTimeout(() => initOfficerMap(o), 50);
+  }
+
+  // Officer Map Initializer with True Leaflet.heat Heatmap + Route Group
+  function initOfficerMap(o) {
+    if (typeof L === 'undefined') return;
+    const mapEl = document.getElementById('officerGeoMap');
+    if (!mapEl) return;
+
+    if (App.activeMap) {
+      App.activeMap.remove();
+      App.activeMap = null;
+    }
+
+    const map = L.map('officerGeoMap', {
+      zoomControl: true,
+      attributionControl: false,
+      scrollWheelZoom: false
+    }).setView([22.5, 78.5], 5);
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      maxZoom: 18,
+      subdomains: 'abcd'
+    }).addTo(map);
+
+    App.activeMap = map;
+
+    const latLngs = [];
+    const stationMap = new Map();
+    const heatPoints = [];
+
+    o.postings.forEach((p, idx) => {
+      const coords = getCoords(p.officeId, p.station);
+      latLngs.push(coords);
+
+      if (!stationMap.has(p.station)) {
+        stationMap.set(p.station, {
+          station: p.station,
+          coords: coords,
+          postings: [],
+          totalTenure: 0,
+          maxSingleTenure: 0,
+          isCurrent: p.isLatest,
+          stepOrder: idx + 1
+        });
+      }
+      const stnObj = stationMap.get(p.station);
+      stnObj.postings.push(p);
+      stnObj.totalTenure = +(stnObj.totalTenure + p.periodYears).toFixed(2);
+      stnObj.maxSingleTenure = Math.max(stnObj.maxSingleTenure, p.periodYears);
+      if (p.isLatest) stnObj.isCurrent = true;
+    });
+
+    // Build Heatmap points weighted by exact user rule:
+    // Single stint: < 3y Green, 3-4y Green->Orange, > 4y Red
+    // Multiple postings: < 4y Green, 4-8y Green->Orange, > 8y Red
+    stationMap.forEach((stn) => {
+      const s = stn.maxSingleTenure || 0;
+      const c = stn.totalTenure || 0;
+
+      let rSingle = 0.2;
+      if (s <= 3.0) {
+        rSingle = 0.2 + (s / 3.0) * 0.15; // 0.2 -> 0.35 (Green)
+      } else if (s <= 4.0) {
+        rSingle = 0.40 + ((s - 3.0) / 1.0) * 0.45; // 0.40 -> 0.85 (Green going Orange)
+      } else {
+        rSingle = 1.0; // Red (> 4y single)
+      }
+
+      let rCombined = 0.2;
+      if (c <= 4.0) {
+        rCombined = 0.2 + (c / 4.0) * 0.15; // 0.2 -> 0.35 (Green)
+      } else if (c <= 8.0) {
+        rCombined = 0.40 + ((c - 4.0) / 4.0) * 0.45; // 0.40 -> 0.85 (Green going Orange)
+      } else {
+        rCombined = 1.0; // Red (> 8y combined)
+      }
+
+      const intensity = Math.min(1.0, Math.max(0.2, rSingle, rCombined));
+      heatPoints.push([stn.coords[0], stn.coords[1], intensity]);
+    });
+
+    // Create True Thermal Heatmap Layer (Strictly Green to Red)
+    let heatLayer = null;
+    if (typeof L.heatLayer === 'function') {
+      heatLayer = L.heatLayer(heatPoints, {
+        radius: 48,
+        blur: 28,
+        maxZoom: 10,
+        max: 1.0,
+        minOpacity: 0.45,
+        gradient: {
+          0.20: '#15803d', // Green (< 3y single / < 4y combined)
+          0.45: '#84cc16', // Lime Green
+          0.65: '#eab308', // Amber / Yellow (3.0-3.5y single / 4-6y combined)
+          0.85: '#ea580c', // Orange (3.5-4.0y single / 6-8y combined)
+          0.95: '#dc2626'  // Red (>4y single stint OR >8y combined alert)
+        }
+      }).addTo(map);
+    }
+    App.officerHeatLayer = heatLayer;
+
+    // Create Route Elements (Neutral Slate Polyline to highlight Green->Red thermal markers)
+    const routeElements = [];
+    if (latLngs.length > 1) {
+      const poly = L.polyline(latLngs, {
+        color: '#475569',
+        weight: 3.5,
+        opacity: 0.75,
+        dashArray: '6, 8',
+        lineCap: 'round'
+      });
+      routeElements.push(poly);
+    }
+
+    const bounds = L.latLngBounds();
+
+    stationMap.forEach((stn) => {
+      bounds.extend(stn.coords);
+
+      const s = stn.maxSingleTenure || 0;
+      const c = stn.totalTenure || 0;
+
+      // Exact color mapping:
+      // Single: <3y Green, 3-4y Green going Orange, >4y Red
+      // Multiple: <4y Green, 4-8y Green going Orange, >8y Red
+      let markerColor = '#15803d'; // Green
+      let statusClass = 'status-green';
+
+      if (s > 4.0 || c > 8.0) {
+        markerColor = '#dc2626'; // Red (>4y single OR >8y multiple)
+        statusClass = 'status-red';
+      } else if (s >= 3.5 || c >= 6.0) {
+        markerColor = '#ea580c'; // Deep Orange (3.5-4y single OR 6-8y multiple)
+        statusClass = 'status-orange';
+      } else if (s >= 3.0 || c >= 4.0) {
+        markerColor = '#eab308'; // Amber/Yellow (3.0-3.5y single OR 4-6y multiple)
+        statusClass = 'status-amber';
+      } else {
+        markerColor = '#15803d'; // Green (< 3y single AND < 4y multiple)
+        statusClass = 'status-green';
+      }
+
+      // Add a high-visibility SVG tenure halo circle directly under the marker
+      const haloRadius = Math.max(30000, Math.min(120000, (stn.totalTenure || 1) * 22000));
+      const haloCircle = L.circle(stn.coords, {
+        radius: haloRadius,
+        color: markerColor,
+        fillColor: markerColor,
+        fillOpacity: 0.22,
+        weight: 2
+      });
+      routeElements.push(haloCircle);
+
+      const iconHtml = `<div class="custom-map-marker ${statusClass} ${stn.isCurrent ? 'is-current' : ''}" style="width:30px;height:30px;font-size:12px">${stn.stepOrder}</div>`;
+      const customIcon = L.divIcon({
+        className: '',
+        html: iconHtml,
+        iconSize: [30, 30],
+        iconAnchor: [15, 15],
+        popupAnchor: [0, -15]
+      });
+
+      let stnAlertHtml = '';
+      if (s > 4.0 || c > 8.0) {
+        stnAlertHtml = `<div style="margin:4px 0 6px"><span class="badge danger" style="font-size:10px;padding:3px 8px">🚨 Red Alert: ${s > 4.0 ? `Single Stint ${s}y (&gt;4y)` : `Combined ${c}y (&gt;8y)`}</span></div>`;
+      } else if (s >= 3.0 || c >= 4.0) {
+        stnAlertHtml = `<div style="margin:4px 0 6px"><span class="badge warn" style="font-size:10px;padding:3px 8px">⚠️ Warning: ${s >= 3.0 ? `Single Stint ${s}y (3-4y)` : `Combined ${c}y (4-8y)`}</span></div>`;
+      } else {
+        stnAlertHtml = `<div style="margin:4px 0 6px"><span class="badge good" style="font-size:10px;padding:3px 8px">✅ Normal Tenure: ${s}y</span></div>`;
+      }
+
+      const popupContent = `
+        <div class="map-popup-title">${stn.station}</div>
+        <div class="map-popup-sub">Cumulative Station Tenure: <b>${stn.totalTenure} Years</b></div>
+        ${stnAlertHtml}
+        <div style="font-size:11px;color:#475467;margin-top:6px">
+          ${stn.postings.map(p => `
+            <div style="margin-bottom:4px;padding-bottom:4px;border-bottom:1px solid #f1f5f9">
+              <b>${p.designation}</b> · <a href="${getOfficeLink(p.officeId)}" style="color:#1f4e79;font-weight:700">${p.officeName}</a><br>
+              <span style="color:#64748b">${p.fromDate} — ${p.toDate} (${p.periodYears}y)</span>
+            </div>
+          `).join('')}
+        </div>
+      `;
+
+      const m = L.marker(stn.coords, { icon: customIcon }).bindPopup(popupContent);
+      routeElements.push(m);
+    });
+
+    const routeGroup = L.layerGroup(routeElements).addTo(map);
+    App.officerRouteGroup = routeGroup;
+
+    if (latLngs.length > 0) {
+      map.fitBounds(bounds, { padding: [40, 40], maxZoom: 8 });
+    }
   }
 
   // ==========================================
@@ -1277,6 +1615,35 @@
           <small>Transfers Out (Outflow)</small>
           <b>${off.transfersOutCount}</b>
           <span>To ${off.topDestinations.length} destinations</span>
+        </div>
+      </section>
+
+      <!-- Geographic Map: Office Location & Feeder Network -->
+      <section class="card geo-map-card">
+        <div class="title" style="margin-bottom:12px">
+          <div>
+            <h2>Office Location & Mobility Corridors</h2>
+            <span>Geographic node and key inbound feeder & outbound transfer routes</span>
+          </div>
+          <div class="hero-badges" style="margin-bottom:0">
+            <span class="badge">${off.station}</span>
+            <span class="badge">${off.zone}</span>
+          </div>
+        </div>
+        <div id="officeGeoMap" class="geo-map-container"></div>
+        <div class="map-legend">
+          <div class="map-legend-item">
+            <span class="legend-dot" style="background:#1f4e79;border-radius:2px"></span>
+            <b>${off.name} (This Office)</b>
+          </div>
+          <div class="map-legend-item">
+            <span class="legend-dot" style="background:#15803d"></span>
+            <span>Inbound Origins (Incoming Transfers)</span>
+          </div>
+          <div class="map-legend-item">
+            <span class="legend-dot" style="background:#6366f1"></span>
+            <span>Outbound Destinations (Outgoing Moves)</span>
+          </div>
         </div>
       </section>
 
@@ -1477,6 +1844,103 @@
         <b>Design Principle:</b> Office 360° reverses the officer career trajectory to provide an institutional memory view: who served here, when, for how long, where they came from, and where they went next.
       </div>
     `;
+
+    setTimeout(() => initOfficeMap(off), 50);
+  }
+
+  // Office Map Initializer
+  function initOfficeMap(off) {
+    if (typeof L === 'undefined') return;
+    const mapEl = document.getElementById('officeGeoMap');
+    if (!mapEl) return;
+
+    if (App.activeMap) {
+      App.activeMap.remove();
+      App.activeMap = null;
+    }
+
+    const officeCoords = getCoords(off.id, off.station);
+
+    const map = L.map('officeGeoMap', {
+      zoomControl: true,
+      attributionControl: false,
+      scrollWheelZoom: false
+    }).setView(officeCoords, 6);
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      maxZoom: 18,
+      subdomains: 'abcd'
+    }).addTo(map);
+
+    App.activeMap = map;
+
+    const bounds = L.latLngBounds([officeCoords]);
+
+    off.topOrigins.forEach(orig => {
+      const origCoords = getCoords(null, orig.station);
+      bounds.extend(origCoords);
+      L.polyline([origCoords, officeCoords], {
+        color: '#15803d',
+        weight: Math.min(5, Math.max(2, orig.count * 1.2)),
+        opacity: 0.75,
+        dashArray: '5, 6'
+      }).addTo(map);
+
+      L.circleMarker(origCoords, {
+        radius: 6,
+        color: '#15803d',
+        fillColor: '#86efac',
+        fillOpacity: 0.9
+      }).addTo(map).bindPopup(`<b>Inbound Feeder: ${orig.station}</b><br>${orig.count} transfers to ${off.name}`);
+    });
+
+    off.topDestinations.forEach(dest => {
+      const destCoords = getCoords(null, dest.station);
+      bounds.extend(destCoords);
+      L.polyline([officeCoords, destCoords], {
+        color: '#6366f1',
+        weight: Math.min(5, Math.max(2, dest.count * 1.2)),
+        opacity: 0.75,
+        dashArray: '5, 6'
+      }).addTo(map);
+
+      L.circleMarker(destCoords, {
+        radius: 6,
+        color: '#6366f1',
+        fillColor: '#c7d2fe',
+        fillOpacity: 0.9
+      }).addTo(map).bindPopup(`<b>Outbound Destination: ${dest.station}</b><br>${dest.count} transfers from ${off.name}`);
+    });
+
+    const iconHtml = `<div class="custom-map-marker office-pin" style="width:34px;height:34px;font-size:14px">🏢</div>`;
+    const customIcon = L.divIcon({
+      className: '',
+      html: iconHtml,
+      iconSize: [34, 34],
+      iconAnchor: [17, 17],
+      popupAnchor: [0, -17]
+    });
+
+    const pfDetails = App.pfContacts.offices.find(p => p.id === off.id) || {};
+    const popupContent = `
+      <div class="map-popup-title">${off.name}</div>
+      <div class="map-popup-sub">${off.category} · ${off.zone}</div>
+      <div style="font-size:11px;color:#334155;margin-top:6px">
+        <b>Active Tracked Staff:</b> ${off.activeStaffCount} officers<br>
+        <b>Total Historical Officers:</b> ${off.totalOfficersCount}<br>
+        ${pfDetails.address ? `<b>Address:</b> ${pfDetails.address.replace(/\n/g, ', ')}<br>` : ''}
+        ${pfDetails.official_count ? `<b>pf-contacts Officials:</b> ${pfDetails.official_count}` : ''}
+      </div>
+    `;
+
+    L.marker(officeCoords, { icon: customIcon })
+      .addTo(map)
+      .bindPopup(popupContent)
+      .openPopup();
+
+    if (off.topOrigins.length > 0 || off.topDestinations.length > 0) {
+      map.fitBounds(bounds, { padding: [50, 50], maxZoom: 8 });
+    }
   }
 
   // ==========================================
@@ -1735,6 +2199,17 @@
         </div>
       </section>
 
+      <!-- Mobility Geographic Map -->
+      <section class="card geo-map-card">
+        <div class="title" style="margin-bottom:12px">
+          <div>
+            <h2>National Transfer Corridors Map</h2>
+            <span>Top movement arteries between stations nationwide</span>
+          </div>
+        </div>
+        <div id="mobilityGeoMap" class="geo-map-container"></div>
+      </section>
+
       <section class="table-section">
         <div class="card">
           <div class="table-head">
@@ -1772,6 +2247,55 @@
         </div>
       </section>
     `;
+
+    setTimeout(() => initMobilityMap(topFlows), 50);
+  }
+
+  function initMobilityMap(topFlows) {
+    if (typeof L === 'undefined') return;
+    const mapEl = document.getElementById('mobilityGeoMap');
+    if (!mapEl) return;
+
+    if (App.activeMap) {
+      App.activeMap.remove();
+      App.activeMap = null;
+    }
+
+    const map = L.map('mobilityGeoMap', {
+      zoomControl: true,
+      attributionControl: false,
+      scrollWheelZoom: false
+    }).setView([22.5, 78.5], 5);
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      maxZoom: 18,
+      subdomains: 'abcd'
+    }).addTo(map);
+
+    App.activeMap = map;
+
+    const bounds = L.latLngBounds();
+
+    topFlows.forEach(f => {
+      const parts = f.corridor.split(' ➔ ');
+      if (parts.length === 2) {
+        const c1 = getCoords(null, parts[0].trim());
+        const c2 = getCoords(null, parts[1].trim());
+        bounds.extend(c1);
+        bounds.extend(c2);
+
+        L.polyline([c1, c2], {
+          color: '#4f46e5',
+          weight: Math.min(6, Math.max(2, f.count * 0.6)),
+          opacity: 0.65
+        }).addTo(map).bindPopup(`<b>${f.corridor}</b><br><b>${f.count}</b> transfers in AGT history`);
+
+        L.circleMarker(c1, { radius: 4, color: '#4f46e5', fillOpacity: 0.8 }).addTo(map);
+        L.circleMarker(c2, { radius: 4, color: '#4f46e5', fillOpacity: 0.8 }).addTo(map);
+      }
+    });
+
+    map.fitBounds(bounds, { padding: [40, 40], maxZoom: 6 });
   }
 
   // ==========================================
@@ -1895,6 +2419,24 @@
     setAsOnDate: (val) => {
       App.asOnDateValue = val;
       renderAsOnDateSnapshot();
+    },
+    toggleOfficerMapMode: (mode) => {
+      document.querySelectorAll('.map-toggle-btn').forEach(b => b.classList.remove('active'));
+      const btn = document.getElementById(mode === 'both' ? 'btnMapBoth' : (mode === 'heat' ? 'btnMapHeat' : 'btnMapRoute'));
+      if (btn) btn.classList.add('active');
+
+      if (!App.activeMap) return;
+
+      if (mode === 'both') {
+        if (App.officerHeatLayer && !App.activeMap.hasLayer(App.officerHeatLayer)) App.activeMap.addLayer(App.officerHeatLayer);
+        if (App.officerRouteGroup && !App.activeMap.hasLayer(App.officerRouteGroup)) App.activeMap.addLayer(App.officerRouteGroup);
+      } else if (mode === 'heat') {
+        if (App.officerHeatLayer && !App.activeMap.hasLayer(App.officerHeatLayer)) App.activeMap.addLayer(App.officerHeatLayer);
+        if (App.officerRouteGroup && App.activeMap.hasLayer(App.officerRouteGroup)) App.activeMap.removeLayer(App.officerRouteGroup);
+      } else if (mode === 'route') {
+        if (App.officerHeatLayer && App.activeMap.hasLayer(App.officerHeatLayer)) App.activeMap.removeLayer(App.officerHeatLayer);
+        if (App.officerRouteGroup && !App.activeMap.hasLayer(App.officerRouteGroup)) App.activeMap.addLayer(App.officerRouteGroup);
+      }
     },
     exportOfficerJson: (eid) => {
       const o = App.officersByEid.get(eid);
