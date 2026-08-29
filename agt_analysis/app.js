@@ -1940,13 +1940,20 @@
     showRawPostingsModal: (eid) => {
       const o = App.officersByEid.get(eid);
       if (!o) return;
+      const rawRecords = App.rawData.filter(r => r.eid === eid);
       const modal = document.getElementById('appModal');
       const modalTitle = document.getElementById('modalTitle');
       const modalContent = document.getElementById('modalContent');
       if (modal && modalTitle && modalContent) {
-        modalTitle.innerText = `Raw Posting Records · ${o.name} (${o.eid})`;
+        modalTitle.innerText = `HRM Raw Postings Data · ${o.name} (${o.eid})`;
         modalContent.innerHTML = `
-          <pre style="background:#f8fafc;padding:16px;border-radius:8px;font-size:12px;overflow:auto;max-height:450px">${JSON.stringify(o.postings, null, 2)}</pre>
+          <div style="margin-bottom:12px;font-size:12px;color:var(--ink-secondary)">
+            Showing <b>${rawRecords.length} raw HRM records</b> from <code>data.json</code> consolidated into <b>${o.postings.length} career postings</b>.
+          </div>
+          <h4 style="margin:12px 0 6px;font-size:13px">Raw HRM Sub-Records:</h4>
+          <pre style="background:#f8fafc;padding:14px;border-radius:8px;font-size:11px;overflow:auto;max-height:220px;border:1px solid var(--line)">${JSON.stringify(rawRecords, null, 2)}</pre>
+          <h4 style="margin:16px 0 6px;font-size:13px">Consolidated 360° Postings:</h4>
+          <pre style="background:#f8fafc;padding:14px;border-radius:8px;font-size:11px;overflow:auto;max-height:220px;border:1px solid var(--line)">${JSON.stringify(o.postings, null, 2)}</pre>
         `;
         modal.classList.add('open');
       }
