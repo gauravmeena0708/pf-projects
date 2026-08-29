@@ -339,7 +339,17 @@
     'HALDWANI': { id: 'ro-haldwani', name: 'Regional Office Haldwani', station: 'Haldwani', zone: 'Delhi & Uttarakhand Zone', zoneId: 'zo-delhi-uttarakhand-jammu-kashmir-and-ladakh', cat: 'Regional Office' },
     'JAMMU': { id: 'ro-jammu', name: 'Regional Office Jammu', station: 'Jammu', zone: 'Delhi & Uttarakhand Zone', zoneId: 'zo-delhi-uttarakhand-jammu-kashmir-and-ladakh', cat: 'Regional Office' },
     'SRINAGAR': { id: 'ro-kashmir-srinagar', name: 'Regional Office Srinagar', station: 'Srinagar', zone: 'Delhi & Uttarakhand Zone', zoneId: 'zo-delhi-uttarakhand-jammu-kashmir-and-ladakh', cat: 'Regional Office' },
-    'LEH': { id: 'ro-leh-ladakh', name: 'Regional Office Leh (Ladakh)', station: 'Leh', zone: 'Delhi & Uttarakhand Zone', zoneId: 'zo-delhi-uttarakhand-jammu-kashmir-and-ladakh', cat: 'Regional Office' }
+    'LEH': { id: 'ro-leh-ladakh', name: 'Regional Office Leh (Ladakh)', station: 'Leh', zone: 'Delhi & Uttarakhand Zone', zoneId: 'zo-delhi-uttarakhand-jammu-kashmir-and-ladakh', cat: 'Regional Office' },
+
+    'GUWAHATI': { id: 'ro-guwahati', name: 'Regional Office Guwahati', station: 'Guwahati', zone: 'North Eastern Region Zone', zoneId: 'zo-ner-guwahati', cat: 'Regional Office' },
+    'SHILLONG': { id: 'ro-shillong', name: 'Regional Office Shillong', station: 'Shillong', zone: 'North Eastern Region Zone', zoneId: 'zo-ner-guwahati', cat: 'Regional Office' },
+    'AGARTALA': { id: 'ro-agartala', name: 'Regional Office Agartala', station: 'Agartala', zone: 'North Eastern Region Zone', zoneId: 'zo-ner-guwahati', cat: 'Regional Office' },
+    'TINSUKIA': { id: 'ro-tinsukia', name: 'Regional Office Tinsukia', station: 'Tinsukia', zone: 'North Eastern Region Zone', zoneId: 'zo-ner-guwahati', cat: 'Regional Office' },
+    'IMPHAL': { id: 'do-imphal', name: 'District Office Imphal', station: 'Imphal', zone: 'North Eastern Region Zone', zoneId: 'zo-ner-guwahati', cat: 'District Office' },
+    'DIMAPUR': { id: 'do-dimapur', name: 'District Office Dimapur', station: 'Dimapur', zone: 'North Eastern Region Zone', zoneId: 'zo-ner-guwahati', cat: 'District Office' },
+    'AIZAWL': { id: 'do-aizawl', name: 'District Office Aizawl', station: 'Aizawl', zone: 'North Eastern Region Zone', zoneId: 'zo-ner-guwahati', cat: 'District Office' },
+    'ITANAGAR': { id: 'do-itanagar', name: 'District Office Itanagar', station: 'Itanagar', zone: 'North Eastern Region Zone', zoneId: 'zo-ner-guwahati', cat: 'District Office' },
+    'SILCHAR': { id: 'do-silchar', name: 'District Office Silchar', station: 'Silchar', zone: 'North Eastern Region Zone', zoneId: 'zo-ner-guwahati', cat: 'District Office' }
   };
 
   const SORTED_KEYS = Object.keys(OFFICE_DICT).sort((a, b) => b.length - a.length);
@@ -457,7 +467,7 @@
     };
   }
 
-  function normalizeDesignation(col2Str, eventStr, prevDesig) {
+  function normalizeDesignation(col2Str, eventStr, prevDesig, lastPromoDate, currentDate) {
     let d = (col2Str || '').trim().toUpperCase();
     if (d === 'APFC') return 'APFC';
     if (d === 'RPFC-II' || d === 'RPFC II' || d === 'RPFC-2') return 'RPFC-II';
@@ -466,6 +476,12 @@
     if (d.startsWith('ACC')) return 'ACC';
 
     if (eventStr && eventStr.toUpperCase().includes('PROMOTION')) {
+      const yearsSinceLastPromo = (lastPromoDate && currentDate) ? (currentDate.getTime() - lastPromoDate.getTime()) / (365.25 * 86400000) : 999;
+      // In EPFO cadre rules, inter-grade promotion requires minimum 3-5 years residency.
+      // An administrative regularization / confirmation row within 3 years of previous promotion does NOT double-promote.
+      if (yearsSinceLastPromo < 3.0) {
+        return prevDesig;
+      }
       if (prevDesig === 'APFC') return 'RPFC-II';
       if (prevDesig === 'RPFC-II') return 'RPFC-I';
       if (prevDesig === 'RPFC-I') return 'ACC';
@@ -506,6 +522,277 @@
       }
     }
     return [22.5, 78.5]; // Default center
+  }
+
+  function getHaversineDistanceKm(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+              Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+
+  function computeSpatialMetrics(postings, totalServiceYears) {
+    const stationTenures = new Map();
+    const zoneTenures = new Map();
+    const coordsList = [];
+    let maxSingleStint = 0;
+
+    postings.forEach(p => {
+      const stn = p.station || 'Unknown';
+      const zn = p.zone || 'Unknown';
+      const years = p.periodYears || 0;
+
+      maxSingleStint = Math.max(maxSingleStint, years);
+
+      if (!stationTenures.has(stn)) {
+        stationTenures.set(stn, { station: stn, totalTenure: 0, maxSingle: 0, count: 0 });
+      }
+      const stnObj = stationTenures.get(stn);
+      stnObj.totalTenure = +(stnObj.totalTenure + years).toFixed(2);
+      stnObj.maxSingle = Math.max(stnObj.maxSingle, years);
+      stnObj.count++;
+
+      zoneTenures.set(zn, +( (zoneTenures.get(zn) || 0) + years ).toFixed(2));
+
+      const c = getCoords(p.officeId, p.station);
+      coordsList.push(c);
+    });
+
+    let maxDistanceKm = 0;
+    for (let i = 0; i < coordsList.length; i++) {
+      for (let j = i + 1; j < coordsList.length; j++) {
+        const d = getHaversineDistanceKm(coordsList[i][0], coordsList[i][1], coordsList[j][0], coordsList[j][1]);
+        if (d > maxDistanceKm) maxDistanceKm = d;
+      }
+    }
+
+    let topStation = 'Unknown';
+    let topStationTenure = 0;
+    stationTenures.forEach((obj, stn) => {
+      if (obj.totalTenure > topStationTenure) {
+        topStationTenure = obj.totalTenure;
+        topStation = stn;
+      }
+    });
+
+    let topZone = 'Unknown';
+    let topZoneTenure = 0;
+    zoneTenures.forEach((years, zn) => {
+      if (years > topZoneTenure) {
+        topZoneTenure = years;
+        topZone = zn;
+      }
+    });
+
+    const topStationPct = totalServiceYears > 0 ? +((topStationTenure / totalServiceYears) * 100).toFixed(1) : 0;
+    const topZonePct = totalServiceYears > 0 ? +((topZoneTenure / totalServiceYears) * 100).toFixed(1) : 0;
+
+    const isSingleStintRed = maxSingleStint > 4.0;
+    const isCombinedStnRed = topStationTenure > 8.0;
+    const isHyperRegional = totalServiceYears >= 5.0 && maxDistanceKm < 250.0;
+    const isZoneDominant = totalServiceYears >= 5.0 && topZonePct >= 80.0;
+    const isStationDominant = totalServiceYears >= 5.0 && topStationPct >= 65.0;
+    const isZoneTenureHigh = topZoneTenure >= 10.0;
+
+    let stagnationTier = 'compliant-green';
+    let riskColor = '#15803d';
+    let riskLabel = 'Compliant Mobility';
+
+    if (isSingleStintRed || isCombinedStnRed) {
+      stagnationTier = 'critical-red';
+      riskColor = '#dc2626';
+      riskLabel = (isSingleStintRed && isCombinedStnRed) ? 'Single >4y & Station >8y' : (isSingleStintRed ? 'Single Stint >4y Alert' : 'Station Tenure >8y Alert');
+    } else if (maxSingleStint >= 3.0 || topStationTenure >= 4.0 || isHyperRegional) {
+      stagnationTier = 'warning-orange';
+      riskColor = '#ea580c';
+      riskLabel = isHyperRegional ? 'Hyper-Regional (<250km)' : 'Extended Tenure (3-4y)';
+    }
+
+    return {
+      maxSingleStint: parseFloat(maxSingleStint.toFixed(1)),
+      maxDistanceKm: Math.round(maxDistanceKm),
+      topStation,
+      topStationTenure: parseFloat(topStationTenure.toFixed(1)),
+      topStationPct,
+      topZone,
+      topZoneTenure: parseFloat(topZoneTenure.toFixed(1)),
+      topZonePct,
+      isSingleStintRed,
+      isCombinedStnRed,
+      isHyperRegional,
+      isZoneDominant,
+      isStationDominant,
+      isZoneTenureHigh,
+      stagnationTier,
+      riskColor,
+      riskLabel
+    };
+  }
+
+  const MACRO_REGION_COLORS = {
+    'North': '#0284c7',
+    'NCR': '#6366f1',
+    'South': '#16a34a',
+    'West': '#ea580c',
+    'East': '#9333ea',
+    'North East': '#0d9488',
+    'Central': '#d97706'
+  };
+
+  function getMacroRegion(officeId, station, zone, category) {
+    const s = (station || '').toLowerCase();
+    const z = (zone || '').toLowerCase();
+    const o = (officeId || '').toLowerCase();
+    const c = (category || '').toLowerCase();
+
+    // 1. NCR is in North: Return region as 'North' with isNcr flag = true
+    const isNcr = (c === 'head office' || c === 'special wing' || o.includes('head-office') || o.includes('pdunass') || o.includes('ndc') || o.includes('vigilance') || o.includes('internal-audit') || s === 'delhi' || s === 'new delhi' || s === 'faridabad' || s === 'gurugram' || s === 'gurgaon' || s === 'noida' || s === 'greater noida' || s === 'ghaziabad');
+    
+    if (isNcr) {
+      return { region: 'North', isNcr: true, label: 'North (NCR)' };
+    }
+
+    // 2. North East (NER - Special / Hard Area)
+    if (z.includes('ner') || z.includes('north east') || z.includes('assam') || z.includes('meghalaya') || z.includes('tripura') || z.includes('nagaland') || z.includes('manipur') || z.includes('mizoram') || z.includes('arunachal') ||
+        ['guwahati', 'shillong', 'agartala', 'imphal', 'dimapur', 'aizawl', 'itanagar', 'tinsukia', 'silchar', 'tezpur', 'dibrugarh', 'jorhat', 'bongaigaon'].includes(s)) {
+      return { region: 'North East', isNcr: false, label: 'North East (NER)' };
+    }
+
+    // 3. South
+    if (z.includes('karnataka') || z.includes('tamil nadu') || z.includes('telangana') || z.includes('andhra') || z.includes('kerala') || z.includes('bengaluru') || z.includes('chennai') || z.includes('hyderabad') ||
+        ['bengaluru', 'bangalore', 'chennai', 'hyderabad', 'kochi', 'cochin', 'thiruvananthapuram', 'trivandrum', 'coimbatore', 'madurai', 'salem', 'tirunelveli', 'tiruchirappalli', 'tiruppur', 'vellore', 'puducherry', 'pondicherry', 'kadapa', 'guntur', 'vijayawada', 'visakhapatnam', 'rajamahendravaram', 'kozhikode', 'calicut', 'kannur', 'kollam', 'kottayam', 'mysore', 'mangaluru', 'mangalore', 'hubli', 'shivamogga', 'kalaburagi', 'ballari', 'bellary', 'udupi', 'peenya', 'whitefield', 'yelahanka', 'bommasandra', 'warangal', 'nizamabad', 'karimnagar'].includes(s)) {
+      return { region: 'South', isNcr: false, label: 'South' };
+    }
+
+    // 4. West
+    if (z.includes('maharashtra') || z.includes('gujarat') || z.includes('mumbai') || z.includes('pune') || z.includes('ahmedabad') || z.includes('goa') ||
+        ['mumbai', 'pune', 'nagpur', 'nashik', 'aurangabad', 'thane', 'navi mumbai', 'vashi', 'kandivali', 'bandra', 'ahmedabad', 'surat', 'vadodara', 'baroda', 'rajkot', 'vapi', 'goa', 'panaji', 'kolhapur', 'solapur', 'akola', 'amravati', 'ahmadnagar', 'bharuch', 'bhavnagar'].includes(s)) {
+      return { region: 'West', isNcr: false, label: 'West' };
+    }
+
+    // 5. Central
+    if (z.includes('madhya pradesh') || z.includes('chhattisgarh') || z.includes('mp & chhattisgarh') ||
+        ['bhopal', 'indore', 'jabalpur', 'gwalior', 'ujjain', 'raipur', 'bilaspur', 'sagar', 'durg'].includes(s)) {
+      return { region: 'Central', isNcr: false, label: 'Central' };
+    }
+
+    // 6. East (Mainland)
+    if (z.includes('west bengal') || z.includes('bihar') || z.includes('jharkhand') || z.includes('odisha') || z.includes('orissa') || z.includes('kolkata') || z.includes('patna') ||
+        ['kolkata', 'howrah', 'patna', 'ranchi', 'bhubaneswar', 'muzaffarpur', 'bhagalpur', 'jamshedpur', 'rourkela', 'cuttack', 'berhampur', 'durgapur', 'siliguri', 'port blair', 'katihar', 'alipurduar', 'barbil', 'balasore', 'keonjhar'].includes(s)) {
+      return { region: 'East', isNcr: false, label: 'East' };
+    }
+
+    // 7. North
+    return { region: 'North', isNcr: false, label: 'North' };
+  }
+
+  function computeRegionalAffinity(postings, totalServiceYears) {
+    const regionTenures = {
+      'North': 0,
+      'South': 0,
+      'West': 0,
+      'East': 0,
+      'North East': 0,
+      'Central': 0
+    };
+    let ncrTenure = 0;
+    let northNonNcrTenure = 0;
+    let nerTenure = 0;
+
+    postings.forEach(p => {
+      const regObj = getMacroRegion(p.officeId, p.station, p.zone, p.category);
+      p.macroRegion = regObj.region;
+      p.isNcr = regObj.isNcr;
+      p.macroRegionLabel = regObj.label;
+
+      regionTenures[regObj.region] = +( (regionTenures[regObj.region] || 0) + p.periodYears ).toFixed(2);
+      if (regObj.isNcr) {
+        ncrTenure = +(ncrTenure + p.periodYears).toFixed(2);
+      } else if (regObj.region === 'North') {
+        northNonNcrTenure = +(northNonNcrTenure + p.periodYears).toFixed(2);
+      } else if (regObj.region === 'North East') {
+        nerTenure = +(nerTenure + p.periodYears).toFixed(2);
+      }
+    });
+
+    const sortedRegions = Object.entries(regionTenures)
+      .map(([region, years]) => ({
+        region,
+        years: parseFloat(years.toFixed(1)),
+        percent: totalServiceYears > 0 ? Math.round((years / totalServiceYears) * 100) : 0,
+        ncrYears: region === 'North' ? parseFloat(ncrTenure.toFixed(1)) : 0,
+        ncrPercent: region === 'North' && totalServiceYears > 0 ? Math.round((ncrTenure / totalServiceYears) * 100) : 0,
+        northNonNcrYears: region === 'North' ? parseFloat(northNonNcrTenure.toFixed(1)) : 0,
+        northNonNcrPercent: region === 'North' && totalServiceYears > 0 ? Math.round((northNonNcrTenure / totalServiceYears) * 100) : 0
+      }))
+      .sort((a, b) => b.years - a.years);
+
+    const primary = sortedRegions[0] || { region: 'North', years: 0, percent: 0 };
+    const secondary = sortedRegions[1] && sortedRegions[1].percent >= 15 ? sortedRegions[1] : null;
+    const activeRegions = sortedRegions.filter(r => r.years > 0.3);
+
+    const getRegionDisplayName = (r) => {
+      if (r.region === 'North') {
+        if (r.ncrYears > 0 && r.northNonNcrYears > 0) return 'North (incl. NCR)';
+        if (r.ncrYears > 0 && r.northNonNcrYears === 0) return 'North (NCR Centric)';
+        return 'North';
+      }
+      return r.region;
+    };
+
+    const primaryName = getRegionDisplayName(primary);
+    let preferenceLabel = '';
+    let affinityTag = '';
+    let badgeClass = 'good';
+
+    if (totalServiceYears < 2.0) {
+      preferenceLabel = `Early Career (${primaryName} Entry)`;
+      affinityTag = `Initial ${primaryName} Posting`;
+    } else if (primary.percent >= 80) {
+      preferenceLabel = `Strong ${primaryName} Affinity (${primary.percent}%)`;
+      affinityTag = `Strictly ${primaryName} Centric (${primary.years}y of ${totalServiceYears}y)`;
+      badgeClass = 'warn';
+    } else if (primary.percent >= 60) {
+      if (secondary) {
+        preferenceLabel = `${primaryName} Dominant (${primary.percent}%) · ${getRegionDisplayName(secondary)} (${secondary.percent}%)`;
+        affinityTag = `Predominantly ${primaryName} with ${secondary.region} exposure`;
+      } else {
+        preferenceLabel = `${primaryName} Preferred (${primary.percent}%)`;
+        affinityTag = `${primaryName} Focused Career`;
+      }
+    } else if (primary.percent >= 40 && secondary && secondary.percent >= 30) {
+      preferenceLabel = `Dual-Region: ${primaryName} (${primary.percent}%) & ${getRegionDisplayName(secondary)} (${secondary.percent}%)`;
+      affinityTag = `Bi-Regional (${primary.region} + ${secondary.region})`;
+    } else if (activeRegions.length >= 3) {
+      preferenceLabel = `Pan-India Rotated (${activeRegions.map(r => `${r.region} ${r.percent}%`).join(' · ')})`;
+      affinityTag = `Pan-India Mobility (${activeRegions.length} Macro-Regions)`;
+    } else {
+      preferenceLabel = `${primaryName} Leaning (${primary.percent}%)`;
+      affinityTag = `${primaryName} Primary`;
+    }
+
+    return {
+      primaryRegion: primary.region,
+      primaryDisplayName: primaryName,
+      primaryPercent: primary.percent,
+      primaryYears: primary.years,
+      secondaryRegion: secondary ? secondary.region : null,
+      secondaryPercent: secondary ? secondary.percent : 0,
+      ncrYears: parseFloat(ncrTenure.toFixed(1)),
+      ncrPercent: totalServiceYears > 0 ? Math.round((ncrTenure / totalServiceYears) * 100) : 0,
+      hasNerExposure: nerTenure > 0.1,
+      nerYears: parseFloat(nerTenure.toFixed(1)),
+      nerPercent: totalServiceYears > 0 ? Math.round((nerTenure / totalServiceYears) * 100) : 0,
+      breakdown: sortedRegions,
+      preferenceLabel,
+      affinityTag,
+      badgeClass,
+      activeRegionsCount: activeRegions.length
+    };
   }
 
   async function fetchPfContacts() {
@@ -588,10 +875,14 @@
       });
 
       let prevDesig = 'APFC';
+      let lastPromoDate = null;
       const rawEnriched = officer.records.map((r) => {
         const d1 = parseDate(r.date1);
         const d2 = parseDate(r.date2);
-        const desig = normalizeDesignation(r.col2, r.new_col4, prevDesig);
+        const desig = normalizeDesignation(r.col2, r.new_col4, prevDesig, lastPromoDate, d1);
+        if (desig !== prevDesig && d1) {
+          lastPromoDate = d1;
+        }
         prevDesig = desig;
 
         const offMeta = resolveOffice(r.col4);
@@ -635,6 +926,17 @@
           });
         } else {
           const prev = consolidated[consolidated.length - 1];
+
+          // Check if this record is an administrative confirmation row of a recent transfer/promotion
+          // (e.g. within 120 days, same or blank designation, referencing previous relieving office)
+          const isRecentAdminConfirmation = (
+            item.fromDateTime && prev.fromDateTime &&
+            (item.fromDateTime.getTime() - prev.fromDateTime.getTime()) < (120 * 86400000) &&
+            (!item.rawRecord.col2 || item.designation === prev.designation) &&
+            (item.event.includes('Promotion') || (item.cadreStatus && item.cadreStatus.toUpperCase() === 'REGULAR')) &&
+            item.periodYears < 0.35
+          );
+
           if (prev.officeId === item.officeId && prev.designation === item.designation) {
             prev.mergedCount++;
             prev.subRecords.push(item.rawRecord);
@@ -650,6 +952,14 @@
             if (item.event && item.event !== 'Transferred') {
               prev.event = item.event;
             }
+          } else if (isRecentAdminConfirmation) {
+            // Merge administrative confirmation into the active posting
+            prev.mergedCount++;
+            prev.subRecords.push(item.rawRecord);
+            if (item.cadreStatus) prev.cadreStatus = item.cadreStatus;
+            if (item.event && item.event.includes('Promotion') && !prev.event.includes('Promotion')) {
+              prev.event = 'Promotion with Transfer';
+            }
           } else {
             consolidated.push({
               ...item,
@@ -664,7 +974,6 @@
       let totalServiceYears = 0;
       for (let i = 0; i < consolidated.length; i++) {
         const cur = consolidated[i];
-        totalServiceYears += cur.periodYears;
         cur.prevOffice = i > 0 ? consolidated[i - 1].officeName : 'Initial Cadre Entry';
         cur.prevStation = i > 0 ? consolidated[i - 1].station : 'Entry';
         cur.prevZone = i > 0 ? consolidated[i - 1].zone : 'Entry';
@@ -683,6 +992,22 @@
           cur.nextZone = cur.zone;
           cur.isLatest = true;
         }
+
+        // Reconcile periodYears with verified calendar date span
+        if (cur.fromDateTime) {
+          let endDt = cur.toDateTime;
+          if (cur.isLatest || !endDt) {
+            endDt = new Date(2024, 5, 1); // June 2024 AGT analysis baseline
+          }
+          if (endDt && endDt > cur.fromDateTime) {
+            const calYears = parseFloat(((endDt.getTime() - cur.fromDateTime.getTime()) / (365.25 * 24 * 3600 * 1000)).toFixed(2));
+            if (calYears > 0.05) {
+              cur.periodYears = calYears;
+            }
+          }
+        }
+
+        totalServiceYears += cur.periodYears;
       }
 
       officer.postings = consolidated;
@@ -766,6 +1091,9 @@
       });
       const repeatStations = Object.entries(stationCounts).filter(([_, count]) => count > 1).length;
 
+      const spatial = computeSpatialMetrics(officer.postings, totalServiceYears);
+      const regionalAffinity = computeRegionalAffinity(officer.postings, totalServiceYears);
+
       const officerProfile = {
         eid: officer.eid,
         name: officer.name,
@@ -791,7 +1119,30 @@
         interZoneMoves: interZoneMoves,
         intraZoneMoves: intraZoneMoves,
         repeatStations: repeatStations,
-        postings: officer.postings
+        postings: officer.postings,
+        // Macro-Regional Preference & Affinity
+        regionalAffinity: regionalAffinity,
+        preferredRegion: regionalAffinity.primaryRegion,
+        regionalAffinityLabel: regionalAffinity.preferenceLabel,
+        regionalAffinityTag: regionalAffinity.affinityTag,
+        // Spatial & Regional Stagnation Metrics
+        maxSingleStint: spatial.maxSingleStint,
+        maxDistanceKm: spatial.maxDistanceKm,
+        topStation: spatial.topStation,
+        topStationTenure: spatial.topStationTenure,
+        topStationPct: spatial.topStationPct,
+        topZone: spatial.topZone,
+        topZoneTenure: spatial.topZoneTenure,
+        topZonePct: spatial.topZonePct,
+        isSingleStintRed: spatial.isSingleStintRed,
+        isCombinedStnRed: spatial.isCombinedStnRed,
+        isHyperRegional: spatial.isHyperRegional,
+        isZoneDominant: spatial.isZoneDominant,
+        isStationDominant: spatial.isStationDominant,
+        isZoneTenureHigh: spatial.isZoneTenureHigh,
+        stagnationTier: spatial.stagnationTier,
+        riskColor: spatial.riskColor,
+        riskLabel: spatial.riskLabel
       };
 
       App.officersByEid.set(officer.eid, officerProfile);
@@ -970,12 +1321,19 @@
       return;
     }
 
+    if (pathname.includes('spatial-analytics')) {
+      showSpatialAnalyticsView();
+      return;
+    }
+
     if (params.get('officer') || params.get('eid')) {
       showOfficerProfile(params.get('officer') || params.get('eid'));
     } else if (params.get('office') || params.get('id')) {
       showOfficeProfile(params.get('office') || params.get('id'));
     } else if (params.get('zone') || params.get('zid')) {
       showZoneProfile(params.get('zone') || params.get('zid'));
+    } else if (hash.startsWith('#spatial')) {
+      showSpatialAnalyticsView();
     } else if (hash.startsWith('#office')) {
       const id = hash.startsWith('#office/') ? hash.substring('#office/'.length) : (App.currentOfficeId || 'ro-jaipur');
       showOfficeProfile(id);
@@ -1032,6 +1390,11 @@
     renderMobilityNetwork();
   }
 
+  function showSpatialAnalyticsView() {
+    updateNavActive('spatial');
+    renderSpatialAnalytics();
+  }
+
   function updateNavActive(viewName) {
     document.querySelectorAll('.nav a, .nav button').forEach(el => {
       const target = el.getAttribute('data-view');
@@ -1085,6 +1448,8 @@
               <div class="hero-badges">
                 <span class="badge" style="font-family:monospace;font-size:12px;letter-spacing:0.02em" title="Officer EID">EID: ${o.eid}</span>
                 <span class="badge good">Tracked Service: ${o.totalServiceYears} Years</span>
+                <span class="badge" style="background:#eef2ff;color:#4f46e5;font-weight:700;border:1px solid #c7d2fe" title="${o.regionalAffinity.affinityTag}">🧭 ${o.regionalAffinity.preferenceLabel}</span>
+                ${o.regionalAffinity.hasNerExposure ? `<span class="badge" style="background:#ccfbf1;color:#0f766e;font-weight:700;border:1px solid #99f6e4" title="Served in North Eastern Region for ${o.regionalAffinity.nerYears} years">🌲 NER Served (${o.regionalAffinity.nerYears}y)</span>` : ''}
                 <span class="badge">Station: ${o.currentStation}</span>
                 <span class="badge ${stnBadgeClass}">Station tenure: ${o.currentStationTenure}y</span>
                 <span class="badge">DOB: ${o.dob}</span>
@@ -1100,8 +1465,8 @@
         </div>
       </section>
 
-      <!-- KPI Metrics (4 Cards) -->
-      <section class="metrics">
+      <!-- KPI Metrics (5 Cards) -->
+      <section class="metrics" style="grid-template-columns:repeat(auto-fit, minmax(180px, 1fr))">
         <div class="card metric">
           <small>Distinct Offices</small>
           <b>${o.distinctOfficesCount}</b>
@@ -1121,6 +1486,11 @@
           <small>Avg Station Tenure</small>
           <b>${o.avgStationTenure}y</b>
           <span>Across entire career</span>
+        </div>
+        <div class="card metric">
+          <small>Preferred Region</small>
+          <b style="color:${MACRO_REGION_COLORS[o.regionalAffinity.primaryRegion] || '#4f46e5'}">${o.regionalAffinity.primaryRegion} (${o.regionalAffinity.primaryPercent}%)</b>
+          <span>${o.regionalAffinity.affinityTag}</span>
         </div>
       </section>
 
@@ -1166,7 +1536,7 @@
               <div class="event ${p.isLatest ? 'current' : ''}">
                 <small>${p.fromDate} — ${p.toDate} (${p.periodYears}y)</small>
                 <b>${p.designation} · <a href="${getOfficeLink(p.officeId)}" class="entity-link">${p.officeName}</a></b>
-                <p>${p.station} · ${p.zone} · <span class="pill ${p.event.includes('Promotion') ? 'green' : 'blue'}">${p.event}</span> ${p.mergedCount > 1 ? `<span class="badge" style="font-size:9px;padding:2px 6px">${p.mergedCount} HRM rows</span>` : ''}</p>
+                <p>${p.station} · ${p.zone} · <span class="badge" style="background:${p.isNcr ? '#6366f1' : (MACRO_REGION_COLORS[p.macroRegion] || '#64748b')};color:white;font-size:9px;padding:2px 6px">${p.isNcr ? 'North (NCR)' : p.macroRegion}</span> <span class="pill ${p.event.includes('Promotion') ? 'green' : 'blue'}">${p.event}</span> ${p.mergedCount > 1 ? `<span class="badge" style="font-size:9px;padding:2px 6px">${p.mergedCount} HRM rows</span>` : ''}</p>
               </div>
             `).join('')}
           </div>
@@ -1174,6 +1544,36 @@
 
         <section class="card">
           <div class="title">
+            <h2>Macro-Regional Affinity</h2>
+            <span>North (incl. NCR) / South / West / East / Central distribution</span>
+          </div>
+          <div style="font-size:12px;color:var(--ink-secondary);margin-bottom:8px">
+            <b>Preferred Region:</b> <span class="badge" style="background:${MACRO_REGION_COLORS[o.regionalAffinity.primaryRegion] || '#4f46e5'};color:white;font-size:11px">${o.regionalAffinity.primaryDisplayName} (${o.regionalAffinity.primaryPercent}%)</span> — <i>${o.regionalAffinity.affinityTag}</i>
+          </div>
+          <div class="macro-region-bar">
+            ${o.regionalAffinity.breakdown.filter(r => r.percent > 0).map(r => {
+              if (r.region === 'North' && r.ncrYears > 0 && r.northNonNcrYears > 0) {
+                return `
+                  <div class="macro-region-seg" style="width:${r.northNonNcrPercent}%;background:#0284c7" title="North (Field): ${r.northNonNcrYears}y (${r.northNonNcrPercent}%)"></div>
+                  <div class="macro-region-seg" style="width:${r.ncrPercent}%;background:#6366f1" title="North (NCR): ${r.ncrYears}y (${r.ncrPercent}%)"></div>
+                `;
+              }
+              return `
+                <div class="macro-region-seg" style="width:${r.percent}%;background:${r.region === 'North' && r.ncrYears > 0 ? '#6366f1' : (MACRO_REGION_COLORS[r.region] || '#64748b')}" title="${r.region}: ${r.years}y (${r.percent}%)"></div>
+              `;
+            }).join('')}
+          </div>
+          <div class="macro-region-chips">
+            ${o.regionalAffinity.breakdown.filter(r => r.years > 0).map(r => `
+              <div class="macro-region-chip">
+                <span class="chip-dot" style="background:${MACRO_REGION_COLORS[r.region] || '#64748b'}"></span>
+                <b>${r.region === 'North' ? 'North (incl. NCR)' : r.region}</b>: ${r.years}y (${r.percent}%)
+                ${r.region === 'North' && r.ncrYears > 0 ? `<span style="color:#64748b;font-size:10px;margin-left:2px">[NCR: ${r.ncrYears}y${r.northNonNcrYears > 0 ? ` · Field: ${r.northNonNcrYears}y` : ''}]</span>` : ''}
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="title" style="margin-top:24px">
             <h2>Zone Exposure</h2>
             <span>Career time per zone</span>
           </div>
@@ -2299,6 +2699,936 @@
   }
 
   // ==========================================
+  // RENDER: Spatial & Regional Stagnation Analytics
+  // ==========================================
+  App.spatialState = {
+    filterType: 'all',
+    regionFilter: 'all',
+    zoneFilter: 'all',
+    desigFilter: 'all',
+    searchQuery: '',
+    maxRadiusKm: 2500,
+    xAxis: 'service',
+    yAxis: 'distance',
+    selectedEid: null
+  };
+
+  function renderSpatialAnalytics() {
+    const topCrumb = document.getElementById('topCrumb');
+    if (topCrumb) {
+      topCrumb.innerHTML = `AGT Analytics / <b>Spatial & Regional Stagnation Lab</b>`;
+    }
+
+    const container = document.getElementById('mainContent');
+    if (!container) return;
+
+    const totalOfficers = App.officersList.length;
+    const singleStintRedCount = App.officersList.filter(o => o.isSingleStintRed).length;
+    const combinedStnRedCount = App.officersList.filter(o => o.isCombinedStnRed).length;
+    const hyperRegionalCount = App.officersList.filter(o => o.isHyperRegional).length;
+    const zoneTenureHighCount = App.officersList.filter(o => o.isZoneTenureHigh).length;
+    const stationDomCount = App.officersList.filter(o => o.isStationDominant).length;
+    const nerServedCount = App.officersList.filter(o => o.regionalAffinity && o.regionalAffinity.hasNerExposure).length;
+
+    container.innerHTML = `
+      <section class="hero">
+        <div class="hero-row">
+          <div>
+            <div class="eyebrow">Institutional Intelligence & Cadre Spatial Analytics</div>
+            <h1>Spatial Mobility & Regional Stagnation Lab</h1>
+            <div class="sub">Identifying officers confined to small geographic radii, single station dominance, or extended zonal tenure</div>
+          </div>
+          <div class="actions">
+            <button class="btn primary" onclick="window.App.exportSpatialCsv()"><i class="dot"></i> Export Spatial CSV</button>
+            <button class="btn" onclick="window.print()">Print Analysis</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5 Interactive KPI Metric Cards -->
+      <section class="metrics" style="grid-template-columns:repeat(auto-fit, minmax(200px, 1fr))">
+        <div class="card metric" style="cursor:pointer" onclick="window.App.setSpatialFilter('all')">
+          <small>Total Officers</small>
+          <b>${totalOfficers}</b>
+          <span>All Cadres Tracked</span>
+        </div>
+        <div class="card metric" style="cursor:pointer;border-left:4px solid #dc2626" onclick="window.App.setSpatialFilter('single_red')">
+          <small style="color:#dc2626;font-weight:700">🚨 Single Stint &gt; 4y</small>
+          <b style="color:#dc2626">${singleStintRedCount}</b>
+          <span>${((singleStintRedCount/totalOfficers)*100).toFixed(0)}% of cadre</span>
+        </div>
+        <div class="card metric" style="cursor:pointer;border-left:4px solid #dc2626" onclick="window.App.setSpatialFilter('stn_red')">
+          <small style="color:#dc2626;font-weight:700">🔴 Station Stagnation &gt; 8y</small>
+          <b style="color:#dc2626">${combinedStnRedCount}</b>
+          <span>Cumulative Station Time</span>
+        </div>
+        <div class="card metric" style="cursor:pointer;border-left:4px solid #ea580c" onclick="window.App.setSpatialFilter('hyper_regional')">
+          <small style="color:#ea580c;font-weight:700">📍 Hyper-Regional (&lt; 250km)</small>
+          <b style="color:#ea580c">${hyperRegionalCount}</b>
+          <span>Confined Geographic Pocket</span>
+        </div>
+        <div class="card metric" style="cursor:pointer;border-left:4px solid #d97706" onclick="window.App.setSpatialFilter('zone_high')">
+          <small style="color:#d97706;font-weight:700">🌐 Zone Tenure &gt; 10y</small>
+          <b style="color:#d97706">${zoneTenureHighCount}</b>
+          <span>Single Zone Exposure</span>
+        </div>
+      </section>
+
+      <!-- Section 1: 2D Spatial Scatter / Quadrant Matrix Plot -->
+      <section class="card scatter-plot-card">
+        <div class="title" style="margin-bottom:0;padding-bottom:12px;border-bottom:1px solid var(--line)">
+          <div>
+            <h2>Interactive 2D Spatial Mobility Scatter & Quadrant Matrix</h2>
+            <span>Hover on any officer point for live dossier preview; click to inspect details</span>
+          </div>
+          <div class="scatter-controls">
+            <div class="scatter-control-group">
+              <label><b>X-Axis:</b></label>
+              <select id="scatterXSelect" class="scatter-select" onchange="window.App.updateScatterPlotAxes()">
+                <option value="service" ${App.spatialState.xAxis === 'service' ? 'selected' : ''}>Total Service Span (Years)</option>
+                <option value="single" ${App.spatialState.xAxis === 'single' ? 'selected' : ''}>Max Single Stint (Years)</option>
+                <option value="station" ${App.spatialState.xAxis === 'station' ? 'selected' : ''}>Primary Station Tenure (Years)</option>
+              </select>
+            </div>
+            <div class="scatter-control-group">
+              <label><b>Y-Axis:</b></label>
+              <select id="scatterYSelect" class="scatter-select" onchange="window.App.updateScatterPlotAxes()">
+                <option value="distance" ${App.spatialState.yAxis === 'distance' ? 'selected' : ''}>Max Career Mobility Span (km)</option>
+                <option value="zonePct" ${App.spatialState.yAxis === 'zonePct' ? 'selected' : ''}>Primary Zone Dominance (%)</option>
+                <option value="stationPct" ${App.spatialState.yAxis === 'stationPct' ? 'selected' : ''}>Primary Station Dominance (%)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="scatter-plot-wrapper" id="scatterPlotWrapper">
+          <svg id="scatterPlotSvg" class="scatter-plot-svg"></svg>
+          <div id="scatterTooltip" class="scatter-tooltip"></div>
+        </div>
+
+        <div class="map-legend" style="padding-top:12px;margin-top:0">
+          <div class="map-legend-item">
+            <span class="legend-dot" style="background:#dc2626"></span>
+            <b>Critical Stagnation (Single &gt;4y OR Combined &gt;8y)</b>
+          </div>
+          <div class="map-legend-item">
+            <span class="legend-dot" style="background:#ea580c"></span>
+            <span>Warning (3-4y Single OR Hyper-Regional &lt;250km)</span>
+          </div>
+          <div class="map-legend-item">
+            <span class="legend-dot" style="background:#15803d"></span>
+            <span>Compliant / High Dispersion (&gt;600km)</span>
+          </div>
+          <div style="margin-left:auto;font-size:11px;color:var(--muted)">
+            Showing all <b>${totalOfficers} officers</b>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2: Regional Stagnation Hubs Map & Zone Matrix (Side-by-Side) -->
+      <div class="grid2">
+        <section class="card geo-map-card">
+          <div class="title" style="margin-bottom:12px">
+            <div>
+              <h2>Regional Stagnation Hubs Map</h2>
+              <span>Geographic clusters with high cadre concentration</span>
+            </div>
+          </div>
+          <div id="spatialHubsMap" class="geo-map-container" style="height:380px"></div>
+          <div class="map-legend">
+            <div class="map-legend-item">
+              <span class="legend-dot" style="background:#dc2626"></span>
+              <span>Major Stagnation Hub (Click cluster to filter roster)</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="title" style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+            <div>
+              <h2 id="zoneTableTitle">Macro-Zone / Regional Cadre Preference Matrix</h2>
+              <span id="zoneTableSub">Cadre distribution and affinity across the 6 Macro-Regions</span>
+            </div>
+            <div class="map-header-controls" style="margin-left:auto">
+              <button class="map-toggle-btn active" id="btnMacroPref" onclick="window.App.toggleZoneView('macro')">🌐 Macro-Zone</button>
+              <button class="map-toggle-btn" id="btnZonePref" onclick="window.App.toggleZoneView('pref')">🏛️ Zone-Wise (21 Zones)</button>
+              <button class="map-toggle-btn" id="btnZoneRisk" onclick="window.App.toggleZoneView('risk')">🚨 Risk Matrix</button>
+            </div>
+          </div>
+          <div class="table-wrapper" style="max-height:380px;overflow:auto" id="zoneMatrixContainer">
+            <!-- Dynamic Zone Matrix Injected Here -->
+          </div>
+        </section>
+      </div>
+
+      <!-- Section 3: Selected Officer Inspector Card (Appears on click) -->
+      <div id="officerInspectorCard" style="display:none;margin-bottom:24px"></div>
+
+      <!-- Section 4: Advanced Filterable Officer Roster -->
+      <section class="table-section">
+        <div class="card">
+          <div class="title">
+            <div>
+              <h2>Cadre Spatial Mobility Roster</h2>
+              <span id="rosterCountSub">Filter officers by spatial mobility, station tenure, and regional confinement</span>
+            </div>
+            <button class="btn sm" onclick="window.App.exportSpatialCsv()">Export Filtered CSV</button>
+          </div>
+
+          <!-- Quick Filter Pills -->
+          <div class="filter-pills-bar">
+            <button class="filter-pill active" data-filter="all" onclick="window.App.setSpatialFilter('all')">All Officers (${totalOfficers})</button>
+            <button class="filter-pill danger" data-filter="single_red" onclick="window.App.setSpatialFilter('single_red')">🚨 Single Stint &gt; 4y (${singleStintRedCount})</button>
+            <button class="filter-pill danger" data-filter="stn_red" onclick="window.App.setSpatialFilter('stn_red')">🔴 Station &gt; 8y (${combinedStnRedCount})</button>
+            <button class="filter-pill warn" data-filter="hyper_regional" onclick="window.App.setSpatialFilter('hyper_regional')">📍 Hyper-Regional &lt; 250km (${hyperRegionalCount})</button>
+            <button class="filter-pill warn" data-filter="zone_high" onclick="window.App.setSpatialFilter('zone_high')">🌐 Zone Tenure &gt; 10y (${zoneTenureHighCount})</button>
+            <button class="filter-pill" data-filter="station_dominant" onclick="window.App.setSpatialFilter('station_dominant')">🏛️ Station Dominant &gt; 65% (${stationDomCount})</button>
+            <button class="filter-pill" style="border-color:#0d9488;color:#0d9488;font-weight:700" data-filter="ner_served" onclick="window.App.setSpatialFilter('ner_served')">🌲 NER Served (${nerServedCount})</button>
+          </div>
+
+          <!-- Filter Controls -->
+          <div class="filter-controls-row" style="grid-template-columns:1.2fr 1fr 1fr 1fr 1.2fr">
+            <input type="text" id="spatialSearchInput" class="search-input" placeholder="Filter by officer name, EID, office, station..." oninput="window.App.onSpatialFilterChange()">
+            <select id="spatialRegionSelect" class="scatter-select" style="width:100%" onchange="window.App.onSpatialFilterChange()">
+              <option value="all">All Macro-Regions</option>
+              <option value="North">North (incl. NCR)</option>
+              <option value="South">South Affinity</option>
+              <option value="West">West Affinity</option>
+              <option value="East">East (Mainland)</option>
+              <option value="North East">North East (NER)</option>
+              <option value="Central">Central Affinity</option>
+              <option value="NCR_only">NCR Centric (&gt;50% NCR)</option>
+              <option value="ner_only">Has NER Exposure (${nerServedCount})</option>
+              <option value="no_ner">Zero NER Exposure (${totalOfficers - nerServedCount})</option>
+            </select>
+            <select id="spatialZoneSelect" class="scatter-select" style="width:100%" onchange="window.App.onSpatialFilterChange()">
+              <option value="all">All Zones (21 Zones)</option>
+              ${App.zonesList.map(z => `<option value="${z.name}">${z.name}</option>`).join('')}
+            </select>
+            <select id="spatialDesigSelect" class="scatter-select" style="width:100%" onchange="window.App.onSpatialFilterChange()">
+              <option value="all">All Designations</option>
+              <option value="APFC">APFC</option>
+              <option value="RPFC-II">RPFC-II</option>
+              <option value="RPFC-I">RPFC-I</option>
+              <option value="ACC">ACC / ACC (HQ)</option>
+            </select>
+            <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--ink-secondary)">
+              <span>Max Span:</span>
+              <input type="range" id="spatialRadiusSlider" min="50" max="2500" step="50" value="2500" style="flex:1" oninput="window.App.onSpatialSliderChange(this.value)">
+              <span id="radiusSliderVal" style="font-weight:700;color:var(--ink)">2500km</span>
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Officer Name</th>
+                  <th>Designation</th>
+                  <th>Current Office</th>
+                  <th>Regional Affinity</th>
+                  <th>Career Span</th>
+                  <th>Max Distance</th>
+                  <th>Top Station (Tenure)</th>
+                  <th>Max Single Stint</th>
+                  <th>Top Zone (% Dominance)</th>
+                  <th>Risk Tier</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="spatialRosterTbody">
+                <!-- Injected by filterSpatialRoster() -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    `;
+
+    setTimeout(() => {
+      initSpatialScatterPlot();
+      initSpatialHubsMap();
+      initMacroPreferenceMatrix();
+      filterSpatialRoster();
+    }, 50);
+  }
+
+  // 2D Spatial Scatter Plot Generator
+  function initSpatialScatterPlot() {
+    const svg = document.getElementById('scatterPlotSvg');
+    const tooltip = document.getElementById('scatterTooltip');
+    const wrapper = document.getElementById('scatterPlotWrapper');
+    if (!svg || !wrapper) return;
+
+    const width = wrapper.clientWidth || 900;
+    const height = 440;
+    const padding = { top: 30, right: 30, bottom: 45, left: 60 };
+
+    if (svg.setAttribute) {
+      svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    }
+
+    const xAxisType = App.spatialState.xAxis;
+    const yAxisType = App.spatialState.yAxis;
+
+    // Determine Axis Ranges
+    let xMax = 30, xLabel = 'Total Service Span (Years)';
+    if (xAxisType === 'single') { xMax = 20; xLabel = 'Max Single Stint (Years)'; }
+    else if (xAxisType === 'station') { xMax = 28; xLabel = 'Primary Station Tenure (Years)'; }
+
+    let yMax = 2500, yLabel = 'Max Career Mobility Span (km)';
+    if (yAxisType === 'zonePct') { yMax = 100; yLabel = 'Primary Zone Dominance (%)'; }
+    else if (yAxisType === 'stationPct') { yMax = 100; yLabel = 'Primary Station Dominance (%)'; }
+
+    const getXVal = (o) => {
+      if (xAxisType === 'single') return o.maxSingleStint;
+      if (xAxisType === 'station') return o.topStationTenure;
+      return o.totalServiceYears;
+    };
+
+    const getYVal = (o) => {
+      if (yAxisType === 'zonePct') return o.topZonePct;
+      if (yAxisType === 'stationPct') return o.topStationPct;
+      return o.maxDistanceKm;
+    };
+
+    const xScale = (val) => padding.left + (val / xMax) * (width - padding.left - padding.right);
+    const yScale = (val) => height - padding.bottom - (val / yMax) * (height - padding.top - padding.bottom);
+
+    // Draw Grid & Axes
+    let svgHtml = '';
+
+    // Quadrant Alert Shading (if distance vs service)
+    if (xAxisType === 'service' && yAxisType === 'distance') {
+      const qX = xScale(5);
+      const qY = yScale(250);
+      const qW = width - padding.right - qX;
+      const qH = (height - padding.bottom) - qY;
+      svgHtml += `<rect x="${qX}" y="${qY}" width="${qW}" height="${qH}" fill="rgba(220, 38, 38, 0.06)" rx="4" />`;
+      svgHtml += `<text x="${width - padding.right - 8}" y="${height - padding.bottom - 10}" text-anchor="end" fill="#dc2626" font-size="10" font-weight="700" opacity="0.6">🚨 HYPER-REGIONAL / STAGNATION QUADRANT</text>`;
+    }
+
+    // Grid lines
+    for (let i = 0; i <= 5; i++) {
+      const xVal = (xMax / 5) * i;
+      const yVal = (yMax / 5) * i;
+      const xPos = xScale(xVal);
+      const yPos = yScale(yVal);
+
+      // Vertical line & label
+      svgHtml += `<line x1="${xPos}" y1="${padding.top}" x2="${xPos}" y2="${height - padding.bottom}" stroke="#e2e8f0" stroke-dasharray="3,3" />`;
+      svgHtml += `<text x="${xPos}" y="${height - padding.bottom + 16}" text-anchor="middle" fill="#64748b" font-size="10">${xVal.toFixed(0)}</text>`;
+
+      // Horizontal line & label
+      svgHtml += `<line x1="${padding.left}" y1="${yPos}" x2="${width - padding.right}" y2="${yPos}" stroke="#e2e8f0" stroke-dasharray="3,3" />`;
+      svgHtml += `<text x="${padding.left - 8}" y="${yPos + 3}" text-anchor="end" fill="#64748b" font-size="10">${yVal.toFixed(0)}</text>`;
+    }
+
+    // Axis Labels
+    svgHtml += `<text x="${width / 2}" y="${height - 10}" text-anchor="middle" fill="#334155" font-size="11" font-weight="700">${xLabel}</text>`;
+    svgHtml += `<text x="14" y="${height / 2}" text-anchor="middle" fill="#334155" font-size="11" font-weight="700" transform="rotate(-90 14 ${height / 2})">${yLabel}</text>`;
+
+    // Plot Dots for all officers
+    App.officersList.forEach(o => {
+      const x = xScale(Math.min(xMax, getXVal(o)));
+      const y = yScale(Math.min(yMax, getYVal(o)));
+      const isSelected = App.spatialState.selectedEid === o.eid;
+      const r = isSelected ? 8 : (o.stagnationTier === 'critical-red' ? 5.5 : 4.5);
+      const stroke = isSelected ? '#1e293b' : 'white';
+      const strokeWidth = isSelected ? 2.5 : 1;
+
+      svgHtml += `
+        <circle class="scatter-dot"
+          cx="${x}" cy="${y}" r="${r}"
+          fill="${o.riskColor}"
+          stroke="${stroke}" stroke-width="${strokeWidth}"
+          opacity="${isSelected ? 1 : 0.82}"
+          data-eid="${o.eid}"
+          data-name="${o.name}"
+          data-desig="${o.currentDesignation}"
+          data-office="${o.currentOffice}"
+          data-stn="${o.topStation}"
+          data-stntenure="${o.topStationTenure}"
+          data-stint="${o.maxSingleStint}"
+          data-dist="${o.maxDistanceKm}"
+          data-risk="${o.riskLabel}"
+          data-color="${o.riskColor}"
+        />
+      `;
+    });
+
+    svg.innerHTML = svgHtml;
+
+    // Attach interaction events to dots
+    const dots = svg.querySelectorAll ? svg.querySelectorAll('.scatter-dot') : (document.querySelectorAll ? document.querySelectorAll('#scatterPlotSvg .scatter-dot') : []);
+    dots.forEach(dot => {
+      dot.addEventListener('mouseenter', (e) => {
+        const d = e.target.dataset || {};
+        if (!tooltip) return;
+        tooltip.innerHTML = `
+          <b>${d.name || ''}</b> (${d.desig || ''})<br>
+          <span style="color:#94a3b8">${d.office || ''}</span>
+          <div style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.15)">
+            Max Mobility Span: <b>${d.dist || 0} km</b><br>
+            Top Station: <b>${d.stn || ''} (${d.stntenure || 0}y)</b><br>
+            Max Single Stint: <b>${d.stint || 0}y</b>
+          </div>
+          <span class="badge" style="background:${d.color || '#15803d'};color:white;margin-top:6px;display:inline-block">${d.risk || ''}</span>
+        `;
+        tooltip.style.display = 'block';
+      });
+
+      dot.addEventListener('mousemove', (e) => {
+        if (!tooltip || !wrapper.getBoundingClientRect) return;
+        const rect = wrapper.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        const tooltipX = mouseX + 15 + 260 > rect.width ? mouseX - 275 : mouseX + 15;
+        const tooltipY = mouseY - 40 < 10 ? mouseY + 15 : mouseY - 40;
+        tooltip.style.left = `${tooltipX}px`;
+        tooltip.style.top = `${tooltipY}px`;
+      });
+
+      dot.addEventListener('mouseleave', () => {
+        if (tooltip) tooltip.style.display = 'none';
+      });
+
+      dot.addEventListener('click', (e) => {
+        const eid = (e.target.dataset && e.target.dataset.eid) || e.target.getAttribute('data-eid');
+        if (eid) window.App.selectSpatialOfficer(eid);
+      });
+    });
+  }
+
+  // Regional Stagnation Hubs Map Generator
+  function initSpatialHubsMap() {
+    if (typeof L === 'undefined') return;
+    const mapEl = document.getElementById('spatialHubsMap');
+    if (!mapEl) return;
+
+    if (App.activeMap) {
+      App.activeMap.remove();
+      App.activeMap = null;
+    }
+
+    const map = L.map('spatialHubsMap', {
+      zoomControl: true,
+      attributionControl: false,
+      scrollWheelZoom: false
+    }).setView([22.5, 78.5], 5);
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      maxZoom: 18,
+      subdomains: 'abcd'
+    }).addTo(map);
+
+    App.activeMap = map;
+
+    // Define Major Regional Metropolitan Corridors
+    const HUBS = [
+      { name: 'Delhi NCR Corridor', coords: [28.6139, 77.2090], filterStn: 'delhi' },
+      { name: 'Mumbai MMR & Pune Corridor', coords: [19.0760, 72.8777], filterStn: 'mumbai' },
+      { name: 'Bengaluru Karnataka Hub', coords: [12.9716, 77.5946], filterStn: 'bengaluru' },
+      { name: 'Hyderabad Telangana Hub', coords: [17.3850, 78.4867], filterStn: 'hyderabad' },
+      { name: 'Kolkata & Howrah Hub', coords: [22.5726, 88.3639], filterStn: 'kolkata' },
+      { name: 'Chennai & Tamil Nadu Hub', coords: [13.0827, 80.2707], filterStn: 'chennai' },
+      { name: 'Jaipur & Rajasthan Hub', coords: [26.9124, 75.7873], filterStn: 'jaipur' },
+      { name: 'Patna & Bihar Hub', coords: [25.5941, 85.1376], filterStn: 'patna' },
+      { name: 'Chandigarh & Punjab Hub', coords: [30.7333, 76.7794], filterStn: 'chandigarh' },
+      { name: 'Ahmedabad & Gujarat Hub', coords: [23.0225, 72.5714], filterStn: 'ahmedabad' }
+    ];
+
+    HUBS.forEach(hub => {
+      const matchingOfficers = App.officersList.filter(o =>
+        o.topStation.toLowerCase().includes(hub.filterStn) ||
+        o.currentStation.toLowerCase().includes(hub.filterStn)
+      );
+
+      const redOfficers = matchingOfficers.filter(o => o.stagnationTier === 'critical-red');
+      const count = matchingOfficers.length;
+
+      const circleColor = redOfficers.length > 10 ? '#dc2626' : (redOfficers.length > 3 ? '#ea580c' : '#15803d');
+      const radius = Math.max(25000, Math.min(80000, count * 1500));
+
+      L.circle(hub.coords, {
+        radius: radius,
+        color: circleColor,
+        fillColor: circleColor,
+        fillOpacity: 0.25,
+        weight: 2
+      }).addTo(map);
+
+      const customIcon = L.divIcon({
+        className: '',
+        html: `<div class="custom-map-marker" style="background:${circleColor};width:32px;height:32px;font-size:12px;cursor:pointer" title="Click to filter ${hub.name}">${count}</div>`,
+        iconSize: [32, 32],
+        iconAnchor: [16, 16]
+      });
+
+      const popupContent = `
+        <div class="map-popup-title">${hub.name}</div>
+        <div class="map-popup-sub"><b>${count}</b> Officers Concentrated Here</div>
+        <div style="font-size:11px;color:#475467;margin-top:6px">
+          🚨 Single Stint &gt;4y: <b>${redOfficers.length} officers</b><br>
+          📍 Hyper-Regional (&lt;250km): <b>${matchingOfficers.filter(o => o.isHyperRegional).length}</b>
+        </div>
+        <button class="btn sm primary" style="width:100%;margin-top:8px" onclick="window.App.filterByHub('${hub.filterStn}')">Filter Roster to this Hub</button>
+      `;
+
+      L.marker(hub.coords, { icon: customIcon }).addTo(map).bindPopup(popupContent);
+    });
+  }
+
+  // Macro-Zone / Regional Cadre Preference Matrix Table Generator
+  function initMacroPreferenceMatrix() {
+    const container = document.getElementById('zoneMatrixContainer');
+    if (!container) return;
+
+    const titleEl = document.getElementById('zoneTableTitle');
+    const subEl = document.getElementById('zoneTableSub');
+    if (titleEl) titleEl.innerText = 'Macro-Zone / Regional Cadre Preference Matrix';
+    if (subEl) subEl.innerText = 'Cadre distribution and affinity across the 6 Macro-Regions';
+
+    const totalCadre = App.officersList.length;
+    const regions = [
+      { id: 'North', name: 'North (incl. NCR)', desc: 'Delhi/HO, Punjab, Haryana, Rajasthan, UP, UK, HP, J&K' },
+      { id: 'South', name: 'South', desc: 'Karnataka, Tamil Nadu, Telangana, Andhra Pradesh, Kerala' },
+      { id: 'West', name: 'West', desc: 'Maharashtra, Goa, Gujarat' },
+      { id: 'North East', name: 'North East (NER)', desc: 'Assam, Meghalaya, Tripura, Manipur, Nagaland, Mizoram, Arunachal' },
+      { id: 'East', name: 'East (Mainland)', desc: 'West Bengal, Bihar, Jharkhand, Odisha' },
+      { id: 'Central', name: 'Central', desc: 'Madhya Pradesh, Chhattisgarh' }
+    ];
+
+    const macroStats = regions.map(reg => {
+      const preferredOfficers = App.officersList.filter(o => o.preferredRegion === reg.id);
+      const strongAffinity = preferredOfficers.filter(o => o.regionalAffinity && o.regionalAffinity.primaryPercent >= 80).length;
+      const dominantAffinity = preferredOfficers.filter(o => o.regionalAffinity && o.regionalAffinity.primaryPercent >= 60 && o.regionalAffinity.primaryPercent < 80).length;
+      const currentOfficers = App.officersList.filter(o => {
+        const lastP = o.postings && o.postings[o.postings.length - 1];
+        return lastP && lastP.macroRegion === reg.id;
+      });
+
+      const totalYears = App.officersList.reduce((acc, o) => {
+        if (!o.regionalAffinity || !o.regionalAffinity.breakdown) return acc;
+        const rExp = o.regionalAffinity.breakdown.find(r => r.region === reg.id);
+        return acc + (rExp ? rExp.years : 0);
+      }, 0);
+
+      // NCR sub-breakdown for North
+      const ncrDominant = reg.id === 'North' ? preferredOfficers.filter(o => (o.regionalAffinity && o.regionalAffinity.ncrPercent >= 40)).length : 0;
+
+      return {
+        regionId: reg.id,
+        regionName: reg.name,
+        desc: reg.desc,
+        preferredCount: preferredOfficers.length,
+        preferredPct: totalCadre > 0 ? ((preferredOfficers.length / totalCadre) * 100).toFixed(1) : '0',
+        strongAffinity,
+        dominantAffinity,
+        currentCount: currentOfficers.length,
+        totalYears: Math.round(totalYears),
+        ncrDominant
+      };
+    }).sort((a, b) => b.preferredCount - a.preferredCount);
+
+    container.innerHTML = `
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th>Macro-Region</th>
+            <th>Primary Preferred</th>
+            <th>Strong (&gt;80%)</th>
+            <th>Dominant (60–80%)</th>
+            <th>Currently Posted</th>
+            <th>Cumulative Cadre Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${macroStats.map(m => {
+            const barWidth = Math.max(5, Math.min(100, Math.round(parseFloat(m.preferredPct) * 2.2)));
+            return `
+              <tr onclick="window.App.filterByMacroRegion('${m.regionId}')" title="Click to filter officers preferring ${m.regionName}" style="cursor:pointer">
+                <td>
+                  <div style="display:flex;align-items:center;gap:6px">
+                    <span class="chip-dot" style="background:${MACRO_REGION_COLORS[m.regionId] || '#64748b'};width:10px;height:10px;border-radius:50%"></span>
+                    <b>${m.regionName}</b>
+                  </div>
+                  <small style="color:var(--muted);font-size:10px">${m.desc}</small>
+                  ${m.regionId === 'North' ? `<div style="font-size:10px;color:#6366f1;margin-top:2px">↳ of which <b>${m.ncrDominant} officers</b> are NCR-centric</div>` : ''}
+                </td>
+                <td>
+                  <div style="font-weight:700;font-size:13px;color:${MACRO_REGION_COLORS[m.regionId] || '#1e293b'}">${m.preferredCount} <span style="font-weight:400;font-size:11px;color:var(--muted)">(${m.preferredPct}%)</span></div>
+                  <div class="progress" style="width:85px;height:5px;margin-top:3px">
+                    <i style="width:${barWidth}%;background:${MACRO_REGION_COLORS[m.regionId] || '#4f46e5'}"></i>
+                  </div>
+                </td>
+                <td>${m.strongAffinity > 0 ? `<span class="badge warn" style="font-size:11px">${m.strongAffinity}</span>` : '<span style="color:var(--muted)">0</span>'}</td>
+                <td>${m.dominantAffinity > 0 ? `<span class="badge good" style="font-size:11px">${m.dominantAffinity}</span>` : '<span style="color:var(--muted)">0</span>'}</td>
+                <td><b>${m.currentCount}</b> staff</td>
+                <td><b>${m.totalYears.toLocaleString()}y</b></td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+
+  // Zone-Wise Preference Matrix Table Generator
+  function initZonePreferenceMatrix() {
+    const container = document.getElementById('zoneMatrixContainer');
+    if (!container) return;
+
+    const titleEl = document.getElementById('zoneTableTitle');
+    const subEl = document.getElementById('zoneTableSub');
+    if (titleEl) titleEl.innerText = 'Zone-Wise Cadre Preference Matrix';
+    if (subEl) subEl.innerText = 'Cadre officers classified by primary career zone & affinity strength';
+
+    const totalCadre = App.officersList.length;
+
+    const zoneStats = App.zonesList.map(zone => {
+      const preferredOfficers = App.officersList.filter(o => o.topZone === zone.name);
+      const currentOfficers = App.officersList.filter(o => o.currentZone === zone.name);
+      const strongAffinity = preferredOfficers.filter(o => o.topZonePct >= 80).length;
+      const dominantAffinity = preferredOfficers.filter(o => o.topZonePct >= 60 && o.topZonePct < 80).length;
+      const totalZoneYears = App.officersList.reduce((acc, o) => {
+        const zExp = o.zoneExposure ? o.zoneExposure.find(z => z.zone === zone.name) : null;
+        return acc + (zExp ? zExp.years : 0);
+      }, 0);
+
+      // Determine dominant macro region for this zone
+      const sampleOffice = zone.offices && zone.offices[0];
+      const macroReg = getMacroRegion(sampleOffice ? sampleOffice.id : '', '', zone.name, '');
+
+      return {
+        zoneName: zone.name,
+        zoneId: zone.id,
+        macroRegion: macroReg.region,
+        preferredCount: preferredOfficers.length,
+        preferredPct: totalCadre > 0 ? ((preferredOfficers.length / totalCadre) * 100).toFixed(1) : '0',
+        strongAffinity,
+        dominantAffinity,
+        currentCount: currentOfficers.length,
+        totalZoneYears: Math.round(totalZoneYears)
+      };
+    }).sort((a, b) => b.preferredCount - a.preferredCount);
+
+    container.innerHTML = `
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th>Zone Name</th>
+            <th>Region</th>
+            <th>Preferred By</th>
+            <th>Strong (&gt;80%)</th>
+            <th>Dominant (60–80%)</th>
+            <th>Currently Posted</th>
+            <th>Total Cadre Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${zoneStats.map(z => {
+            const barWidth = Math.max(4, Math.min(100, Math.round(parseFloat(z.preferredPct) * 4.5)));
+            return `
+              <tr onclick="window.App.filterByPreferredZone('${z.zoneName}')" title="Click to filter officers preferring ${z.zoneName}" style="cursor:pointer">
+                <td><b><a href="${getZoneLink(z.zoneId)}" class="entity-link" onclick="event.stopPropagation()">${z.zoneName}</a></b></td>
+                <td><span class="badge" style="background:${MACRO_REGION_COLORS[z.macroRegion] || '#64748b'};color:white;font-size:9px;padding:2px 6px">${z.macroRegion}</span></td>
+                <td>
+                  <div style="font-weight:700;font-size:12px">${z.preferredCount} <span style="font-weight:400;color:var(--muted)">(${z.preferredPct}%)</span></div>
+                  <div class="progress" style="width:70px;height:4px;margin-top:2px">
+                    <i style="width:${barWidth}%;background:#4f46e5"></i>
+                  </div>
+                </td>
+                <td>${z.strongAffinity > 0 ? `<span class="badge warn" style="font-size:10px">${z.strongAffinity}</span>` : '<span style="color:var(--muted)">0</span>'}</td>
+                <td>${z.dominantAffinity > 0 ? `<span class="badge good" style="font-size:10px">${z.dominantAffinity}</span>` : '<span style="color:var(--muted)">0</span>'}</td>
+                <td><b>${z.currentCount}</b> staff</td>
+                <td><b>${z.totalZoneYears.toLocaleString()}y</b></td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+
+  // Zone Stagnation Matrix Table Generator
+  function initZoneStagnationMatrix() {
+    const container = document.getElementById('zoneMatrixContainer');
+    if (!container) return;
+
+    const titleEl = document.getElementById('zoneTableTitle');
+    const subEl = document.getElementById('zoneTableSub');
+    if (titleEl) titleEl.innerText = 'Zonal Stagnation Risk Matrix';
+    if (subEl) subEl.innerText = 'Ranked by cumulative regional confinement and stagnation index';
+
+    const zoneStats = App.zonesList.map(zone => {
+      const officersInZone = App.officersList.filter(o => o.currentZone === zone.name || o.topZone === zone.name);
+      const total = officersInZone.length;
+      const singleRed = officersInZone.filter(o => o.isSingleStintRed).length;
+      const stnRed = officersInZone.filter(o => o.isCombinedStnRed).length;
+      const hyper = officersInZone.filter(o => o.isHyperRegional).length;
+      const avgDist = total > 0 ? Math.round(officersInZone.reduce((a, o) => a + o.maxDistanceKm, 0) / total) : 0;
+      const singleRedPct = total > 0 ? Math.round((singleRed / total) * 100) : 0;
+      const score = total > 0 ? Math.min(100, Math.round((singleRedPct * 0.5) + ((stnRed / total) * 30) + ((hyper / total) * 20))) : 0;
+
+      return {
+        zoneName: zone.name,
+        zoneId: zone.id,
+        total,
+        singleRed,
+        singleRedPct,
+        stnRed,
+        hyper,
+        avgDist,
+        score
+      };
+    }).sort((a, b) => b.score - a.score);
+
+    container.innerHTML = `
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th>Zone Name</th>
+            <th>Officers</th>
+            <th>Single &gt;4y</th>
+            <th>Station &gt;8y</th>
+            <th>&lt;250km</th>
+            <th>Avg Span</th>
+            <th>Risk Index</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${zoneStats.map(z => {
+            const barColor = z.score > 60 ? '#dc2626' : (z.score > 35 ? '#ea580c' : '#15803d');
+            return `
+              <tr onclick="window.App.filterByZoneName('${z.zoneName}')" title="Click to filter ${z.zoneName}">
+                <td><b>${z.zoneName}</b></td>
+                <td><b>${z.total}</b></td>
+                <td><span class="badge ${z.singleRed > 0 ? 'danger' : 'good'}" style="font-size:10px">${z.singleRed} (${z.singleRedPct}%)</span></td>
+                <td>${z.stnRed > 0 ? `<span class="badge danger" style="font-size:10px">${z.stnRed}</span>` : '0'}</td>
+                <td>${z.hyper > 0 ? `<span class="badge warn" style="font-size:10px">${z.hyper}</span>` : '0'}</td>
+                <td>${z.avgDist} km</td>
+                <td>
+                  <div class="stagnation-index-bar">
+                    <div class="stagnation-bar-outer">
+                      <div class="stagnation-bar-fill" style="width:${z.score}%;background:${barColor}"></div>
+                    </div>
+                    <span style="font-weight:700;font-size:11px;color:${barColor}">${z.score}</span>
+                  </div>
+                </td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+
+  // Filterable Officer Roster Engine
+  function filterSpatialRoster() {
+    const tbody = document.getElementById('spatialRosterTbody');
+    const countSub = document.getElementById('rosterCountSub');
+    if (!tbody) return;
+
+    const { filterType, regionFilter, zoneFilter, desigFilter, searchQuery, maxRadiusKm } = App.spatialState;
+
+    let filtered = App.officersList.filter(o => {
+      // 1. Quick Pill Filter
+      if (filterType === 'single_red' && !o.isSingleStintRed) return false;
+      if (filterType === 'stn_red' && !o.isCombinedStnRed) return false;
+      if (filterType === 'hyper_regional' && !o.isHyperRegional) return false;
+      if (filterType === 'zone_high' && !o.isZoneTenureHigh) return false;
+      if (filterType === 'station_dominant' && !o.isStationDominant) return false;
+      if (filterType === 'ner_served' && (!o.regionalAffinity || !o.regionalAffinity.hasNerExposure)) return false;
+
+      // 2. Macro-Region Filter
+      if (regionFilter === 'NCR_only') {
+        if ((o.regionalAffinity.ncrPercent || 0) < 40) return false;
+      } else if (regionFilter === 'ner_only') {
+        if (!o.regionalAffinity || !o.regionalAffinity.hasNerExposure) return false;
+      } else if (regionFilter === 'no_ner') {
+        if (o.regionalAffinity && o.regionalAffinity.hasNerExposure) return false;
+      } else if (regionFilter !== 'all' && o.preferredRegion !== regionFilter) {
+        return false;
+      }
+
+      // 3. Zone Filter
+      if (zoneFilter !== 'all' && o.currentZone !== zoneFilter && o.topZone !== zoneFilter) return false;
+
+      // 4. Designation Filter
+      if (desigFilter !== 'all' && !o.currentDesignation.includes(desigFilter)) return false;
+
+      // 5. Max Radius Filter
+      if (o.maxDistanceKm > maxRadiusKm) return false;
+
+      // 6. Search Query Filter
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        const matchName = o.name.toLowerCase().includes(q);
+        const matchEid = o.eid.toLowerCase().includes(q);
+        const matchOffice = o.currentOffice.toLowerCase().includes(q);
+        const matchStation = o.currentStation.toLowerCase().includes(q) || o.topStation.toLowerCase().includes(q);
+        const matchRegion = o.preferredRegion.toLowerCase().includes(q);
+        if (!matchName && !matchEid && !matchOffice && !matchStation && !matchRegion) return false;
+      }
+
+      return true;
+    });
+
+    if (countSub) {
+      countSub.innerText = `Showing ${filtered.length} of ${App.officersList.length} officers matching criteria`;
+    }
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="11" style="text-align:center;padding:32px;color:var(--muted)">No officers match the selected filter criteria.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = filtered.slice(0, 100).map(o => {
+      const isSelected = App.spatialState.selectedEid === o.eid;
+      const rowStyle = isSelected ? 'background:#f0fdf4;border-left:4px solid #15803d' : '';
+      const distPct = Math.min(100, Math.round((o.maxDistanceKm / 2000) * 100));
+
+      return `
+        <tr style="${rowStyle}" id="officer-row-${o.eid}">
+          <td>
+            <b><a href="${getOfficerLink(o.eid)}" class="entity-link">${o.name}</a></b><br>
+            <span style="font-family:monospace;font-size:10px;color:var(--muted)">${o.eid}</span>
+            ${o.regionalAffinity && o.regionalAffinity.hasNerExposure ? `<span class="badge" style="background:#ccfbf1;color:#0f766e;font-size:9px;padding:1px 4px;margin-left:4px">🌲 NER</span>` : ''}
+          </td>
+          <td><b>${o.currentDesignation}</b></td>
+          <td><a href="${getOfficeLink(o.currentOfficeId)}" class="entity-link">${o.currentOffice}</a></td>
+          <td>
+            <span class="badge" style="background:${MACRO_REGION_COLORS[o.preferredRegion] || '#64748b'};color:white;font-size:10px;padding:3px 7px" title="${o.regionalAffinityTag}">
+              ${o.preferredRegion} (${o.regionalAffinity.primaryPercent}%)
+            </span>
+          </td>
+          <td><b>${o.totalServiceYears}y</b></td>
+          <td>
+            <div style="font-weight:700">${o.maxDistanceKm} km</div>
+            <div class="progress" style="width:80px;height:5px;margin-top:3px">
+              <i style="width:${Math.max(5, distPct)}%;background:${o.maxDistanceKm < 250 ? '#ea580c' : '#15803d'}"></i>
+            </div>
+          </td>
+          <td>
+            <b>${o.topStation}</b><br>
+            <span style="color:var(--muted);font-size:11px">${o.topStationTenure}y (${o.topStationPct}%)</span>
+          </td>
+          <td>
+            <span class="badge ${o.isSingleStintRed ? 'danger' : (o.maxSingleStint >= 3.0 ? 'warn' : 'good')}" style="font-size:11px">
+              ${o.maxSingleStint}y
+            </span>
+          </td>
+          <td>
+            <b>${o.topZone}</b><br>
+            <span style="color:var(--muted);font-size:11px">${o.topZoneTenure}y (${o.topZonePct}%)</span>
+          </td>
+          <td>
+            <span class="badge" style="background:${o.riskColor};color:white;font-size:10px;padding:3px 7px">
+              ${o.riskLabel}
+            </span>
+          </td>
+          <td>
+            <button class="btn sm" onclick="window.App.selectSpatialOfficer('${o.eid}')">Inspect</button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function selectSpatialOfficer(eid) {
+    App.spatialState.selectedEid = eid;
+    const o = App.officersByEid.get(eid);
+    if (!o) return;
+
+    // Update scatter plot highlighting
+    initSpatialScatterPlot();
+
+    // Show Inspector Card
+    const card = document.getElementById('officerInspectorCard');
+    if (card) {
+      card.style.display = 'block';
+      card.innerHTML = `
+        <div class="card" style="border:2px solid ${o.riskColor};background:#f8fafc">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
+            <div>
+              <div class="eyebrow" style="color:${o.riskColor}">Officer Spatial Mobility Dossier</div>
+              <h2 style="margin:4px 0">${o.name} (${o.currentDesignation})</h2>
+              <div class="sub">${o.currentOffice} · ${o.currentZone} · EID: <code>${o.eid}</code></div>
+            </div>
+            <div class="actions" style="margin-top:0">
+              <a href="${getOfficerLink(o.eid)}" class="btn primary">Open Full 360° Profile ➔</a>
+              <button class="btn sm" onclick="document.getElementById('officerInspectorCard').style.display='none'">Close</button>
+            </div>
+          </div>
+
+          <div class="metrics" style="grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));margin-top:14px">
+            <div class="card metric" style="padding:12px">
+              <small>Regional Affinity</small>
+              <b style="color:${MACRO_REGION_COLORS[o.preferredRegion] || '#4f46e5'}">${o.preferredRegion} (${o.regionalAffinity.primaryPercent}%)</b>
+              <span>${o.regionalAffinityTag}</span>
+            </div>
+            <div class="card metric" style="padding:12px">
+              <small>Max Distance Span</small>
+              <b>${o.maxDistanceKm} km</b>
+              <span>${o.distinctStationsCount} distinct stations</span>
+            </div>
+            <div class="card metric" style="padding:12px">
+              <small>Primary Station</small>
+              <b>${o.topStation}</b>
+              <span>${o.topStationTenure}y (${o.topStationPct}% of career)</span>
+            </div>
+            <div class="card metric" style="padding:12px">
+              <small>Max Single Stint</small>
+              <b style="color:${o.isSingleStintRed ? '#dc2626' : '#15803d'}">${o.maxSingleStint}y</b>
+              <span>${o.isSingleStintRed ? 'Exceeds 4y alert' : 'Compliant stint'}</span>
+            </div>
+            <div class="card metric" style="padding:12px">
+              <small>Primary Zone</small>
+              <b>${o.topZone}</b>
+              <span>${o.topZoneTenure}y (${o.topZonePct}% of career)</span>
+            </div>
+          </div>
+
+          <div class="macro-region-bar" style="margin-top:14px">
+            ${o.regionalAffinity.breakdown.filter(r => r.percent > 0).map(r => `
+              <div class="macro-region-seg" style="width:${r.percent}%;background:${MACRO_REGION_COLORS[r.region] || '#64748b'}" title="${r.region}: ${r.years}y (${r.percent}%)"></div>
+            `).join('')}
+          </div>
+
+          <div style="margin-top:10px;padding:10px 14px;background:white;border-radius:8px;border:1px solid var(--line);font-size:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+            <span class="badge" style="background:${o.riskColor};color:white;font-size:11px">${o.riskLabel}</span>
+            ${o.regionalAffinity && o.regionalAffinity.hasNerExposure ? `<span class="badge" style="background:#ccfbf1;color:#0f766e;font-size:11px;font-weight:700">🌲 NER Hard Area Served: ${o.regionalAffinity.nerYears}y</span>` : ''}
+            <span><b>Career Trajectory:</b> ${o.postings.map(p => `${p.station} (${p.periodYears}y)`).join(' ➔ ')}</span>
+          </div>
+        </div>
+      `;
+
+      card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    filterSpatialRoster();
+  }
+
+  function exportSpatialAnalyticsCsv() {
+    let csv = 'OfficerName,EID,Designation,CurrentOffice,CurrentZone,TotalServiceYears,PreferredMacroRegion,PreferredRegionPercent,RegionalAffinityTag,HasNERExposure,NERTenureYears,MaxDistanceKm,DistinctStations,DistinctZones,TopStation,TopStationTenureYears,TopStationPercent,MaxSingleStintYears,TopZone,TopZoneTenureYears,TopZonePercent,RiskClassification\n';
+
+    App.officersList.forEach(o => {
+      const hasNer = o.regionalAffinity && o.regionalAffinity.hasNerExposure ? 'YES' : 'NO';
+      const nerYrs = o.regionalAffinity ? o.regionalAffinity.nerYears : 0;
+      csv += `"${o.name}","${o.eid}","${o.currentDesignation}","${o.currentOffice}","${o.currentZone}",${o.totalServiceYears},"${o.preferredRegion}",${o.regionalAffinity.primaryPercent},"${o.regionalAffinityTag}","${hasNer}",${nerYrs},${o.maxDistanceKm},${o.distinctStationsCount},${o.zonesCount},"${o.topStation}",${o.topStationTenure},${o.topStationPct},${o.maxSingleStint},"${o.topZone}",${o.topZoneTenure},${o.topZonePct},"${o.riskLabel}"\n`;
+    });
+
+    const dataStr = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+    const a = document.createElement('a');
+    a.setAttribute('href', dataStr);
+    a.setAttribute('download', 'epfo_cadre_spatial_stagnation_analytics.csv');
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
+  // ==========================================
   // Search & Omnibox
   // ==========================================
   function setupEventListeners() {
@@ -2416,6 +3746,95 @@
       document.getElementById('globalSearchInput').value = '';
       window.App.showOffice(id);
     },
+    showSpatial: () => {
+      if (window.location.pathname.includes('spatial-analytics.html')) {
+        showSpatialAnalyticsView();
+        history.replaceState(null, '', 'spatial-analytics.html');
+      } else {
+        window.location.href = 'spatial-analytics.html';
+      }
+    },
+    setSpatialFilter: (filterType) => {
+      App.spatialState.filterType = filterType;
+      document.querySelectorAll('.filter-pill').forEach(b => {
+        if (b.dataset.filter === filterType) b.classList.add('active');
+        else b.classList.remove('active');
+      });
+      filterSpatialRoster();
+    },
+    updateScatterPlotAxes: () => {
+      const xSel = document.getElementById('scatterXSelect');
+      const ySel = document.getElementById('scatterYSelect');
+      if (xSel) App.spatialState.xAxis = xSel.value;
+      if (ySel) App.spatialState.yAxis = ySel.value;
+      initSpatialScatterPlot();
+    },
+    onSpatialFilterChange: () => {
+      const search = document.getElementById('spatialSearchInput');
+      const region = document.getElementById('spatialRegionSelect');
+      const zone = document.getElementById('spatialZoneSelect');
+      const desig = document.getElementById('spatialDesigSelect');
+      if (search) App.spatialState.searchQuery = search.value.trim();
+      if (region) App.spatialState.regionFilter = region.value;
+      if (zone) App.spatialState.zoneFilter = zone.value;
+      if (desig) App.spatialState.desigFilter = desig.value;
+      filterSpatialRoster();
+    },
+    onSpatialSliderChange: (val) => {
+      App.spatialState.maxRadiusKm = parseInt(val, 10);
+      const label = document.getElementById('radiusSliderVal');
+      if (label) label.innerText = val + 'km';
+      filterSpatialRoster();
+    },
+    filterByHub: (hubFilter) => {
+      App.spatialState.searchQuery = hubFilter;
+      const input = document.getElementById('spatialSearchInput');
+      if (input) input.value = hubFilter;
+      filterSpatialRoster();
+      const roster = document.getElementById('rosterCountSub');
+      if (roster) roster.scrollIntoView({ behavior: 'smooth' });
+    },
+    filterByZoneName: (zoneName) => {
+      App.spatialState.zoneFilter = zoneName;
+      const zoneSel = document.getElementById('spatialZoneSelect');
+      if (zoneSel) zoneSel.value = zoneName;
+      filterSpatialRoster();
+      const roster = document.getElementById('rosterCountSub');
+      if (roster) roster.scrollIntoView({ behavior: 'smooth' });
+    },
+    filterByPreferredZone: (zoneName) => {
+      App.spatialState.zoneFilter = zoneName;
+      const zoneSel = document.getElementById('spatialZoneSelect');
+      if (zoneSel) zoneSel.value = zoneName;
+      filterSpatialRoster();
+      const roster = document.getElementById('rosterCountSub');
+      if (roster) roster.scrollIntoView({ behavior: 'smooth' });
+    },
+    filterByMacroRegion: (regId) => {
+      App.spatialState.regionFilter = regId;
+      const regSel = document.getElementById('spatialRegionSelect');
+      if (regSel) regSel.value = regId;
+      filterSpatialRoster();
+      const roster = document.getElementById('rosterCountSub');
+      if (roster) roster.scrollIntoView({ behavior: 'smooth' });
+    },
+    toggleZoneView: (viewType) => {
+      const btnMacro = document.getElementById('btnMacroPref');
+      const btnPref = document.getElementById('btnZonePref');
+      const btnRisk = document.getElementById('btnZoneRisk');
+      if (btnMacro) btnMacro.classList.toggle('active', viewType === 'macro');
+      if (btnPref) btnPref.classList.toggle('active', viewType === 'pref');
+      if (btnRisk) btnRisk.classList.toggle('active', viewType === 'risk');
+      if (viewType === 'macro') {
+        initMacroPreferenceMatrix();
+      } else if (viewType === 'pref') {
+        initZonePreferenceMatrix();
+      } else {
+        initZoneStagnationMatrix();
+      }
+    },
+    selectSpatialOfficer: (eid) => selectSpatialOfficer(eid),
+    exportSpatialCsv: () => exportSpatialAnalyticsCsv(),
     setAsOnDate: (val) => {
       App.asOnDateValue = val;
       renderAsOnDateSnapshot();
