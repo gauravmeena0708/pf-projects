@@ -829,7 +829,9 @@
       if (!resp.ok) throw new Error(`HTTP error ${resp.status}`);
       App.rawData = await resp.json();
 
-      await fetchPfContacts();
+      // The advisor uses the local, dated catalogue and does not wait on a
+      // third-party contact API before officer search becomes available.
+      if (!window.location.pathname.includes('posting-advisor')) await fetchPfContacts();
       processData();
       App.isLoaded = true;
 
@@ -1293,6 +1295,12 @@
     const hash = window.location.hash || '';
     const params = new URLSearchParams(window.location.search);
 
+    if (pathname.includes('posting-advisor')) {
+      updateNavActive('advisor');
+      window.PostingAdvisor.mount({ officers: App.officersList, officeDictionary: OFFICE_DICT }).catch(showErrorState);
+      return;
+    }
+
     if (pathname.includes('office-profile')) {
       const officeId = params.get('id') || params.get('office') || (hash.startsWith('#office/') ? hash.substring(8) : null) || 'ro-jaipur';
       showOfficeProfile(officeId);
@@ -1457,6 +1465,7 @@
             </div>
           </div>
           <div class="actions">
+            <a class="btn primary" href="posting-advisor.html?eid=${encodeURIComponent(o.eid)}">Explore next postings</a>
             <button class="btn" onclick="window.App.exportOfficerJson('${o.eid}')"><i class="dot"></i> Export JSON</button>
             <button class="btn" onclick="window.App.exportOfficerCsv('${o.eid}')">Export CSV</button>
             <button class="btn" onclick="window.print()">Print Dossier</button>

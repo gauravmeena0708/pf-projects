@@ -1,0 +1,80 @@
+[
+  {
+    "url": "https://www.epfindia.nic.in/site_docs/PDFs/Circulars/Y2025-2026/Corrigendum_AGTCircular_31122025.pdf",
+    "error": "ConnectTimeout"
+  },
+  {
+    "url": "https://www.epfindia.gov.in/site_docs/PDFs/Circulars/Y2024-2025/AGT_2025_OptionCallingCircular.pdf",
+    "status": 404,
+    "final_url": "https://www.epfo.gov.in:443/site_docs/PDFs/Circulars/Y2024-2025/AGT_2025_OptionCallingCircular.pdf",
+    "content_type": "text/html; charset=UTF-8",
+    "bytes": 203185
+  },
+  {
+    "url": "https://www.epfindia.gov.in/site_docs/PDFs/Circulars/Y2022-2023/Circular_sanctioned_strength_23092022.pdf",
+    "status": 404,
+    "final_url": "https://www.epfo.gov.in:443/site_docs/PDFs/Circulars/Y2022-2023/Circular_sanctioned_strength_23092022.pdf",
+    "content_type": "text/html; charset=UTF-8",
+    "bytes": 203185
+  },
+  {
+    "url": "https://www.epfo.gov.in/",
+    "status": 200,
+    "final_url": "https://www.epfo.gov.in/",
+    "content_type": "text/html; charset=UTF-8",
+    "bytes": 282689,
+    "relevant_links": [
+      "https://pmvbry-cdn.epfindia.gov.in/wp-content/uploads/2025/11/CitizenCharter.pdf",
+      "https://www.epfo.gov.in/employee-documents/",
+      "https://www.epfo.gov.in/employer-documents/",
+      "/circulars/",
+      "https://pmvbry-cdn.epfindia.gov.in/wp-content/uploads/2026/03/March-2026-NAN-Venue-details.pdf",
+      "https://pmvbry-cdn.epfindia.gov.in/wp-content/uploads/2026/01/VENUE-DETAILS-OF-CAMPS-UNDER-NIDHI-AAPKE-NIKAT-2.0-29th-Dec-2025-Final.pdf",
+      "https://pmvbry-cdn.epfindia.gov.in/wp-content/uploads/2025/07/Corrigendum-regarding-filling-up-the-post-of-vigilance-assistant-on-deputation-basis-in-epfo.pdf",
+      "https://jeevanpramaan.gov.in/v1.0/misc/circular",
+      "https://pmvbry-cdn.epfindia.gov.in/wp-content/uploads/2026/03/Union-Minister-Dr.-Mansukh-Mandaviya-Inaugurates-Fifth-Regional-Conference-on-Labour-Codes-in-New-Delhi-Posted-On-27-Feb-2026.pdf",
+      "https://pmvbry-cdn.epfindia.gov.in/wp-content/uploads/2026/01/Year-End-Review-2025-%E2%80%93-Ministry-of-Labour-Employment.pdf",
+      "https://pmvbry-cdn.epfindia.gov.in/wp-content/uploads/2026/01/PDUNASS-and-IC-Centre-for-Governance-Forge-Landmark-Partnership-to-Embed-Ethics-in-Social-Security-Administration.pdf"
+    ]
+  },
+  {
+    "url": "https://pmvbry-cdn.epfindia.gov.in/wp-content/uploads/2025/09/TransferPolicy_CommissionerCadreFinal-1.pdf",
+    "status": 200,
+    "final_url": "https://pmvbry-cdn.epfindia.gov.in/wp-content/uploads/2025/09/TransferPolicy_CommissionerCadreFinal-1.pdf",
+    "content_type": "application/pdf",
+    "bytes": 1492307,
+    "saved": "sources\\TransferPolicy_CommissionerCadreFinal-1.pdf"
+  },
+  {
+    "url": "https://pmvbry-cdn.epfindia.gov.in/wp-content/uploads/2025/09/Final_ModificationOrder-3.pdf",
+    "status": 200,
+    "final_url": "https://pmvbry-cdn.epfindia.gov.in/wp-content/uploads/2025/09/Final_ModificationOrder-3.pdf",
+    "content_type": "application/pdf",
+    "bytes": 465786,
+    "saved": "sources\\Final_ModificationOrder-3.pdf"
+  },
+  {
+    "url": "https://pmvbry-cdn.epfindia.gov.in/wp-content/uploads/2025/09/Order_RedistributionOfCommissionerCadre.pdf",
+    "status": 200,
+    "final_url": "https://pmvbry-cdn.epfindia.gov.in/wp-content/uploads/2025/09/Order_RedistributionOfCommissionerCadre.pdf",
+    "content_type": "application/pdf",
+    "bytes": 1349405,
+    "saved": "sources\\Order_RedistributionOfCommissionerCadre.pdf"
+  },
+  {
+    "url": "https://pmvbry-cdn.epfindia.gov.in/wp-content/uploads/2025/09/OO_HRD_09102023-1.pdf",
+    "status": 200,
+    "final_url": "https://pmvbry-cdn.epfindia.gov.in/wp-content/uploads/2025/09/OO_HRD_09102023-1.pdf",
+    "content_type": "application/pdf",
+    "bytes": 2139516,
+    "saved": "sources\\OO_HRD_09102023-1.pdf"
+  },
+  {
+    "url": "https://pmvbry-cdn.epfindia.gov.in/wp-content/uploads/2025/09/Circular_sanctioned_strength_23092022.pdf",
+    "status": 200,
+    "final_url": "https://pmvbry-cdn.epfindia.gov.in/wp-content/uploads/2025/09/Circular_sanctioned_strength_23092022.pdf",
+    "content_type": "application/pdf",
+    "bytes": 3055647,
+    "saved": "sources\\Circular_sanctioned_strength_23092022.pdf"
+  }
+]

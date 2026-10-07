@@ -1,0 +1,1507 @@
+{
+  "source": "research/sources/Order_RedistributionOfCommissionerCadre.pdf",
+  "amendment": "research/sources/Final_ModificationOrder-3.pdf",
+  "note": "Historical OIC ranks only. Other cadre strength and current vacancies are unknown.",
+  "offices": [
+    {
+      "serial": 1,
+      "zone": "MUMBAI-2 (THANE)",
+      "name": "VASHI",
+      "uan_count": 1159740,
+      "oic_cadre": "RPFC-I",
+      "source_page": 3,
+      "original_name": "VASHI",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 2,
+      "zone": "DELHI & UTTARAKHAND",
+      "name": "DELHI (EAST)",
+      "uan_count": 1078011,
+      "oic_cadre": "RPFC-I",
+      "source_page": 3,
+      "original_name": "DELHI (EAST)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 3,
+      "zone": "MUMBAI-1 (BANDRA)",
+      "name": "MUMBAI (NARIMAN POINT)",
+      "uan_count": 1041629,
+      "oic_cadre": "RPFC-I",
+      "source_page": 3,
+      "original_name": "MUMBAI (NARIMAN POINT)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 4,
+      "zone": "DELHI & UTTARAKHAND",
+      "name": "DELHI (CENTRAL)",
+      "uan_count": 1000425,
+      "oic_cadre": "RPFC-I",
+      "source_page": 3,
+      "original_name": "DELHI (CENTRAL)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 5,
+      "zone": "DELHI & UTTARAKHAND",
+      "name": "DELHI SOUTH",
+      "uan_count": 998369,
+      "oic_cadre": "RPFC-I",
+      "source_page": 3,
+      "original_name": "DELHI SOUTH",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 6,
+      "zone": "MUMBAI-1 (BANDRA)",
+      "name": "MUMBAI (DADAR)",
+      "uan_count": 997301,
+      "oic_cadre": "RPFC-I",
+      "source_page": 3,
+      "original_name": "MUMBAI (DADAR)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 7,
+      "zone": "MUMBAI-1 (BANDRA)",
+      "name": "MUMBAI (FORT)",
+      "uan_count": 989359,
+      "oic_cadre": "RPFC-I",
+      "source_page": 3,
+      "original_name": "MUMBAI (FORT)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 8,
+      "zone": "HARYANA",
+      "name": "GURUGRAM (WEST)",
+      "uan_count": 971523,
+      "oic_cadre": "RPFC-I",
+      "source_page": 3,
+      "original_name": "GURUGRAM (WEST)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 9,
+      "zone": "MUMBAI-2 (THANE)",
+      "name": "MUMBAI (MULUND)",
+      "uan_count": 964642,
+      "oic_cadre": "RPFC-I",
+      "source_page": 3,
+      "original_name": "MUMBAI (MULUND)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 10,
+      "zone": "UTTAR PRADESH",
+      "name": "NOIDA",
+      "uan_count": 951278,
+      "oic_cadre": "RPFC-I",
+      "source_page": 3,
+      "original_name": "NOIDA",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 11,
+      "zone": "DELHI & UTTARAKHAND",
+      "name": "DELHI WEST",
+      "uan_count": 910163,
+      "oic_cadre": "RPFC-I",
+      "source_page": 3,
+      "original_name": "DELHI WEST",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 12,
+      "zone": "RAJASTHAN",
+      "name": "JAIPUR",
+      "uan_count": 900998,
+      "oic_cadre": "RPFC-I",
+      "source_page": 3,
+      "original_name": "JAIPUR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 13,
+      "zone": "MUMBAI-2 (THANE)",
+      "name": "KANDIVALI (WEST)",
+      "uan_count": 900920,
+      "oic_cadre": "RPFC-I",
+      "source_page": 3,
+      "original_name": "KANDIVALI (WEST)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 14,
+      "zone": "GUJARAT (AHMEDABAD)",
+      "name": "AHMEDABAD",
+      "uan_count": 891808,
+      "oic_cadre": "RPFC-I",
+      "source_page": 3,
+      "original_name": "AHMEDABAD",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 15,
+      "zone": "MUMBAI-2 (THANE)",
+      "name": "KANDIVALI (EAST)",
+      "uan_count": 880354,
+      "oic_cadre": "RPFC-I",
+      "source_page": 3,
+      "original_name": "KANDIVALI (EAST)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 16,
+      "zone": "MUMBAI-2 (THANE)",
+      "name": "THANE (NORTH)",
+      "uan_count": 878616,
+      "oic_cadre": "RPFC-I",
+      "source_page": 3,
+      "original_name": "THANE (NORTH)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 17,
+      "zone": "HARYANA",
+      "name": "GURUGRAM (CENTRAL)",
+      "uan_count": 862438,
+      "oic_cadre": "RPFC-I",
+      "source_page": 3,
+      "original_name": "GURUGRAM (CENTRAL)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 18,
+      "zone": "HARYANA",
+      "name": "GURUGRAM (EAST)",
+      "uan_count": 858398,
+      "oic_cadre": "RPFC-I",
+      "source_page": 3,
+      "original_name": "GURUGRAM (EAST)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 19,
+      "zone": "MAHARASHTRA(EXCLU DING MUMBAI)(PUNE)",
+      "name": "PUNE (PUNE CANTT)",
+      "uan_count": 855353,
+      "oic_cadre": "RPFC-I",
+      "source_page": 3,
+      "original_name": "PUNE (PUNE CANTT)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 20,
+      "zone": "MAHARASHTRA(EXCLU DING MUMBAI)(PUNE)",
+      "name": "RO PUNE (VIMAN NAGAR)",
+      "uan_count": 846824,
+      "oic_cadre": "RPFC-I",
+      "source_page": 3,
+      "original_name": "RO PUNE (VIMAN NAGAR)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 21,
+      "zone": "CHENNAI & PUDUCHERRY (CHENNAI)",
+      "name": "AMBATTUR",
+      "uan_count": 845382,
+      "oic_cadre": "RPFC-I",
+      "source_page": 3,
+      "original_name": "AMBATTUR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 22,
+      "zone": "TELANGANA (HYDERABAD)",
+      "name": "KUKATPALLY",
+      "uan_count": 839431,
+      "oic_cadre": "RPFC-I",
+      "source_page": 3,
+      "original_name": "SIDDIPET-MEDCHAL",
+      "effective_date": "2025-07-03"
+    },
+    {
+      "serial": 23,
+      "zone": "CHENNAI & PUDUCHERRY (CHENNAI)",
+      "name": "CHENNAI (EAST COAST ROAD)",
+      "uan_count": 832699,
+      "oic_cadre": "RPFC-I",
+      "source_page": 4,
+      "original_name": "CHENNAI (EAST COAST ROAD)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 24,
+      "zone": "GUJARAT (AHMEDABAD)",
+      "name": "VADODARA",
+      "uan_count": 829488,
+      "oic_cadre": "RPFC-I",
+      "source_page": 4,
+      "original_name": "VADODARA",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 25,
+      "zone": "MUMBAI-1 (BANDRA)",
+      "name": "MUMBAI (BANDRA)",
+      "uan_count": 828719,
+      "oic_cadre": "RPFC-I",
+      "source_page": 4,
+      "original_name": "MUMBAI (BANDRA)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 26,
+      "zone": "MAHARASHTRA(EXCLU DING MUMBAI)(PUNE)",
+      "name": "PUNE (AKURDI)",
+      "uan_count": 821329,
+      "oic_cadre": "RPFC-I",
+      "source_page": 4,
+      "original_name": "PUNE (AKURDI)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 27,
+      "zone": "TELANGANA (HYDERABAD)",
+      "name": "HYDERABAD-BANJARA HILLS",
+      "uan_count": 816535,
+      "oic_cadre": "RPFC-I",
+      "source_page": 4,
+      "original_name": "HYDERABAD (HIGH TECH CITY)",
+      "effective_date": "2025-07-03"
+    },
+    {
+      "serial": 28,
+      "zone": "DELHI & UTTARAKHAND",
+      "name": "DELHI (NORTH)",
+      "uan_count": 814972,
+      "oic_cadre": "RPFC-I",
+      "source_page": 4,
+      "original_name": "DELHI (NORTH)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 29,
+      "zone": "CHENNAI & PUDUCHERRY (CHENNAI)",
+      "name": "CHENNAI (ROYAPETTAH)",
+      "uan_count": 798402,
+      "oic_cadre": "RPFC-I",
+      "source_page": 4,
+      "original_name": "CHENNAI (ROYAPETTAH)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 30,
+      "zone": "CHENNAI & PUDUCHERRY (CHENNAI)",
+      "name": "SRIPERUMBUDUR",
+      "uan_count": 784044,
+      "oic_cadre": "RPFC-I",
+      "source_page": 4,
+      "original_name": "SRIPERUMBUDUR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 31,
+      "zone": "BENGALURU (BENGALURU)",
+      "name": "BENGALURU (KORAMANGALA)",
+      "uan_count": 777798,
+      "oic_cadre": "RPFC-I",
+      "source_page": 4,
+      "original_name": "BENGALURU (KORAMANGALA)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 32,
+      "zone": "TELANGANA (HYDERABAD)",
+      "name": "HYDERABAD (MADHAPUR)",
+      "uan_count": 776147,
+      "oic_cadre": "RPFC-I",
+      "source_page": 4,
+      "original_name": "HYDERABAD (MADHAPUR)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 33,
+      "zone": "WB, A&N ISLANDS & SIKKIM (KOLKATA)",
+      "name": "PARK STREET",
+      "uan_count": 775335,
+      "oic_cadre": "RPFC-I",
+      "source_page": 4,
+      "original_name": "PARK STREET",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 34,
+      "zone": "BENGALURU (BENGALURU)",
+      "name": "BENGALURU (CENTRAL)",
+      "uan_count": 771672,
+      "oic_cadre": "RPFC-I",
+      "source_page": 4,
+      "original_name": "BENGALURU (CENTRAL)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 35,
+      "zone": "TELANGANA (HYDERABAD)",
+      "name": "PATANCHERU",
+      "uan_count": 771138,
+      "oic_cadre": "RPFC-I",
+      "source_page": 4,
+      "original_name": "PATANCHERU",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 36,
+      "zone": "ORISSA (BHUBANESWAR)",
+      "name": "BHUBANESWAR",
+      "uan_count": 768138,
+      "oic_cadre": "RPFC-I",
+      "source_page": 4,
+      "original_name": "BHUBANESWAR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 37,
+      "zone": "GUJARAT (AHMEDABAD)",
+      "name": "RAJKOT",
+      "uan_count": 765248,
+      "oic_cadre": "RPFC-I",
+      "source_page": 4,
+      "original_name": "RAJKOT",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 38,
+      "zone": "BENGALURU (BENGALURU)",
+      "name": "BENGALURU (ELECTRONIC CITY)",
+      "uan_count": 760925,
+      "oic_cadre": "RPFC-I",
+      "source_page": 4,
+      "original_name": "BENGALURU (ELECTRONIC CITY)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 39,
+      "zone": "MADHYA PRADESH & CHATTISGARH (BHOPAL)",
+      "name": "RAIPUR (CHATTISGARH)",
+      "uan_count": 760900,
+      "oic_cadre": "RPFC-I",
+      "source_page": 4,
+      "original_name": "RAIPUR (CHATTISGARH)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 40,
+      "zone": "BENGALURU (BENGALURU)",
+      "name": "PEENYA",
+      "uan_count": 757385,
+      "oic_cadre": "RPFC-I",
+      "source_page": 4,
+      "original_name": "PEENYA",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 41,
+      "zone": "WB, A&N ISLANDS & SIKKIM (KOLKATA)",
+      "name": "KOLKATA",
+      "uan_count": 754547,
+      "oic_cadre": "RPFC-I",
+      "source_page": 5,
+      "original_name": "KOLKATA",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 42,
+      "zone": "BIHAR & JHARKHAND(PATNA)",
+      "name": "PATNA",
+      "uan_count": 748227,
+      "oic_cadre": "RPFC-I",
+      "source_page": 5,
+      "original_name": "PATNA",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 43,
+      "zone": "TELANGANA (HYDERABAD)",
+      "name": "HYDERABAD (BARKATPURA)",
+      "uan_count": 745663,
+      "oic_cadre": "RPFC-I",
+      "source_page": 5,
+      "original_name": "HYDERABAD (BARKATPURA)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 44,
+      "zone": "BENGALURU (BENGALURU)",
+      "name": "BELLANDUR",
+      "uan_count": 744927,
+      "oic_cadre": "RPFC-I",
+      "source_page": 5,
+      "original_name": "BELLANDUR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 45,
+      "zone": "BENGALURU (BENGALURU)",
+      "name": "BENGALURU (MALLESWARAM)",
+      "uan_count": 736331,
+      "oic_cadre": "RPFC-I",
+      "source_page": 5,
+      "original_name": "BENGALURU (MALLESWARAM)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 46,
+      "zone": "HARYANA",
+      "name": "FARIDABAD",
+      "uan_count": 710243,
+      "oic_cadre": "RPFC-I",
+      "source_page": 5,
+      "original_name": "FARIDABAD",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 47,
+      "zone": "KERALA & LAKSHADWEEP (THIRUVANANTHAPURA M)",
+      "name": "KOCHI (COCHIN)",
+      "uan_count": 710243,
+      "oic_cadre": "RPFC-I",
+      "source_page": 5,
+      "original_name": "KOCHI (COCHIN)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 48,
+      "zone": "GUJARAT (AHMEDABAD)",
+      "name": "VAPI",
+      "uan_count": 708168,
+      "oic_cadre": "RPFC-I",
+      "source_page": 5,
+      "original_name": "VAPI",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 49,
+      "zone": "MUMBAI-2 (THANE)",
+      "name": "THANE (SOUTH)",
+      "uan_count": 705388,
+      "oic_cadre": "RPFC-I",
+      "source_page": 5,
+      "original_name": "THANE (SOUTH)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 50,
+      "zone": "TAMIL NADU(EXCLUDING CHENNAI)",
+      "name": "SALEM",
+      "uan_count": 704343,
+      "oic_cadre": "RPFC-I",
+      "source_page": 5,
+      "original_name": "SALEM",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 51,
+      "zone": "MUMBAI-1 (BANDRA)",
+      "name": "MUMBAI (POWAI)",
+      "uan_count": 704008,
+      "oic_cadre": "RPFC-I",
+      "source_page": 5,
+      "original_name": "MUMBAI (POWAI)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 52,
+      "zone": "BENGALURU (BENGALURU)",
+      "name": "K R PURAM (WHITEFIELD)",
+      "uan_count": 696455,
+      "oic_cadre": "RPFC-I",
+      "source_page": 5,
+      "original_name": "K R PURAM (WHITEFIELD)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 53,
+      "zone": "PUNJAB & HIMACHAL PRADESH",
+      "name": "CHANDIGARH",
+      "uan_count": 693786,
+      "oic_cadre": "RPFC-I",
+      "source_page": 5,
+      "original_name": "CHANDIGARH",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 54,
+      "zone": "BENGALURU (BENGALURU)",
+      "name": "RAJARAJESHWARI NAGAR",
+      "uan_count": 684259,
+      "oic_cadre": "RPFC-I",
+      "source_page": 5,
+      "original_name": "RAJARAJESHWARI NAGAR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 55,
+      "zone": "BENGALURU (BENGALURU)",
+      "name": "INDIRANAGAR",
+      "uan_count": 680838,
+      "oic_cadre": "RPFC-I",
+      "source_page": 5,
+      "original_name": "INDIRANAGAR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 56,
+      "zone": "MADHYA PRADESH & CHATTISGARH (BHOPAL)",
+      "name": "INDORE",
+      "uan_count": 679869,
+      "oic_cadre": "RPFC-I",
+      "source_page": 5,
+      "original_name": "INDORE",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 57,
+      "zone": "MAHARASHTRA(EXCLU DING MUMBAI)(PUNE)",
+      "name": "RO PUNE (HINJAWADI)",
+      "uan_count": 661508,
+      "oic_cadre": "RPFC-I",
+      "source_page": 5,
+      "original_name": "RO PUNE (HINJAWADI)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 58,
+      "zone": "TAMIL NADU(EXCLUDING CHENNAI)",
+      "name": "COIMBATORE",
+      "uan_count": 657401,
+      "oic_cadre": "RPFC-I",
+      "source_page": 5,
+      "original_name": "COIMBATORE",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 59,
+      "zone": "BENGALURU (BENGALURU)",
+      "name": "YELAHANKA",
+      "uan_count": 656052,
+      "oic_cadre": "RPFC-I",
+      "source_page": 6,
+      "original_name": "YELAHANKA",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 60,
+      "zone": "CHENNAI & PUDUCHERRY (CHENNAI)",
+      "name": "TAMBARAM",
+      "uan_count": 654663,
+      "oic_cadre": "RPFC-I",
+      "source_page": 6,
+      "original_name": "TAMBARAM",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 61,
+      "zone": "GUJARAT (AHMEDABAD)",
+      "name": "NARODA",
+      "uan_count": 636057,
+      "oic_cadre": "RPFC-I",
+      "source_page": 6,
+      "original_name": "NARODA",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 62,
+      "zone": "UTTAR PRADESH",
+      "name": "MEERUT",
+      "uan_count": 609063,
+      "oic_cadre": "RPFC-I",
+      "source_page": 6,
+      "original_name": "MEERUT",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 63,
+      "zone": "MAHARASHTRA(EXCLU DING MUMBAI)(PUNE)",
+      "name": "NASIK",
+      "uan_count": 603788,
+      "oic_cadre": "RPFC-I",
+      "source_page": 6,
+      "original_name": "NASIK",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 64,
+      "zone": "HARYANA",
+      "name": "KARNAL",
+      "uan_count": 581507,
+      "oic_cadre": "RPFC-I",
+      "source_page": 6,
+      "original_name": "KARNAL",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 65,
+      "zone": "DELHI & UTTARAKHAND",
+      "name": "DEHRADUN",
+      "uan_count": 573250,
+      "oic_cadre": "RPFC-I",
+      "source_page": 6,
+      "original_name": "DEHRADUN",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 66,
+      "zone": "TAMIL NADU(EXCLUDING CHENNAI)",
+      "name": "MADURAI",
+      "uan_count": 572599,
+      "oic_cadre": "RPFC-I",
+      "source_page": 6,
+      "original_name": "MADURAI",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 67,
+      "zone": "WB, A&N ISLANDS & SIKKIM (KOLKATA)",
+      "name": "HOWRAH",
+      "uan_count": 565743,
+      "oic_cadre": "RPFC-I",
+      "source_page": 6,
+      "original_name": "HOWRAH",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 68,
+      "zone": "GUJARAT (AHMEDABAD)",
+      "name": "SURAT",
+      "uan_count": 559391,
+      "oic_cadre": "RPFC-I",
+      "source_page": 6,
+      "original_name": "SURAT",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 69,
+      "zone": "MAHARASHTRA(EXCLU DING MUMBAI)(PUNE)",
+      "name": "NAGPUR",
+      "uan_count": 553768,
+      "oic_cadre": "RPFC-I",
+      "source_page": 6,
+      "original_name": "NAGPUR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 70,
+      "zone": "ANDHRA PRADESH (VIJAYWADA)",
+      "name": "VISHAKAPATNAM",
+      "uan_count": 522835,
+      "oic_cadre": "RPFC-I",
+      "source_page": 6,
+      "original_name": "VISHAKAPATNAM",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 71,
+      "zone": "ANDHRA PRADESH (VIJAYWADA)",
+      "name": "GUNTUR",
+      "uan_count": 505348,
+      "oic_cadre": "RPFC-I",
+      "source_page": 6,
+      "original_name": "GUNTUR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 72,
+      "zone": "PUNJAB & HIMACHAL PRADESH",
+      "name": "SHIMLA",
+      "uan_count": 499397,
+      "oic_cadre": "RPFC-I",
+      "source_page": 6,
+      "original_name": "SHIMLA",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 73,
+      "zone": "ANDHRA PRADESH (VIJAYWADA)",
+      "name": "KADAPA",
+      "uan_count": 495794,
+      "oic_cadre": "RPFC-I",
+      "source_page": 6,
+      "original_name": "KADAPA",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 74,
+      "zone": "UTTAR PRADESH",
+      "name": "LUCKNOW",
+      "uan_count": 465356,
+      "oic_cadre": "RPFC-I",
+      "source_page": 6,
+      "original_name": "LUCKNOW",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 75,
+      "zone": "TELANGANA (HYDERABAD)",
+      "name": "NIZAMABAD",
+      "uan_count": 460286,
+      "oic_cadre": "RPFC-I",
+      "source_page": 6,
+      "original_name": "NIZAMABAD",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 76,
+      "zone": "UTTAR PRADESH",
+      "name": "GREATER NOIDA",
+      "uan_count": 447506,
+      "oic_cadre": "RPFC-I",
+      "source_page": 6,
+      "original_name": "GREATER NOIDA",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 77,
+      "zone": "MADHYA PRADESH & CHATTISGARH (BHOPAL)",
+      "name": "BHOPAL",
+      "uan_count": 439146,
+      "oic_cadre": "RPFC-I",
+      "source_page": 6,
+      "original_name": "BHOPAL",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 78,
+      "zone": "TAMIL NADU(EXCLUDING CHENNAI)",
+      "name": "TRICHY",
+      "uan_count": 437444,
+      "oic_cadre": "RPFC-I",
+      "source_page": 6,
+      "original_name": "TRICHY",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 79,
+      "zone": "BIHAR & JHARKHAND(PATNA)",
+      "name": "RANCHI",
+      "uan_count": 436675,
+      "oic_cadre": "RPFC-I",
+      "source_page": 7,
+      "original_name": "RANCHI",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 80,
+      "zone": "TAMIL NADU(EXCLUDING CHENNAI)",
+      "name": "TIRUPPUR",
+      "uan_count": 432788,
+      "oic_cadre": "RPFC-I",
+      "source_page": 7,
+      "original_name": "TIRUPPUR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 81,
+      "zone": "GUJARAT (AHMEDABAD)",
+      "name": "VATWA",
+      "uan_count": 431429,
+      "oic_cadre": "RPFC-I",
+      "source_page": 7,
+      "original_name": "VATWA",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 82,
+      "zone": "MAHARASHTRA(EXCLU DING MUMBAI)(PUNE)",
+      "name": "AURANGABAD",
+      "uan_count": 419685,
+      "oic_cadre": "RPFC-I",
+      "source_page": 7,
+      "original_name": "AURANGABAD",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 83,
+      "zone": "MAHARASHTRA(EXCLU DING MUMBAI)(PUNE)",
+      "name": "KOLHAPUR",
+      "uan_count": 411614,
+      "oic_cadre": "RPFC-I",
+      "source_page": 7,
+      "original_name": "KOLHAPUR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 84,
+      "zone": "NORTH-EASTERN REGION (GUWAHATI)",
+      "name": "GUWAHATI",
+      "uan_count": 403219,
+      "oic_cadre": "RPFC-I",
+      "source_page": 7,
+      "original_name": "GUWAHATI",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 85,
+      "zone": "WB, A&N ISLANDS & SIKKIM (KOLKATA)",
+      "name": "JANGIPUR",
+      "uan_count": 402833,
+      "oic_cadre": "RPFC-I",
+      "source_page": 7,
+      "original_name": "JANGIPUR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 86,
+      "zone": "CHENNAI & PUDUCHERRY (CHENNAI)",
+      "name": "THIRUVALLUR (AVADI)",
+      "uan_count": 389498,
+      "oic_cadre": "RPFC-I",
+      "source_page": 7,
+      "original_name": "THIRUVALLUR (AVADI)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 87,
+      "zone": "PUNJAB & HIMACHAL PRADESH",
+      "name": "LUDHIANA",
+      "uan_count": 381577,
+      "oic_cadre": "RPFC-I",
+      "source_page": 7,
+      "original_name": "LUDHIANA",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 88,
+      "zone": "RAJASTHAN",
+      "name": "UDAIPUR",
+      "uan_count": 381054,
+      "oic_cadre": "RPFC-I",
+      "source_page": 7,
+      "original_name": "UDAIPUR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 89,
+      "zone": "WB, A&N ISLANDS & SIKKIM (KOLKATA)",
+      "name": "BARRACKPORE (TITAGARH)",
+      "uan_count": 373312,
+      "oic_cadre": "RPFC-I",
+      "source_page": 7,
+      "original_name": "BARRACKPORE (TITAGARH)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 90,
+      "zone": "WB, A&N ISLANDS & SIKKIM (KOLKATA)",
+      "name": "DURGAPUR",
+      "uan_count": 373206,
+      "oic_cadre": "RPFC-I",
+      "source_page": 7,
+      "original_name": "DURGAPUR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 91,
+      "zone": "RAJASTHAN",
+      "name": "ALWAR",
+      "uan_count": 369705,
+      "oic_cadre": "RPFC-I",
+      "source_page": 7,
+      "original_name": "ALWAR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 92,
+      "zone": "KARNATAKA (OTHER THAN BENGALURU) & GOA (HUBLI)",
+      "name": "HUBLI",
+      "uan_count": 362398,
+      "oic_cadre": "RPFC-I",
+      "source_page": 7,
+      "original_name": "HUBLI",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 93,
+      "zone": "BIHAR & JHARKHAND(PATNA)",
+      "name": "JAMSHEDPUR",
+      "uan_count": 359753,
+      "oic_cadre": "RPFC-I",
+      "source_page": 7,
+      "original_name": "JAMSHEDPUR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 94,
+      "zone": "GUJARAT (AHMEDABAD)",
+      "name": "BHARUCH",
+      "uan_count": 341329,
+      "oic_cadre": "RPFC-I",
+      "source_page": 7,
+      "original_name": "BHARUCH",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 95,
+      "zone": "UTTAR PRADESH",
+      "name": "KANPUR",
+      "uan_count": 323857,
+      "oic_cadre": "RPFC-I",
+      "source_page": 7,
+      "original_name": "KANPUR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 96,
+      "zone": "BIHAR & JHARKHAND(PATNA)",
+      "name": "MUZAFFARPUR",
+      "uan_count": 314226,
+      "oic_cadre": "RPFC-II",
+      "source_page": 8,
+      "original_name": "MUZAFFARPUR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 97,
+      "zone": "HARYANA",
+      "name": "ROHTAK",
+      "uan_count": 305486,
+      "oic_cadre": "RPFC-I",
+      "source_page": 8,
+      "original_name": "ROHTAK",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 98,
+      "zone": "DELHI & UTTARAKHAND",
+      "name": "HALDWANI",
+      "uan_count": 303457,
+      "oic_cadre": "RPFC-I",
+      "source_page": 8,
+      "original_name": "HALDWANI",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 99,
+      "zone": "ORISSA (BHUBANESWAR)",
+      "name": "ROURKELA",
+      "uan_count": 296382,
+      "oic_cadre": "RPFC-I",
+      "source_page": 8,
+      "original_name": "ROURKELA",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 100,
+      "zone": "TAMIL NADU(EXCLUDING CHENNAI)",
+      "name": "TIRUNELVELI",
+      "uan_count": 289225,
+      "oic_cadre": "RPFC-I",
+      "source_page": 8,
+      "original_name": "TIRUNELVELI",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 101,
+      "zone": "KERALA & LAKSHADWEEP (THIRUVANANTHAPURA M)",
+      "name": "THIRUVANANTHAPUR AM (TRIVENDRUM)",
+      "uan_count": 285048,
+      "oic_cadre": "RPFC-I",
+      "source_page": 8,
+      "original_name": "THIRUVANANTHAPUR AM (TRIVENDRUM)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 102,
+      "zone": "KARNATAKA (OTHER THAN BENGALURU) & GOA (HUBLI)",
+      "name": "GOA",
+      "uan_count": 284543,
+      "oic_cadre": "RPFC-I",
+      "source_page": 8,
+      "original_name": "GOA",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 103,
+      "zone": "KARNATAKA (OTHER THAN BENGALURU) & GOA (HUBLI)",
+      "name": "MYSORE",
+      "uan_count": 278730,
+      "oic_cadre": "RPFC-I",
+      "source_page": 8,
+      "original_name": "MYSORE",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 104,
+      "zone": "RAJASTHAN",
+      "name": "JODHPUR",
+      "uan_count": 277897,
+      "oic_cadre": "RPFC-I",
+      "source_page": 8,
+      "original_name": "JODHPUR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 105,
+      "zone": "MADHYA PRADESH & CHATTISGARH (BHOPAL)",
+      "name": "JABALPUR",
+      "uan_count": 274485,
+      "oic_cadre": "RPFC-I",
+      "source_page": 8,
+      "original_name": "JABALPUR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 106,
+      "zone": "PUNJAB & HIMACHAL PRADESH",
+      "name": "JALANDHAR",
+      "uan_count": 274118,
+      "oic_cadre": "RPFC-I",
+      "source_page": 8,
+      "original_name": "JALANDHAR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 107,
+      "zone": "UTTAR PRADESH",
+      "name": "VARANASI",
+      "uan_count": 266438,
+      "oic_cadre": "RPFC-I",
+      "source_page": 8,
+      "original_name": "VARANASI",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 108,
+      "zone": "UTTAR PRADESH",
+      "name": "AGRA",
+      "uan_count": 266044,
+      "oic_cadre": "RPFC-II",
+      "source_page": 8,
+      "original_name": "AGRA",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 109,
+      "zone": "KARNATAKA (OTHER THAN BENGALURU) & GOA (HUBLI)",
+      "name": "MANGALORE",
+      "uan_count": 262404,
+      "oic_cadre": "RPFC-II",
+      "source_page": 8,
+      "original_name": "MANGALORE",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 110,
+      "zone": "CHENNAI & PUDUCHERRY (CHENNAI)",
+      "name": "VELLORE",
+      "uan_count": 257755,
+      "oic_cadre": "RPFC-II",
+      "source_page": 8,
+      "original_name": "VELLORE",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 111,
+      "zone": "WB, A&N ISLANDS & SIKKIM (KOLKATA)",
+      "name": "JALPAIGURI",
+      "uan_count": 241207,
+      "oic_cadre": "RPFC-II",
+      "source_page": 8,
+      "original_name": "JALPAIGURI",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 112,
+      "zone": "WB, A&N ISLANDS & SIKKIM (KOLKATA)",
+      "name": "SILIGURI",
+      "uan_count": 218996,
+      "oic_cadre": "RPFC-II",
+      "source_page": 8,
+      "original_name": "SILIGURI",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 113,
+      "zone": "ANDHRA PRADESH (VIJAYWADA)",
+      "name": "RAJAMUNDRY",
+      "uan_count": 207372,
+      "oic_cadre": "RPFC-II",
+      "source_page": 9,
+      "original_name": "RAJAMUNDRY",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 114,
+      "zone": "KERALA & LAKSHADWEEP (THIRUVANANTHAPURA M)",
+      "name": "KOZHIKODE (CALICUT)",
+      "uan_count": 207365,
+      "oic_cadre": "RPFC-II",
+      "source_page": 9,
+      "original_name": "KOZHIKODE (CALICUT)",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 115,
+      "zone": "UTTAR PRADESH",
+      "name": "BAREILLY",
+      "uan_count": 199422,
+      "oic_cadre": "RPFC-II",
+      "source_page": 9,
+      "original_name": "BAREILLY",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 116,
+      "zone": "PUNJAB & HIMACHAL PRADESH",
+      "name": "BHATINDA",
+      "uan_count": 197586,
+      "oic_cadre": "RPFC-II",
+      "source_page": 9,
+      "original_name": "BHATINDA",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 117,
+      "zone": "BIHAR & JHARKHAND(PATNA)",
+      "name": "BHAGALPUR",
+      "uan_count": 194926,
+      "oic_cadre": "RPFC-II",
+      "source_page": 9,
+      "original_name": "BHAGALPUR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 118,
+      "zone": "KARNATAKA (OTHER THAN BENGALURU) & GOA (HUBLI)",
+      "name": "BELLARY",
+      "uan_count": 171058,
+      "oic_cadre": "RPFC-II",
+      "source_page": 9,
+      "original_name": "BELLARY",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 119,
+      "zone": "MAHARASHTRA(EXCLU DING MUMBAI)(PUNE)",
+      "name": "SOLHAPUR",
+      "uan_count": 159864,
+      "oic_cadre": "RPFC-II",
+      "source_page": 9,
+      "original_name": "SOLHAPUR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 120,
+      "zone": "JAMMU KASHMIR AND LADAKH",
+      "name": "JAMMU",
+      "uan_count": 155000,
+      "oic_cadre": "RPFC-I",
+      "source_page": 9,
+      "original_name": "JAMMU",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 121,
+      "zone": "CHENNAI & PUDUCHERRY (CHENNAI)",
+      "name": "PONDICHERRY",
+      "uan_count": 150831,
+      "oic_cadre": "RPFC-II",
+      "source_page": 9,
+      "original_name": "PONDICHERRY",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 122,
+      "zone": "MADHYA PRADESH & CHATTISGARH (BHOPAL)",
+      "name": "GWALIOR",
+      "uan_count": 141655,
+      "oic_cadre": "RPFC-II",
+      "source_page": 9,
+      "original_name": "GWALIOR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 123,
+      "zone": "RAJASTHAN",
+      "name": "KOTA",
+      "uan_count": 131930,
+      "oic_cadre": "RPFC-II",
+      "source_page": 9,
+      "original_name": "KOTA",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 124,
+      "zone": "TELANGANA (HYDERABAD)",
+      "name": "KARIMNAGAR",
+      "uan_count": 123971,
+      "oic_cadre": "RPFC-II",
+      "source_page": 9,
+      "original_name": "KARIMNAGAR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 125,
+      "zone": "UTTAR PRADESH",
+      "name": "ALLAHABAD",
+      "uan_count": 123699,
+      "oic_cadre": "RPFC-II",
+      "source_page": 9,
+      "original_name": "ALLAHABAD",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 126,
+      "zone": "PUNJAB & HIMACHAL PRADESH",
+      "name": "AMRITSAR",
+      "uan_count": 121439,
+      "oic_cadre": "RPFC-II",
+      "source_page": 9,
+      "original_name": "AMRITSAR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 127,
+      "zone": "KARNATAKA (OTHER THAN BENGALURU) & GOA (HUBLI)",
+      "name": "SHIMOGA",
+      "uan_count": 112807,
+      "oic_cadre": "RPFC-II",
+      "source_page": 9,
+      "original_name": "SHIMOGA",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 128,
+      "zone": "UTTAR PRADESH",
+      "name": "GORAKHPUR",
+      "uan_count": 111039,
+      "oic_cadre": "RPFC-II",
+      "source_page": 9,
+      "original_name": "GORAKHPUR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 129,
+      "zone": "MAHARASHTRA(EXCLU DING MUMBAI)(PUNE)",
+      "name": "AKOLA",
+      "uan_count": 109630,
+      "oic_cadre": "RPFC-II",
+      "source_page": 9,
+      "original_name": "AKOLA",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 130,
+      "zone": "ORISSA (BHUBANESWAR)",
+      "name": "BERHAMPUR",
+      "uan_count": 104999,
+      "oic_cadre": "RPFC-II",
+      "source_page": 9,
+      "original_name": "BERHAMPUR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 131,
+      "zone": "KARNATAKA (OTHER THAN BENGALURU) & GOA (HUBLI)",
+      "name": "UDUPPI",
+      "uan_count": 104457,
+      "oic_cadre": "RPFC-II",
+      "source_page": 10,
+      "original_name": "UDUPPI",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 132,
+      "zone": "KARNATAKA (OTHER THAN BENGALURU) & GOA (HUBLI)",
+      "name": "GULBARGA",
+      "uan_count": 104280,
+      "oic_cadre": "RPFC-II",
+      "source_page": 10,
+      "original_name": "GULBARGA",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 133,
+      "zone": "KERALA & LAKSHADWEEP (THIRUVANANTHAPURA M)",
+      "name": "KOTTAYAM",
+      "uan_count": 98100,
+      "oic_cadre": "RPFC-II",
+      "source_page": 10,
+      "original_name": "KOTTAYAM",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 134,
+      "zone": "TELANGANA (HYDERABAD)",
+      "name": "WARANGAL",
+      "uan_count": 95720,
+      "oic_cadre": "RPFC-II",
+      "source_page": 10,
+      "original_name": "WARANGAL",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 135,
+      "zone": "MADHYA PRADESH & CHATTISGARH (BHOPAL)",
+      "name": "UJJAIN",
+      "uan_count": 92705,
+      "oic_cadre": "RPFC-II",
+      "source_page": 10,
+      "original_name": "UJJAIN",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 136,
+      "zone": "ORISSA (BHUBANESWAR)",
+      "name": "KEONJHAR",
+      "uan_count": 84834,
+      "oic_cadre": "RPFC-II",
+      "source_page": 10,
+      "original_name": "KEONJHAR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 137,
+      "zone": "KARNATAKA (OTHER THAN BENGALURU) & GOA (HUBLI)",
+      "name": "CHIKAMAGALUR",
+      "uan_count": 73891,
+      "oic_cadre": "RPFC-II",
+      "source_page": 10,
+      "original_name": "CHIKAMAGALUR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 138,
+      "zone": "KERALA & LAKSHADWEEP (THIRUVANANTHAPURA M)",
+      "name": "KOLLAM",
+      "uan_count": 73662,
+      "oic_cadre": "RPFC-II",
+      "source_page": 10,
+      "original_name": "KOLLAM",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 139,
+      "zone": "TAMIL NADU(EXCLUDING CHENNAI)",
+      "name": "NAGERCOIL",
+      "uan_count": 70945,
+      "oic_cadre": "RPFC-II",
+      "source_page": 10,
+      "original_name": "NAGERCOIL",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 140,
+      "zone": "KERALA & LAKSHADWEEP (THIRUVANANTHAPURA M)",
+      "name": "KANNUR",
+      "uan_count": 69629,
+      "oic_cadre": "RPFC-II",
+      "source_page": 10,
+      "original_name": "KANNUR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 141,
+      "zone": "BENGALURU (BENGALURU)",
+      "name": "TUMKUR",
+      "uan_count": 69186,
+      "oic_cadre": "RPFC-II",
+      "source_page": 10,
+      "original_name": "TUMKUR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 142,
+      "zone": "KARNATAKA (OTHER THAN BENGALURU) & GOA (HUBLI)",
+      "name": "RAICHUR",
+      "uan_count": 68649,
+      "oic_cadre": "RPFC-II",
+      "source_page": 10,
+      "original_name": "RAICHUR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 143,
+      "zone": "JAMMU KASHMIR AND LADAKH",
+      "name": "SRINAGAR",
+      "uan_count": 61081,
+      "oic_cadre": "RPFC-II",
+      "source_page": 10,
+      "original_name": "SRINAGAR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 144,
+      "zone": "MADHYA PRADESH & CHATTISGARH (BHOPAL)",
+      "name": "SAGAR",
+      "uan_count": 57862,
+      "oic_cadre": "RPFC-II",
+      "source_page": 10,
+      "original_name": "SAGAR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 145,
+      "zone": "NORTH-EASTERN REGION (GUWAHATI)",
+      "name": "TINSUKIA",
+      "uan_count": 55926,
+      "oic_cadre": "RPFC-II",
+      "source_page": 11,
+      "original_name": "TINSUKIA",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 146,
+      "zone": "NORTH-EASTERN REGION (GUWAHATI)",
+      "name": "SHILLONG",
+      "uan_count": 53932,
+      "oic_cadre": "RPFC-II",
+      "source_page": 11,
+      "original_name": "SHILLONG",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 147,
+      "zone": "NORTH-EASTERN REGION (GUWAHATI)",
+      "name": "AGARTALA",
+      "uan_count": 38369,
+      "oic_cadre": "RPFC-II",
+      "source_page": 11,
+      "original_name": "AGARTALA",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 148,
+      "zone": "WB, A&N ISLANDS & SIKKIM (KOLKATA)",
+      "name": "DARJEELING",
+      "uan_count": 26899,
+      "oic_cadre": "RPFC-II",
+      "source_page": 11,
+      "original_name": "DARJEELING",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 149,
+      "zone": "WB, A&N ISLANDS & SIKKIM (KOLKATA)",
+      "name": "PORT BLAIR",
+      "uan_count": 22528,
+      "oic_cadre": "RPFC-II",
+      "source_page": 11,
+      "original_name": "PORT BLAIR",
+      "effective_date": "2025-04-23"
+    },
+    {
+      "serial": 150,
+      "zone": "JAMMU KASHMIR AND LADAKH",
+      "name": "LADAKH(LEH)",
+      "uan_count": 2548,
+      "oic_cadre": "RPFC-II",
+      "source_page": 11,
+      "original_name": "LADAKH(LEH)",
+      "effective_date": "2025-04-23"
+    }
+  ]
+}

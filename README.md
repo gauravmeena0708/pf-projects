@@ -2,7 +2,7 @@
 
 1. [Pension and EDLI Calculator](./calculator/cal.html)
 2. [Performance Visualizations](./performance-visualization/claimwise-rejection.html)
-3. [AGT analysis](./agt_analysis/index3.html)
+3. [AGT analysis](./agt_analysis/index.html) · [Next Posting Advisor](./agt_analysis/posting-advisor.html)
 4. [Pension Contribution Eligibility Checker](./form11-eligibility/index.html)
 5. [Transfer Claim Risk Score](./prototypes/transfer_risk.html)
 6. [Esatblishment Risk Score](./prototypes/establishment_risk.html)
