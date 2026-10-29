@@ -467,13 +467,29 @@
     };
   }
 
-  function normalizeDesignation(col2Str, eventStr, prevDesig, lastPromoDate, currentDate) {
+  function normalizeDesignation(col2Str, eventStr, prevDesig, lastPromoDate, currentDate, isFirstRecord) {
     let d = (col2Str || '').trim().toUpperCase();
-    if (d === 'APFC') return 'APFC';
-    if (d === 'RPFC-II' || d === 'RPFC II' || d === 'RPFC-2') return 'RPFC-II';
-    if (d === 'RPFC-I' || d === 'RPFC I' || d === 'RPFC-1') return 'RPFC-I';
-    if (d === 'ACC (HQ)' || d === 'ACC(HQ)') return 'ACC (HQ)';
-    if (d.startsWith('ACC')) return 'ACC';
+    const rankOrder = { 'APFC': 1, 'RPFC-II': 2, 'RPFC-I': 3, 'ACC': 4, 'ACC (HQ)': 5, 'CPFC': 6 };
+    let normD = null;
+    if (d === 'APFC') normD = 'APFC';
+    else if (d === 'RPFC-II' || d === 'RPFC II' || d === 'RPFC-2') normD = 'RPFC-II';
+    else if (d === 'RPFC-I' || d === 'RPFC I' || d === 'RPFC-1') normD = 'RPFC-I';
+    else if (d === 'ACC (HQ)' || d === 'ACC(HQ)') normD = 'ACC (HQ)';
+    else if (d.startsWith('ACC')) normD = 'ACC';
+
+    // If explicit rank is parsed, ensure we never downgrade an already achieved substantive rank
+    if (normD) {
+      if (prevDesig && (rankOrder[normD] || 1) < (rankOrder[prevDesig] || 1)) {
+        return prevDesig;
+      }
+      return normD;
+    }
+
+    // If it is the first record in the officer's career and col2 is blank,
+    // the entry rank is APFC (departmental promotion into officer cadre as APFC)
+    if (isFirstRecord) {
+      return 'APFC';
+    }
 
     if (eventStr && eventStr.toUpperCase().includes('PROMOTION')) {
       const yearsSinceLastPromo = (lastPromoDate && currentDate) ? (currentDate.getTime() - lastPromoDate.getTime()) / (365.25 * 86400000) : 999;
@@ -876,10 +892,10 @@
 
       let prevDesig = 'APFC';
       let lastPromoDate = null;
-      const rawEnriched = officer.records.map((r) => {
+      const rawEnriched = officer.records.map((r, idx) => {
         const d1 = parseDate(r.date1);
         const d2 = parseDate(r.date2);
-        const desig = normalizeDesignation(r.col2, r.new_col4, prevDesig, lastPromoDate, d1);
+        const desig = normalizeDesignation(r.col2, r.new_col4, prevDesig, lastPromoDate, d1, idx === 0);
         if (desig !== prevDesig && d1) {
           lastPromoDate = d1;
         }
